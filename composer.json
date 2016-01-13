@@ -1,0 +1,42 @@
+{
+    "name": "eellak/gredu_labs",
+    "type": "application",
+    "description": "",
+    "license": "GNU GPLv3",
+    "authors": [
+        {
+            "name": "Vassilis Kanellopoulos",
+            "email": "contact@kanellov.com",
+            "homepage": "http://kanellov.com"
+        },
+        {
+            "name": "Giorgos Tsakalos"
+        },
+        {
+            "name": "Nontas Aggelou"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "slim/slim": "^3.0",
+        "slim/twig-view": "^2.0",
+        "slim/flash": "^0.1.0",
+        "monolog/monolog": "^1.13",
+        "kanellov/config-merge": "dev-master"
+    },
+    "require-dev": {
+        "fabpot/php-cs-fixer": "1.*",
+        "phpunit/PHPUnit": "4.*",
+        "satooshi/php-coveralls": "dev-master",
+        "phpunit/phpcov": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "GrEdu\\": "app/src"
+        }
+    },
+    "autoload-dev": {
+        "psr-0": {
+        }
+    }
+}
