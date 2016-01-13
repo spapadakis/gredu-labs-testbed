@@ -22,7 +22,9 @@
         "slim/twig-view": "^2.0",
         "slim/flash": "^0.1.0",
         "monolog/monolog": "^1.13",
-        "kanellov/config-merge": "dev-master"
+        "kanellov/config-merge": "dev-master",
+        "zendframework/zend-authentication": "^2.0",
+        "zendframework/zend-eventmanager": "^3.0"
     },
     "require-dev": {
         "fabpot/php-cs-fixer": "1.*",
@@ -32,11 +34,12 @@
     },
     "autoload": {
         "psr-4": {
-            "GrEdu\\": "app/src"
+            "GrEduLabs\\": "app/src"
         }
     },
     "autoload-dev": {
-        "psr-0": {
+        "psr-4": {
+            "GrEduLabsTest\\": "test/src"
         }
     }
 }
