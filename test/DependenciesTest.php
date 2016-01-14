@@ -36,27 +36,45 @@ class DependenciesTest extends \PHPUnit_Framework_TestCase
         @session_destroy();
     }
 
-    public function testViewInContainer()
+    public function testView()
     {
         $view = self::$container->get('view');
         $this->assertInstanceOf('\Slim\Views\Twig', $view);
     }
 
-    public function testFlashInContainer()
+    public function testFlash()
     {
         $flash = self::$container->get('flash');
         $this->assertInstanceOf('\Slim\Flash\Messages', $flash);
     }
 
-    public function testLoggerInContainer()
+    public function testLogger()
     {
         $logger = self::$container->get('logger');
         $this->assertInstanceOf('\Monolog\Logger', $logger);
     }
 
-    public function testEventsInContainer()
+    public function testEvents()
     {
         $events = self::$container->get('events');
         $this->assertInstanceOf('\Zend\EventManager\EventManagerInterface', $events);
+    }
+
+    public function testAuthAdapter()
+    {
+        $adapter = self::$container->get('Service\\Authentication\\Adapter');
+        $this->assertInstanceOf('\Zend\Authentication\Adapter\AdapterInterface', $adapter);
+    }
+
+    public function testAuthStorage()
+    {
+        $storage = self::$container->get('Service\\Authentication\\Storage');
+        $this->assertInstanceOf('\Zend\Authentication\Storage\StorageInterface', $storage);
+    }
+
+    public function testAuthService()
+    {
+        $service = self::$container->get('Service\\Authentication');
+        $this->assertInstanceOf('\Zend\Authentication\AuthenticationServiceInterface', $service);
     }
 }

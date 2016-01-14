@@ -49,25 +49,25 @@ $container['logger'] = function ($c) {
 
 $container['events'] = function ($c) {
     return new \Zend\EventManager\EventManager(
-        new \Zend\EventManager\SharedEventManager()
+        new \Zend\EventManager\SharedEventManager(),
+        ['events']
     );
 };
 
-$container['Service\\Authentication\\Adapter'] = function ($c) use ($app) {
-    return new \Zend\Authentication\Adapter\Callback(function () use ($c) {
-        return $c->events->triggerUntil(
-            function (\Zend\Authentication\Result $result) {
-                return $result->isValid();
-            },
-            'authenticate', $app, func_get_args()
-        )->last();
-    });
+// Authentication service
+
+$container['Service\\Authentication\\Adapter'] = function ($c) {
+    return new \GrEduLabs\Authentication\Adapter\Events($c->get('events'));
+};
+
+$container['Service\\Authentication\\Storage'] = function ($c) {
+    return new \GrEduLabs\Authentication\Storage\PhpSession($_SESSION);
 };
 
 $container['Service\\Authentication'] = function ($c) {
 
     $service = new \Zend\Authentication\AuthenticationService(
-        new \GrEduLabs\Authentication\Storage\PhpSession($_SESSION),
+        $c->get('Service\\Authentication\\Storage'),
         $c->get('Service\\Authentication\\Adapter')
     );
 
