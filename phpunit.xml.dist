@@ -21,6 +21,8 @@
             <directory suffix=".php">./app/</directory>
             <exclude>
                 <directory>./app/templates</directory>
+                <file>./app/src/Authentication/Adapter/Cas.php</file>
+                <file></file>
             </exclude>
         </whitelist>
     </filter>

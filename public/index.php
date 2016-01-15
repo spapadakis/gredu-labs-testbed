@@ -15,9 +15,12 @@ if (PHP_SAPI === 'cli-server' && $_SERVER['SCRIPT_FILENAME'] !== __FILE__) {
 
 require __DIR__ . '/../vendor/autoload.php';
 
+session_name('GrEduLabs');
 session_start();
 
-$app = new \Slim\App(Knlv\config_merge('config', ['global', 'local']));
+$app = new \Slim\App([
+    'settings' => Knlv\config_merge('config', ['global', 'local']),
+]);
 
 require 'app/dependencies.php';
 require 'app/middleware.php';

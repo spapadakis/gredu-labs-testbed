@@ -22,7 +22,15 @@ class DependenciesTest extends \PHPUnit_Framework_TestCase
             ],
             'logger' => [
                 'name' => 'app',
-                'path' => __DIR__,
+                'path' => __DIR__ . '/tmp/app.log',
+            ],
+            'db'                                => [
+                'dsn'     => 'sqlite:' . __DIR__ . '/tmp/db.sq3',
+                'user'    => null,
+                'pass'    => null,
+                'options' => [
+
+                ],
             ],
         ],
     ];
@@ -60,10 +68,10 @@ class DependenciesTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Zend\EventManager\EventManagerInterface', $events);
     }
 
-    public function testAuthAdapter()
+    public function testDbAuthAdapter()
     {
-        $adapter = self::$container->get('Service\\Authentication\\Adapter');
-        $this->assertInstanceOf('\Zend\Authentication\Adapter\AdapterInterface', $adapter);
+        $adapter = self::$container->get('Service\\Authentication\\DbAdapter');
+        $this->assertInstanceOf('\GrEduLabs\Authentication\Adapter\Pdo', $adapter);
     }
 
     public function testAuthStorage()
@@ -75,6 +83,6 @@ class DependenciesTest extends \PHPUnit_Framework_TestCase
     public function testAuthService()
     {
         $service = self::$container->get('Service\\Authentication');
-        $this->assertInstanceOf('\Zend\Authentication\AuthenticationServiceInterface', $service);
+        $this->assertInstanceOf('\Zend\Authentication\AuthenticationService', $service);
     }
 }

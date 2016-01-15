@@ -54,22 +54,77 @@ $container['events'] = function ($c) {
     );
 };
 
+// Database
+
+$container['db'] = function ($c) {
+    $settings = $c->get('settings');
+    try {
+        $pdo = new \PDO(
+            $settings['db']['dsn'],
+            $settings['db']['user'],
+            $settings['db']['pass'],
+            $settings['db']['options']
+        );
+
+        return $pdo;
+    } catch (\PDOException $e) {
+        $c->get('logger')->error($e->getMessage());
+
+        return;
+    }
+};
+
 // Authentication service
 
-$container['Service\\Authentication\\Adapter'] = function ($c) {
-    return new \GrEduLabs\Authentication\Adapter\Events($c->get('events'));
+$container['Service\\Authentication\\DbAdapter'] = function ($c) {
+    return new \GrEduLabs\Authentication\Adapter\Pdo($c->get('db'));
 };
+
+$container['Service\\Authentication\\CasAdapter'] = function ($c) {
+    $settings = $c->get('settings');
+
+    return new GrEduLabs\Authentication\Adapter\Cas($settings['phpcas']);
+};
+
 
 $container['Service\\Authentication\\Storage'] = function ($c) {
     return new \GrEduLabs\Authentication\Storage\PhpSession($_SESSION);
 };
 
 $container['Service\\Authentication'] = function ($c) {
-
-    $service = new \Zend\Authentication\AuthenticationService(
-        $c->get('Service\\Authentication\\Storage'),
-        $c->get('Service\\Authentication\\Adapter')
+    return new \Zend\Authentication\AuthenticationService(
+        $c->get('Service\\Authentication\\Storage')
     );
+};
 
-    return $service;
+// Actions
+
+$container['GrEduLabs\\Action\\User\\Login'] = function ($c) {
+    return new GrEduLabs\Action\User\Login(
+        $c->get('view'),
+        function ($identity, $credential) use ($c) {
+            $service = $c->get('Service\\Authentication');
+            $adapter = $c->get('Service\\Authentication\\DbAdapter');
+            $adapter->setIdentity($identity)
+                ->setCredential($credential);
+
+            return $service->authenticate($adapter);
+        }
+    );
+};
+
+$container['GrEduLabs\\Action\\User\\LoginSso'] = function ($c) {
+    return new GrEduLabs\Action\User\LoginSso(function () use ($c) {
+        $service = $c->get('Service\\Authentication');
+        $adapter = $c->get('Service\\Authentication\\CasAdapter');
+
+        return $service->authenticate($adapter);
+    });
+};
+
+$container['GrEduLabs\\Action\\User\\Logout'] = function ($c) {
+    return new GrEduLabs\Action\User\Logout(
+        $c->get('Service\\Authentication'),
+        $c->get('router')->pathFor('index')
+    );
 };
