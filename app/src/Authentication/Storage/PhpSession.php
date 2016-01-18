@@ -23,12 +23,6 @@ class PhpSession implements StorageInterface
      */
     const MEMBER_DEFAULT = 'storage';
 
-    /**
-     * Session array
-     * 
-     * @var array
-     */
-    protected $session;
 
     /**
      * Session namespace
@@ -51,7 +45,7 @@ class PhpSession implements StorageInterface
      * @param  mixed $namespace
      * @param  mixed $member
      */
-    public function __construct(array &$session, $namespace = null, $member = null)
+    public function __construct($namespace = null, $member = null)
     {
         if ($namespace !== null) {
             $this->namespace = $namespace;
@@ -59,8 +53,6 @@ class PhpSession implements StorageInterface
         if ($member !== null) {
             $this->member = $member;
         }
-        $this->session                   =& $session;
-        $this->session[$this->namespace] = [];
     }
 
     /**
@@ -91,7 +83,7 @@ class PhpSession implements StorageInterface
      */
     public function isEmpty()
     {
-        return !isset($this->session[$this->namespace][$this->member]);
+        return !isset($_SESSION[$this->namespace][$this->member]);
     }
 
     /**
@@ -104,7 +96,7 @@ class PhpSession implements StorageInterface
      */
     public function read()
     {
-        return $this->session[$this->namespace][$this->member];
+        return $_SESSION[$this->namespace][$this->member];
     }
 
     /**
@@ -116,7 +108,7 @@ class PhpSession implements StorageInterface
      */
     public function write($contents)
     {
-        $this->session[$this->namespace][$this->member] = $contents;
+        $_SESSION[$this->namespace][$this->member] = $contents;
     }
 
     /**
@@ -127,6 +119,6 @@ class PhpSession implements StorageInterface
      */
     public function clear()
     {
-        unset($this->session[$this->namespace][$this->member]);
+        unset($_SESSION[$this->namespace][$this->member]);
     }
 }

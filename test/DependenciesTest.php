@@ -41,6 +41,10 @@ class DependenciesTest extends \PHPUnit_Framework_TestCase
         $app = new \Slim\App(self::$settings);
         require __DIR__ . '/../app/dependencies.php';
         self::$container = $container;
+    }
+
+    public static function tearDownAfterClass()
+    {
         @session_destroy();
     }
 
@@ -70,19 +74,19 @@ class DependenciesTest extends \PHPUnit_Framework_TestCase
 
     public function testDbAuthAdapter()
     {
-        $adapter = self::$container->get('Service\\Authentication\\DbAdapter');
+        $adapter = self::$container->get('authentication_db_adapter');
         $this->assertInstanceOf('\GrEduLabs\Authentication\Adapter\Pdo', $adapter);
     }
 
     public function testAuthStorage()
     {
-        $storage = self::$container->get('Service\\Authentication\\Storage');
+        $storage = self::$container->get('authentication_storage');
         $this->assertInstanceOf('\Zend\Authentication\Storage\StorageInterface', $storage);
     }
 
     public function testAuthService()
     {
-        $service = self::$container->get('Service\\Authentication');
+        $service = self::$container->get('authentication_service');
         $this->assertInstanceOf('\Zend\Authentication\AuthenticationService', $service);
     }
 }

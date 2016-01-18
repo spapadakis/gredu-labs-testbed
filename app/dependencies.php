@@ -23,6 +23,10 @@ $container['view'] = function ($c) {
         $c->get('request')->getUri()
     ));
     $view->addExtension(new Twig_Extension_Debug());
+    $view->addExtension(new GrEduLabs\Twig\Extension\Flash(
+        $c->get('flash'),
+        'flash.twig'
+    ));
 
     return $view;
 };
@@ -76,55 +80,77 @@ $container['db'] = function ($c) {
 
 // Authentication service
 
-$container['Service\\Authentication\\DbAdapter'] = function ($c) {
+$container['authentication_db_adapter'] = function ($c) {
     return new \GrEduLabs\Authentication\Adapter\Pdo($c->get('db'));
 };
 
-$container['Service\\Authentication\\CasAdapter'] = function ($c) {
+$container['authentication_cas_adapter'] = function ($c) {
     $settings = $c->get('settings');
 
     return new GrEduLabs\Authentication\Adapter\Cas($settings['phpcas']);
 };
 
 
-$container['Service\\Authentication\\Storage'] = function ($c) {
-    return new \GrEduLabs\Authentication\Storage\PhpSession($_SESSION);
+$container['authentication_storage'] = function ($c) {
+    return new \GrEduLabs\Authentication\Storage\PhpSession();
 };
 
-$container['Service\\Authentication'] = function ($c) {
+$container['authentication_service'] = function ($c) {
     return new \Zend\Authentication\AuthenticationService(
-        $c->get('Service\\Authentication\\Storage')
+        $c->get('authentication_storage')
     );
+};
+
+$container['maybe_identity'] = function ($c) {
+    return function ($call) use ($c) {
+
+        $authService = $c->get('authentication_service');
+        if (!$authService->hasIdentity()) {
+            return;
+        }
+
+        $identity = $authService->getIdentity();
+        if (method_exists($identity, $call)) {
+            $args = array_slice(func_get_args(), 1);
+
+            return call_user_func_array([$identity, $call], $args);
+        }
+
+        if (property_exists($identity, $call)) {
+            return $identity->{$call};
+        }
+
+        return;
+
+    };
 };
 
 // Actions
 
 $container['GrEduLabs\\Action\\User\\Login'] = function ($c) {
-    return new GrEduLabs\Action\User\Login(
-        $c->get('view'),
-        function ($identity, $credential) use ($c) {
-            $service = $c->get('Service\\Authentication');
-            $adapter = $c->get('Service\\Authentication\\DbAdapter');
-            $adapter->setIdentity($identity)
-                ->setCredential($credential);
+    $service = $service = $c->get('authentication_service');
+    $adapter = $c->get('authentication_db_adapter');
+    $service->setAdapter($adapter);
 
-            return $service->authenticate($adapter);
-        }
-    );
+    return new GrEduLabs\Action\User\Login($c->get('view'), $service, $adapter, $c->get('flash'));
 };
 
 $container['GrEduLabs\\Action\\User\\LoginSso'] = function ($c) {
-    return new GrEduLabs\Action\User\LoginSso(function () use ($c) {
-        $service = $c->get('Service\\Authentication');
-        $adapter = $c->get('Service\\Authentication\\CasAdapter');
+    $service = $c->get('authentication_service');
+    $adapter = $c->get('authentication_cas_adapter');
+    $service->setAdapter($adapter);
 
-        return $service->authenticate($adapter);
-    });
+    return new GrEduLabs\Action\User\LoginSso(
+        $service,
+        $c->get('flash'),
+        $c->get('router')->pathFor('index'),
+        $c->get('router')->pathFor('user.login')
+    );
 };
 
 $container['GrEduLabs\\Action\\User\\Logout'] = function ($c) {
     return new GrEduLabs\Action\User\Logout(
-        $c->get('Service\\Authentication'),
+        $c->get('authentication_service'),
         $c->get('router')->pathFor('index')
     );
 };

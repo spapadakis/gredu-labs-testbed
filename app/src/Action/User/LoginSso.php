@@ -11,32 +11,60 @@ namespace GrEduLabs\Action\User;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Views\Twig;
+use Slim\Flash\Messages;
+use Zend\Authentication\AuthenticationServiceInterface;
 
 class LoginSso
 {
 
     /**
-     * @var callable
+     * @var AuthenticationServiceInterface
      */
-    protected $authenticate;
+    protected $authService;
+
+    /**
+     * @var Messages
+     */
+    protected $flash;
+
+    /**
+     * @var string
+     */
+    protected $successUrl;
+
+    /**
+     * @var string
+     */
+    protected $failureUrl;
 
     /**
      * Constructor
-     * @param Twig $view
+     * @param AuthenticationServiceInterface $authService
+     * @param Messages $flash
      */
-    public function __construct(callable $authenticate)
-    {
-        $this->authenticate = $authenticate;
+    public function __construct(
+        AuthenticationServiceInterface $authService,
+        Messages $flash,
+        $successUrl,
+        $failureUrl
+    ) {
+        $this->authService = $authService;
+        $this->flash       = $flash;
+        $this->successUrl  = $successUrl;
+        $this->failureUrl  = $failureUrl;
     }
 
-    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, array $args = [])
-    {
-        $authenticate = $this->authenticate;
-        $result       = $authenticate();
+    public function __invoke(
+        ServerRequestInterface $req,
+        ResponseInterface $res
+    ) {
+        $result = $this->authService->authenticate();
+        if (!$result->isValid()) {
+            $this->flash->addMessage('danger', reset($result->getMessages()));
 
-        var_dump($result);
+            return $res->withRedirect($this->failureUrl);
+        }
 
-        return $res;
+        return $res->withRedirect($this->successUrl);
     }
 }

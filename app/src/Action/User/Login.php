@@ -11,7 +11,11 @@ namespace GrEduLabs\Action\User;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Flash\Messages;
 use Slim\Views\Twig;
+use Zend\Authentication\Adapter\AdapterInterface;
+use Zend\Authentication\Adapter\ValidatableAdapterInterface;
+use Zend\Authentication\AuthenticationServiceInterface;
 
 class Login
 {
@@ -21,31 +25,55 @@ class Login
     protected $view;
 
     /**
-     * @var callable
+     * @var AuthenticationServiceInterface
      */
-    protected $authenticate;
+    protected $authService;
+
+    /**
+     * @var AdapterInterface
+     */
+    protected $authAdapter;
+
+    /**
+     * @var Messages
+     */
+    protected $flash;
 
     /**
      * Constructor
      * @param Twig $view
+     * @param AuthenticationServiceInterface $authService
+     * @param AdapterInterface $authAdapter
+     * @param Messages $flash
      */
     public function __construct(
         Twig $view,
-        callable $authenticate
+        AuthenticationServiceInterface $authService,
+        AdapterInterface $authAdapter,
+        Messages $flash
     ) {
-        $this->view         = $view;
-        $this->authenticate = $authenticate;
+        $this->view        = $view;
+        $this->authService = $authService;
+        $this->authAdapter = $authAdapter;
+        $this->flash       = $flash;
+        $this->authService->setAdapter($this->authAdapter);
     }
 
     public function __invoke(ServerRequestInterface $req, ResponseInterface $res, array $args = [])
     {
         if ($req->isPost()) {
-            $authenticate = $this->authenticate;
-            $result       = $authenticate(
-                $req->getParam('email'),
-                $req->getParam('password')
-            );
-            var_dump($result);
+            if ($this->authAdapter instanceof ValidatableAdapterInterface) {
+                $this->authAdapter->setIdentity($req->getParam('identity'))
+                    ->setCredential($req->getParam('credential'));
+            }
+            $result = $this->authService->authenticate();
+            if (!$result->isValid()) {
+                $this->flash->addMessage('danger', reset($result->getMessages()));
+
+                return $res->withRedirect($req->getUri());
+            }
+
+            return $res->withRedirect('/');
         }
 
         return $this->view->render($res, 'user/login.twig');

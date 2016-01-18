@@ -7,7 +7,7 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
-namespace GrEduLabstest\Authentication\Storage;
+namespace GrEduLabsTest\Authentication\Storage;
 
 use GrEduLabs\Authentication\Storage\PhpSession;
 
@@ -15,38 +15,41 @@ class PhpSessionTest extends \PHPUnit_Framework_TestCase
 {
     private $storage;
 
-    private $session;
+    public static function setUpBeforeClass()
+    {
+        @session_start();
+    }
+    public static function tearDownAfterClass()
+    {
+        @session_destroy();
+    }
 
     protected function setUp()
     {
-        $this->session = [];
-        $this->storage = new PhpSession($this->session);
+        $this->storage = new PhpSession();
     }
 
-    public function testPassSessionArrayByRefernce()
+    protected function tearDown()
     {
-        $this->assertTrue(is_array($this->session[PhpSession::NAMESPAGE_DEFAULT]));
+        $_SESSION = [];
     }
 
     public function testSetingNamespaceAndMember()
     {
-        $session = [];
-        $storage = new PhpSession($session, 'TEST_NS', 'TEST_MEMBER');
+        $storage = new PhpSession('TEST_NS', 'TEST_MEMBER');
         $this->assertAttributeSame('TEST_NS', 'namespace', $storage);
         $this->assertAttributeSame('TEST_MEMBER', 'member', $storage);
     }
 
     public function testGetNamesapceMethod()
     {
-        $session = [];
-        $storage = new PhpSession($session, 'TEST_NS');
+        $storage = new PhpSession('TEST_NS');
         $this->assertSame('TEST_NS', $storage->getNamespace());
     }
 
     public function testGetMemberMethod()
     {
-        $session = [];
-        $storage = new PhpSession($session, 'TEST_NS', 'TEST_MEMBER');
+        $storage = new PhpSession('TEST_NS', 'TEST_MEMBER');
         $this->assertSame('TEST_MEMBER', $storage->getMember());
     }
 
@@ -57,26 +60,26 @@ class PhpSessionTest extends \PHPUnit_Framework_TestCase
 
     public function testIsEmptyMethodWhenSessionNotEmpty()
     {
-        $this->session[PhpSession::NAMESPAGE_DEFAULT][PhpSession::MEMBER_DEFAULT] = 'test';
+        $_SESSION[PhpSession::NAMESPAGE_DEFAULT][PhpSession::MEMBER_DEFAULT] = 'test';
         $this->assertFalse($this->storage->isEmpty());
     }
 
     public function testReadMethodReturnCorrectResult()
     {
-        $this->session[PhpSession::NAMESPAGE_DEFAULT][PhpSession::MEMBER_DEFAULT] = 'test';
+        $_SESSION[PhpSession::NAMESPAGE_DEFAULT][PhpSession::MEMBER_DEFAULT] = 'test';
         $this->assertSame('test', $this->storage->read());
     }
 
     public function testWriteMethodSetsContents()
     {
         $this->storage->write('test');
-        $this->assertSame('test', $this->session[PhpSession::NAMESPAGE_DEFAULT][PhpSession::MEMBER_DEFAULT]);
+        $this->assertSame('test', $_SESSION[PhpSession::NAMESPAGE_DEFAULT][PhpSession::MEMBER_DEFAULT]);
     }
 
     public function testClearMethodUnsetSession()
     {
         $this->storage->write('test');
         $this->storage->clear();
-        $this->assertFalse(array_key_exists(PhpSession::MEMBER_DEFAULT, $this->session[PhpSession::NAMESPAGE_DEFAULT]));
+        $this->assertFalse(array_key_exists(PhpSession::MEMBER_DEFAULT, $_SESSION[PhpSession::NAMESPAGE_DEFAULT]));
     }
 }

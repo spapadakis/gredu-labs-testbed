@@ -31,7 +31,7 @@ class Identity implements JsonSerializable
 
     public function __get($name)
     {
-        if (property_exists($name, $this)) {
+        if (property_exists($this, $name)) {
             return $this->{$name};
         }
 

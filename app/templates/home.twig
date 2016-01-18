@@ -1,7 +1,7 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-Welcome
+Welcome {{ user }}
 
 <a href="{{ path_for('user.login') }}">Login</a>
 {% endblock %}

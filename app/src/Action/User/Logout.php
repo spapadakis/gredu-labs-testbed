@@ -30,7 +30,6 @@ class Logout
         $redirectUrl
     ) {
         $this->authService = $authService;
-        $this->router      = $router;
         $this->redirectUrl = $redirectUrl;
     }
 

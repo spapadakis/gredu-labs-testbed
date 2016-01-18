@@ -7,25 +7,71 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
-namespace GrEduLabstest\Authentication;
+namespace GrEduLabsTest\Authentication;
 
 use GrEduLabs\Authentication\Identity;
 
 class IdentityTest extends \PHPUnit_Framework_TestCase
 {
-
-    public function testConstructor()
+    private $identity;
+    protected function setUp()
     {
-        $identity = new Identity(
+        $this->identity = new Identity(
             'someUid',
             'some@mail.com',
             'Jonh Doe',
             'Office'
         );
+    }
 
-        $this->assertAttributeSame('someUid', 'uid', $identity);
-        $this->assertAttributeSame('some@mail.com', 'mail', $identity);
-        $this->assertAttributeSame('Jonh Doe', 'displayName', $identity);
-        $this->assertAttributeSame('Office', 'officeName', $identity);
+
+    public function testConstructor()
+    {
+        $this->assertAttributeSame('someUid', 'uid', $this->identity);
+        $this->assertAttributeSame('some@mail.com', 'mail', $this->identity);
+        $this->assertAttributeSame('Jonh Doe', 'displayName', $this->identity);
+        $this->assertAttributeSame('Office', 'officeName', $this->identity);
+    }
+
+    public function testMagicGet()
+    {
+        $this->assertSame('someUid', $this->identity->uid);
+        $this->assertSame('some@mail.com', $this->identity->mail);
+        $this->assertSame('Jonh Doe', $this->identity->displayName);
+        $this->assertSame('Office', $this->identity->officeName);
+    }
+
+    public function testMagicGetReturnsNullIfNoProperty()
+    {
+        $this->assertNull($this->identity->test);
+    }
+
+    public function testToStringReturnsIdentityDisplayName()
+    {
+        $this->assertSame('Jonh Doe', $this->identity->__toString());
+    }
+
+    public function testGetUidReturnsIdentityUid()
+    {
+        $this->assertSame('someUid', $this->identity->getUid());
+    }
+
+    public function testToArray()
+    {
+        $this->assertEquals([
+            'uid'         => 'someUid',
+            'mail'        => 'some@mail.com',
+            'displayName' => 'Jonh Doe',
+            'officeName'  => 'Office',
+        ], $this->identity->toArray());
+    }
+
+    public function testJsonSerializableIdentity()
+    {
+        $this->assertInstanceOf('\JsonSerializable', $this->identity);
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($this->identity->toArray()),
+            json_encode($this->identity)
+        );
     }
 }

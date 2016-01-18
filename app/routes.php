@@ -8,13 +8,15 @@
  */
 
 
-$app->get('/', function ($request, $response, $args) use ($app) {
-    $container = $app->getContainer();
-    $logger = $container['logger'];
-    $view = $container['view'];
+$app->get('/', function ($request, $response, $args) {
+    $logger = $this->get('logger');
+    $view = $this->get('view');
+    $identity = $this->get('maybe_identity');
 
     $logger->info('Home page dispatched');
-    $view->render($response, 'home.twig');
+    $view->render($response, 'home.twig', [
+        'user' => $identity('uid'),
+    ]);
 
     return $response;
 })->setName('index');
