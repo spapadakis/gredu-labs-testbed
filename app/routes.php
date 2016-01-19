@@ -24,8 +24,13 @@ $app->get('/', function ($request, $response, $args) {
 // authentication
 
 $app->group('/user', function () {
-    $this->map(['GET', 'POST'], '/login', 'GrEduLabs\\Action\\User\\Login')->setName('user.login');
-    $this->get('/login-sso', 'GrEduLabs\\Action\\User\\LoginSso')->setName('user.loginSso');
-    $this->get('/logout', 'GrEduLabs\\Action\\User\\Logout')->setName('user.logout');
-    $this->get('/profile', 'GrEduLabs\\Action\\User\\Profile')->setName('user.profile');
+    $this->map(['GET', 'POST'], '/login', 'GrEduLabs\\Action\\User\\Login')
+        ->setName('user.login')
+        ->add('csrf');
+    $this->get('/login-sso', 'GrEduLabs\\Action\\User\\LoginSso')
+        ->setName('user.loginSso');
+    $this->get('/logout', 'GrEduLabs\\Action\\User\\Logout')
+        ->setName('user.logout');
+    $this->get('/profile', 'GrEduLabs\\Action\\User\\Profile')
+        ->setName('user.profile');
 });

@@ -51,11 +51,19 @@ $container['logger'] = function ($c) {
     return $logger;
 };
 
+// Event manager
+
 $container['events'] = function ($c) {
     return new \Zend\EventManager\EventManager(
         new \Zend\EventManager\SharedEventManager(),
         ['events']
     );
+};
+
+// Csrf guard
+
+$container['csrf'] = function ($c) {
+    return new \Slim\Csrf\Guard;
 };
 
 // Database
@@ -132,7 +140,14 @@ $container['GrEduLabs\\Action\\User\\Login'] = function ($c) {
     $adapter = $c->get('authentication_db_adapter');
     $service->setAdapter($adapter);
 
-    return new GrEduLabs\Action\User\Login($c->get('view'), $service, $adapter, $c->get('flash'));
+    return new GrEduLabs\Action\User\Login(
+        $c->get('view'),
+        $service,
+        $adapter,
+        $c->get('flash'),
+        $c->get('csrf'),
+        $c->get('router')->pathFor('index')
+    );
 };
 
 $container['GrEduLabs\\Action\\User\\LoginSso'] = function ($c) {

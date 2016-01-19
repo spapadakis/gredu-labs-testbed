@@ -27,5 +27,7 @@
         <button type="submit" name="login_method" value="credentials" class="btn btn-primary">Sing in</button>
         <a href="{{ path_for('user.loginSso') }}" class="btn bnt-default">SSO</a>
     </div>
+    <input type="hidden" name="{{ csrf_name_key }}" value="{{ csrf_name }}">
+    <input type="hidden" name="{{ csrf_value_key }}" value="{{ csrf_value }}">
 </form>
 {% endblock %}

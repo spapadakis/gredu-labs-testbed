@@ -10,8 +10,9 @@
 namespace GrEduLabs\Action\User;
 
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Slim\Csrf\Guard;
 use Slim\Flash\Messages;
+use Slim\Http\Request;
 use Slim\Views\Twig;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Adapter\ValidatableAdapterInterface;
@@ -40,6 +41,16 @@ class Login
     protected $flash;
 
     /**
+     * @Var Guard
+     */
+    protected $csrf;
+
+    /**
+     * @var string
+     */
+    protected $successUrl;
+
+    /**
      * Constructor
      * @param Twig $view
      * @param AuthenticationServiceInterface $authService
@@ -50,32 +61,55 @@ class Login
         Twig $view,
         AuthenticationServiceInterface $authService,
         AdapterInterface $authAdapter,
-        Messages $flash
+        Messages $flash,
+        Guard $csrf,
+        $successUrl
     ) {
         $this->view        = $view;
         $this->authService = $authService;
         $this->authAdapter = $authAdapter;
         $this->flash       = $flash;
-        $this->authService->setAdapter($this->authAdapter);
+        $this->csrf        = $csrf;
+        $this->successUrl  = $successUrl;
+
+        if (method_exists($this->authService, 'setAdapter')) {
+            $this->authService->setAdapter($this->authAdapter);
+        }
     }
 
-    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, array $args = [])
+    public function __invoke(Request $req, ResponseInterface $res)
     {
         if ($req->isPost()) {
             if ($this->authAdapter instanceof ValidatableAdapterInterface) {
-                $this->authAdapter->setIdentity($req->getParam('identity'))
-                    ->setCredential($req->getParam('credential'));
+                $this->authAdapter->setIdentity($req->getParam('identity'));
+                $this->authAdapter->setCredential($req->getParam('credential'));
             }
-            $result = $this->authService->authenticate();
+
+            $result = $this->authService->authenticate($this->authAdapter);
             if (!$result->isValid()) {
                 $this->flash->addMessage('danger', reset($result->getMessages()));
 
                 return $res->withRedirect($req->getUri());
             }
 
-            return $res->withRedirect('/');
+            return $res->withRedirect($this->successUrl);
         }
 
-        return $this->view->render($res, 'user/login.twig');
+        return $this->view->render($res, 'user/login.twig', $this->getCsrfData($req));
+    }
+
+    private function getCsrfData(Request $req)
+    {
+        $nameKey  = $this->csrf->getTokenNameKey();
+        $valueKey = $this->csrf->getTokenValueKey();
+        $name     = $req->getAttribute($nameKey);
+        $value    = $req->getAttribute($valueKey);
+
+        return [
+            'csrf_name_key'  => $nameKey,
+            'csrf_value_key' => $valueKey,
+            'csrf_name'      => $name,
+            'csrf_value'     => $value,
+        ];
     }
 }
