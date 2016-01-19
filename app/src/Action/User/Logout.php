@@ -9,8 +9,8 @@
 
 namespace GrEduLabs\Action\User;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Response;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 class Logout
@@ -33,7 +33,7 @@ class Logout
         $this->redirectUrl = $redirectUrl;
     }
 
-    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, array $args = [])
+    public function __invoke(ServerRequestInterface $req, Response $res)
     {
         if ($this->authService->hasIdentity()) {
             $this->authService->clearIdentity();

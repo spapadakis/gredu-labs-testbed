@@ -21,12 +21,15 @@ class Identity implements JsonSerializable
 
     protected $officeName;
 
-    public function __construct($uid, $mail, $displayName, $officeName)
+    protected $authenticationSource;
+
+    public function __construct($uid, $mail, $displayName, $officeName, $authenticationSource)
     {
-        $this->uid         = $uid;
-        $this->mail        = $mail;
-        $this->displayName = $displayName;
-        $this->officeName  = $officeName;
+        $this->uid                  = $uid;
+        $this->mail                 = $mail;
+        $this->displayName          = $displayName;
+        $this->officeName           = $officeName;
+        $this->authenticationSource = $authenticationSource;
     }
 
     public function __get($name)
@@ -51,10 +54,11 @@ class Identity implements JsonSerializable
     public function toArray()
     {
         return [
-            'uid'         => $this->uid,
-            'mail'        => $this->mail,
-            'displayName' => $this->displayName,
-            'officeName'  => $this->officeName,
+            'uid'                  => $this->uid,
+            'mail'                 => $this->mail,
+            'displayName'          => $this->displayName,
+            'officeName'           => $this->officeName,
+            'authenticationSource' => $this->authenticationSource,
         ];
     }
 

@@ -109,6 +109,13 @@ $container['authentication_service'] = function ($c) {
     );
 };
 
+$container['authentication_cas_logout_middleware'] = function ($c) {
+    return new GrEduLabs\Middleware\CasLogout(
+        $c->get('authentication_service'),
+        $c->get('authentication_cas_adapter')
+    );
+};
+
 $container['maybe_identity'] = function ($c) {
     return function ($call) use ($c) {
 

@@ -9,10 +9,10 @@
 
 namespace GrEduLabs\Action\User;
 
-use Psr\Http\Message\ResponseInterface;
 use Slim\Csrf\Guard;
 use Slim\Flash\Messages;
 use Slim\Http\Request;
+use Slim\Http\Response;
 use Slim\Views\Twig;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Adapter\ValidatableAdapterInterface;
@@ -77,7 +77,7 @@ class Login
         }
     }
 
-    public function __invoke(Request $req, ResponseInterface $res)
+    public function __invoke(Request $req, Response $res)
     {
         if ($req->isPost()) {
             if ($this->authAdapter instanceof ValidatableAdapterInterface) {

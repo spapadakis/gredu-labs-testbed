@@ -20,7 +20,8 @@ class IdentityTest extends \PHPUnit_Framework_TestCase
             'someUid',
             'some@mail.com',
             'Jonh Doe',
-            'Office'
+            'Office',
+            'authSource'
         );
     }
 
@@ -31,6 +32,7 @@ class IdentityTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeSame('some@mail.com', 'mail', $this->identity);
         $this->assertAttributeSame('Jonh Doe', 'displayName', $this->identity);
         $this->assertAttributeSame('Office', 'officeName', $this->identity);
+        $this->assertAttributeSame('authSource', 'authenticationSource', $this->identity);
     }
 
     public function testMagicGet()
@@ -39,6 +41,7 @@ class IdentityTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('some@mail.com', $this->identity->mail);
         $this->assertSame('Jonh Doe', $this->identity->displayName);
         $this->assertSame('Office', $this->identity->officeName);
+        $this->assertSame('authSource', $this->identity->authenticationSource);
     }
 
     public function testMagicGetReturnsNullIfNoProperty()
@@ -59,10 +62,11 @@ class IdentityTest extends \PHPUnit_Framework_TestCase
     public function testToArray()
     {
         $this->assertEquals([
-            'uid'         => 'someUid',
-            'mail'        => 'some@mail.com',
-            'displayName' => 'Jonh Doe',
-            'officeName'  => 'Office',
+            'uid'                  => 'someUid',
+            'mail'                 => 'some@mail.com',
+            'displayName'          => 'Jonh Doe',
+            'officeName'           => 'Office',
+            'authenticationSource' => 'authSource',
         ], $this->identity->toArray());
     }
 

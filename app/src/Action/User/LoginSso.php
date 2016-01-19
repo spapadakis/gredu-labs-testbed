@@ -9,9 +9,9 @@
 
 namespace GrEduLabs\Action\User;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Flash\Messages;
+use Slim\Http\Response;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 class LoginSso
@@ -56,7 +56,7 @@ class LoginSso
 
     public function __invoke(
         ServerRequestInterface $req,
-        ResponseInterface $res
+        Response $res
     ) {
         $result = $this->authService->authenticate();
         if (!$result->isValid()) {
