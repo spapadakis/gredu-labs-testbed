@@ -97,7 +97,6 @@ $container['authentication_cas_adapter'] = function ($c) {
     return new GrEduLabs\Authentication\Adapter\Cas($settings['phpcas']);
 };
 
-
 $container['authentication_storage'] = function ($c) {
     return new \GrEduLabs\Authentication\Storage\PhpSession();
 };
@@ -137,6 +136,16 @@ $container['maybe_identity'] = function ($c) {
         return;
 
     };
+};
+
+// Inventory service
+
+$container['inventory_service'] = function ($c) {
+    $settings = $c->get('settings');
+
+    return new GrEduLabs\Inventory\GuzzleHttpService(
+        new GuzzleHttp\Client($settings['inventory'])
+    );
 };
 
 // Actions
