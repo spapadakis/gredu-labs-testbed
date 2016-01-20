@@ -24,6 +24,7 @@
         "slim/csrf": "^0.6.0",
         "monolog/monolog": "^1.13",
         "kanellov/config-merge": "dev-master",
+        "kanellov/slim-twig-flash": "^0.1",
         "zendframework/zend-authentication": "^2.0",
         "zendframework/zend-eventmanager": "^3.0",
         "zendframework/zend-permissions-acl": "^2.0",

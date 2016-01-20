@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6db91d83a5d7f09ca4aa148dd467aa37",
-    "content-hash": "9dbc2f0e135613f71e872c3845d833ba",
+    "hash": "6bab5bd43fd57ed6d83fd7df11328bb7",
+    "content-hash": "d8c7dd10bd4590b2b0978fca5f170872",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -135,6 +135,61 @@
                 "merge"
             ],
             "time": "2015-03-16 10:17:44"
+        },
+        {
+            "name": "kanellov/slim-twig-flash",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kanellov/slim-twig-flash.git",
+                "reference": "6c5ecfdbf7eeb9ea44bbc6dbc4a902c1930a392c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kanellov/slim-twig-flash/zipball/6c5ecfdbf7eeb9ea44bbc6dbc4a902c1930a392c",
+                "reference": "6c5ecfdbf7eeb9ea44bbc6dbc4a902c1930a392c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0",
+                "slim/flash": "^0.1.0",
+                "twig/twig": "^1.18"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "1.*",
+                "phpunit/phpcov": "2.*",
+                "phpunit/phpunit": "4.8.0",
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Knlv\\Slim\\Views\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GNU GPLv3"
+            ],
+            "authors": [
+                {
+                    "name": "Vassilis Kanellopoulos",
+                    "email": "contact@kanellov.com",
+                    "homepage": "http://kanellov.com"
+                }
+            ],
+            "description": "A Twig extension to access Slim Flash messages in templates",
+            "keywords": [
+                "extension",
+                "flash",
+                "framework",
+                "message",
+                "provider",
+                "slim",
+                "twig",
+                "view"
+            ],
+            "time": "2016-01-20 09:08:28"
         },
         {
             "name": "monolog/monolog",

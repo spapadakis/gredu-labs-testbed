@@ -23,9 +23,8 @@ $container['view'] = function ($c) {
         $c->get('request')->getUri()
     ));
     $view->addExtension(new Twig_Extension_Debug());
-    $view->addExtension(new GrEduLabs\Twig\Extension\Flash(
-        $c->get('flash'),
-        'flash.twig'
+    $view->addExtension(new Knlv\Slim\Views\TwigMessages(
+        $c->get('flash')
     ));
 
     return $view;
