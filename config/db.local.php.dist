@@ -1,0 +1,10 @@
+<?php return [
+    'db' => [
+        'dsn'     => '',
+        'user'    => null,
+        'pass'    => null,
+        'options' => [
+
+        ],
+    ],
+];

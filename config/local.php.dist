@@ -1,27 +1,4 @@
 <?php return [
     'determineRouteBeforeAppMiddleware' => false,
     'displayErrorDetails'               => false,
-    'db'                                => [
-        'dsn'     => '',
-        'user'    => null,
-        'pass'    => null,
-        'options' => [
-
-        ],
-    ],
-    'phpcas'                => [
-        'serverVersion'         => 'S1',
-        'proxy'                 => false,
-        'serverHostname'        => '',
-        'serverPort'            => 443,
-        'serverUri'             => '/cas',
-        'changeSessionId'       => false,
-        'handleLogoutRequests'  => true,
-        'allowedClients'        => [],
-        'lang'                  => 'CAS_Languages_Greek',
-        'casServerCaCert'       => '',
-        'casServerCnValidate'   => '',
-        'noCasServerValidation' => true,
-    ],
-
 ];

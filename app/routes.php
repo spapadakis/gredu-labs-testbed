@@ -18,8 +18,6 @@ $app->get('/', function ($request, $response, $args) {
         'user' => $identity('uid'),
     ]);
 
-    var_dump($this->get('inventory_service')->getUnitEquipment('0551040'));
-
     return $response;
 })->setName('index');
 
