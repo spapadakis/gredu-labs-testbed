@@ -7,22 +7,9 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
-
-$app->get('/', function ($request, $response, $args) {
-    $logger = $this->get('logger');
-    $view = $this->get('view');
-    $identity = $this->get('maybe_identity');
-
-    $logger->info('Home page dispatched');
-    $view->render($response, 'home.twig', [
-        'user' => $identity('uid'),
-    ]);
-
-    return $response;
-})->setName('index');
+$app->get('/', 'GrEduLabs\\Action\\Index')->setName('index');
 
 // authentication
-
 $app->group('/user', function () {
 
     $this->map(['GET', 'POST'], '/login', 'GrEduLabs\\Action\\User\\Login')

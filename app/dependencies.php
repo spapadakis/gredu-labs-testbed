@@ -26,6 +26,13 @@ $container['view'] = function ($c) {
     $view->addExtension(new Knlv\Slim\Views\TwigMessages(
         $c->get('flash')
     ));
+    if (isset($settings['navigation']) && is_array($settings['navigation'])) {
+        $view->addExtension(new GrEduLabs\Twig\Extension\Navigation(
+            $settings['navigation'],
+            $c->get('router'),
+            $c->get('request')
+        ));
+    }
 
     return $view;
 };
@@ -109,33 +116,14 @@ $container['authentication_service'] = function ($c) {
 
 $container['authentication_cas_logout_middleware'] = function ($c) {
     return new GrEduLabs\Middleware\CasLogout(
-        $c->get('authentication_service'),
         $c->get('authentication_cas_adapter')
     );
 };
 
-$container['maybe_identity'] = function ($c) {
-    return function ($call) use ($c) {
-
-        $authService = $c->get('authentication_service');
-        if (!$authService->hasIdentity()) {
-            return;
-        }
-
-        $identity = $authService->getIdentity();
-        if (method_exists($identity, $call)) {
-            $args = array_slice(func_get_args(), 1);
-
-            return call_user_func_array([$identity, $call], $args);
-        }
-
-        if (property_exists($identity, $call)) {
-            return $identity->{$call};
-        }
-
-        return;
-
-    };
+$container['set_identity_in_request'] = function ($c) {
+    return new GrEduLabs\Middleware\SetIdentityInRequest(
+        $c->get('authentication_service')
+    );
 };
 
 // Inventory service
@@ -149,6 +137,10 @@ $container['inventory_service'] = function ($c) {
 };
 
 // Actions
+
+$container['GrEduLabs\\Action\\Index'] = function ($c) {
+    return new GrEduLabs\Action\Index($c->get('view'));
+};
 
 $container['GrEduLabs\\Action\\User\\Login'] = function ($c) {
     $service = $service = $c->get('authentication_service');

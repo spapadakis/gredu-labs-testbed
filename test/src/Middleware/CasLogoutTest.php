@@ -14,8 +14,6 @@ use Slim\Http\Response;
 
 class CasLogoutTest extends \PHPUnit_Framework_TestCase
 {
-    protected $authService;
-
     protected $middleware;
 
     protected $adapter;
@@ -33,14 +31,6 @@ class CasLogoutTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->authService = $this->getMock('\\Zend\\Authentication\\AuthenticationServiceInterface');
-        $this->authService->expects($this->any())
-            ->method('hasIdentity')
-            ->will($this->returnValue(true));
-        $this->authService->expects($this->any())
-            ->method('getIdentity')
-            ->will($this->returnValue($this->idenityStub));
-
 
         $this->adapter = $this->getMockBuilder('\\GrEduLabs\\Authentication\\Adapter\\Cas')
             ->disableOriginalConstructor()
@@ -55,7 +45,7 @@ class CasLogoutTest extends \PHPUnit_Framework_TestCase
 
         $this->logoutFlag = false;
 
-        $this->middleware = new CasLogout($this->authService, $this->adapter);
+        $this->middleware = new CasLogout($this->adapter);
     }
 
     public function testInvokeCallsCasLogoutIfIdentitySourceIsCAS()
@@ -64,6 +54,10 @@ class CasLogoutTest extends \PHPUnit_Framework_TestCase
             ->method('__get')
             ->with($this->equalTo('authenticationSource'))
             ->will($this->returnValue('CAS'));
+        $this->request->expects($this->any())
+            ->method('getAttribute')
+            ->with($this->equalTo('identity'))
+            ->will($this->returnValue($this->idenityStub));
         $middleware = $this->middleware;
         $middleware($this->request, $this->response, function ($req, $res) {
             return $res;
@@ -77,6 +71,23 @@ class CasLogoutTest extends \PHPUnit_Framework_TestCase
             ->method('__get')
             ->with($this->equalTo('authenticationSource'))
             ->will($this->returnValue('SomeOtherSource'));
+        $this->request->expects($this->any())
+            ->method('getAttribute')
+            ->with($this->equalTo('identity'))
+            ->will($this->returnValue($this->idenityStub));
+        $middleware = $this->middleware;
+        $middleware($this->request, $this->response, function ($req, $res) {
+            return $res;
+        });
+        $this->assertFalse($this->logoutFlag);
+    }
+
+    public function testInvokeNotCallsCasLogoutIfNoIdentityInRequest()
+    {
+        $this->request->expects($this->any())
+            ->method('getAttribute')
+            ->with($this->equalTo('identity'))
+            ->will($this->returnValue(null));
         $middleware = $this->middleware;
         $middleware($this->request, $this->response, function ($req, $res) {
             return $res;
