@@ -9,6 +9,11 @@
                 'label' => 'Σύνδεση',
                 'route' => 'user.login',
             ],
+            [
+                'label' => 'Αποσύνδεση',
+                'route' => 'user.logout',
+                'id'    => 'nav-logout',
+            ],
         ],
     ],
 ];

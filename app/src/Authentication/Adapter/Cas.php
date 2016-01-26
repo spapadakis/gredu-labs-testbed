@@ -10,13 +10,14 @@
 namespace GrEduLabs\Authentication\Adapter;
 
 use Exception;
-use GrEduLabs\Authentication\Identity;
 use phpCAS;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Result;
 
 class Cas implements AdapterInterface
 {
+    use IdentityPrototypeCapableTrait;
+
     /**
      * @var bool
      */
@@ -44,7 +45,7 @@ class Cas implements AdapterInterface
 
             return new Result(
                 Result::SUCCESS,
-                self::identityFormCasAttributes(),
+                $this->identityFormCasAttributes(),
                 ['Authentication success']
             );
         } catch (Exception $e) {
@@ -65,7 +66,7 @@ class Cas implements AdapterInterface
         phpCAS::logout();
     }
 
-    private static function identityFormCasAttributes()
+    private function identityFormCasAttributes()
     {
         $attributes = phpCAS::getAttributes();
         $identity   = phpCAS::getUser();
@@ -81,8 +82,9 @@ class Cas implements AdapterInterface
 
             return $attributes[$attribute];
         };
+        $identityClass = $this->identityPrototype;
 
-        return new Identity(
+        return new $identityClass(
             $identity,
             $filterAttribute('mail'),
             $filterAttribute('cn'),

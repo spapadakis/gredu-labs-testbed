@@ -9,15 +9,19 @@
 
 $app->get('/', 'GrEduLabs\\Action\\Index')->setName('index');
 
+$app->get('/faq', function () {})->setName('faq');
+
 // authentication
 $app->group('/user', function () {
 
     $this->map(['GET', 'POST'], '/login', 'GrEduLabs\\Action\\User\\Login')
         ->setName('user.login')
+        ->add('provide_role_middleware')
         ->add('csrf');
 
     $this->get('/login-sso', 'GrEduLabs\\Action\\User\\LoginSso')
-        ->setName('user.loginSso');
+        ->setName('user.loginSso')
+        ->add('provide_role_middleware');
 
     $this->get('/logout', 'GrEduLabs\\Action\\User\\Logout')
         ->setName('user.logout')

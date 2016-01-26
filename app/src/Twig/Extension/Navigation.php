@@ -1,7 +1,7 @@
 <?php
 /**
  * gredu_labs
- *
+ * 
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
@@ -13,6 +13,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\Interfaces\RouterInterface;
 use Twig_Extension;
 use Twig_SimpleFunction;
+use Zend\Permissions\Acl\AclInterface;
 
 class Navigation extends Twig_Extension
 {
@@ -31,14 +32,28 @@ class Navigation extends Twig_Extension
      */
     private $request;
 
+    /**
+     * @var AclInterface
+     */
+    private $acl;
+
+    /**
+     * @var string
+     */
+    private $currentRole;
+
     public function __construct(
         array $navigation,
         RouterInterface $router,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
+        AclInterface $acl = null,
+        $currentRole = null
     ) {
-        $this->navigation = $navigation;
-        $this->router     = $router;
-        $this->request    = $request;
+        $this->navigation  = $navigation;
+        $this->router      = $router;
+        $this->request     = $request;
+        $this->acl         = $acl;
+        $this->currentRole = $currentRole;
     }
 
      /**
@@ -70,7 +85,19 @@ class Navigation extends Twig_Extension
     {
         $navigation = (null !== $root) ? $this->navigation[$root] : $this->navigation;
 
-        $prepare = function ($page) use (&$prepare) {
+        $aclFilter = function ($page) {
+            if (!$this->acl) {
+                return true;
+            }
+
+            $path = parse_url($page['href'], PHP_URL_PATH);
+
+            $resource = 'route' . $path;
+
+            return $this->acl->isAllowed($this->currentRole, $resource, 'get');
+        };
+
+        $prepare = function ($page) use (&$prepare, &$aclFilter) {
 
             if (isset($page['route'])) {
                 $routeData    = isset($page['route_data']) ? $page['route_data'] : [];
@@ -78,16 +105,16 @@ class Navigation extends Twig_Extension
                 $page['href'] = $this->router->pathFor($page['route'], $routeData, $query);
             }
 
-            $uri            = $this->request->getUri();
-            $path           = $uri->getPath();
-            $page['active'] = $path === parse_url($page['href'], PHP_URL_PATH);
+            $path = parse_url($page['href'], PHP_URL_PATH);
+
+            $page['active'] = $path === $this->request->getUri()->getPath();
             if (isset($page['pages']) && is_array($page['pages'])) {
-                $page['pages'] = array_map($prepare, $page['pages']);
+                $page['pages'] = array_filter(array_map($prepare, $page['pages']), $aclFilter);
             }
 
             return $page;
         };
 
-        return array_map($prepare, $navigation);
+        return array_filter(array_map($prepare, $navigation), $aclFilter);
     }
 }

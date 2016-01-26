@@ -26,11 +26,24 @@ $container['view'] = function ($c) {
     $view->addExtension(new Knlv\Slim\Views\TwigMessages(
         $c->get('flash')
     ));
+    $view->addExtension(new GrEduLabs\Twig\Extension\Identity(
+        $c->get('authentication_service')
+    ));
     if (isset($settings['navigation']) && is_array($settings['navigation'])) {
+        $authService = $c->get('authentication_service');
+        $role        = $settings['acl']['default_role'];
+        if ($authService->hasIdentity()) {
+            $identity = $authService->getIdentity();
+            if ($identity instanceof GrEduLabs\Authorization\RoleAwareInterface) {
+                $role = $identity->getRole();
+            }
+        }
         $view->addExtension(new GrEduLabs\Twig\Extension\Navigation(
             $settings['navigation'],
             $c->get('router'),
-            $c->get('request')
+            $c->get('request'),
+            $c->get('acl_service'),
+            $role
         ));
     }
 
@@ -100,8 +113,10 @@ $container['authentication_db_adapter'] = function ($c) {
 
 $container['authentication_cas_adapter'] = function ($c) {
     $settings = $c->get('settings');
+    $adapter  =  new GrEduLabs\Authentication\Adapter\Cas($settings['phpcas']);
+    $adapter->setIdentityPrototype(GrEduLabs\Authorization\Identity::class);
 
-    return new GrEduLabs\Authentication\Adapter\Cas($settings['phpcas']);
+    return $adapter;
 };
 
 $container['authentication_storage'] = function ($c) {
@@ -124,6 +139,32 @@ $container['set_identity_in_request'] = function ($c) {
     return new GrEduLabs\Middleware\SetIdentityInRequest(
         $c->get('authentication_service')
     );
+};
+
+// Acl 
+
+$container['acl_service'] = function ($c) {
+    $settings = $c->get('settings');
+
+    return new GrEduLabs\Authorization\Acl($settings['acl'], $c);
+};
+
+$container['acl_guard_middleware'] = function ($c) {
+    $settings    = $c->get('settings');
+    $authService = $c->get('authentication_service');
+    $role        = $settings['acl']['default_role'];
+    if ($authService->hasIdentity()) {
+        $identity = $authService->getIdentity();
+        if ($identity instanceof GrEduLabs\Authorization\RoleAwareInterface) {
+            $role = $identity->getRole();
+        }
+    }
+
+    return new GrEduLabs\Authorization\GuardMiddleware($c->get('acl_service'), $role);
+};
+
+$container['provide_role_middleware'] = function ($c) {
+    return new GrEduLabs\Authorization\ProvideRoleMiddleware($c->get('authentication_service'));
 };
 
 // Inventory service
