@@ -1,0 +1,104 @@
+{% extends "school/index.twig" %}
+
+{% import "school/index.twig" as macros %}
+
+{% block schoolTitle %}
+    {{ parent() }} <small>Εκπαιδευτικοί</small>
+{% endblock %}
+
+{% block navItems %}
+    <li role="presentation" class="pull-right">
+        <a href="#" class="btn btn-primary btn-add-employee" title="Καταχώρηση εκπαιδευτικού">
+            <i class="visible-xs fa fa-plus"></i>
+            <span class="hidden-xs">Καταχώρηση εκπαιδευτικού</span>
+        </a>
+    </li>
+{% endblock %}
+
+{% block schoolContent %}
+<div id="school-staff">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Όνομα</th>
+                    <th>Επώνυμο</th>
+                    <th>Τηλέφωνο</th>
+                    <th>Email</th>
+                    <th>Ειδικότητα</th>
+                    <th>Θέση</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in staff %}
+                    <tr data-employee="{{ employee|json_encode }}" data-id="{{ employee.id }}">
+                        <td class="name">{{ employee.name }}</td>
+                        <td class="surname">{{ employee.surname }}</td>
+                        <td class="telephone">{{ employee.telephone }}</td>
+                        <td class="email">
+                            <a href="mailto:{{ employee.email }}">{{ employee.email }}</a>
+                        </td>
+                        <td class="branch">{{ employee.branch }}</td>
+                        <td class="positionLabel">{{ employee.positionLabel }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">
+                            Δεν έχει καταχωρηθεί προσωπικό.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <th colspan="6"></th>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="modal fade" id="employee-form-modal" tabindex="-1" role="dialog" aria-labelledby="employee-from">
+        <form class="form-horizontal">
+            <div class="modal-dialog" role="form">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Στοιχεία εκπαιδευτικού</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{ macros.input('name', 'Όνομα', '', 'text', {'required': ''}) }}
+                        {{ macros.input('surname', 'Επώνυμο', '', 'text', {'required': ''}) }}
+                        {{ macros.input('telephone', 'Τηλέφωνο','', 'tel', {'required': ''}) }}
+                        {{ macros.input('email', 'Email','', 'email', {'required': ''}) }}
+                        {{ macros.select('branch', 'Ειδικότητα', branches, '', {'required': ''}) }}
+                        {{ macros.select('position', 'Θέση', positions, '', {'multiple': '', 'required': ''}) }}
+                        <input type="hidden" name="id" value="">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Κλείσιμο</button>
+                        <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script type="text/template" id="employee-row">
+        <td class="name"><%= employee.name %></td>
+        <td class="surname"><%= employee.surname %></td>
+        <td class="telephone"><%= employee.telephone %></td>
+        <td class="email">
+            <a href="mailto:<%= employee.email %>"><%= employee.email %></a>
+        </td>
+        <td class="branch"><%= employee.branch %></td>
+        <td class="positionLabel"><%= employee.positionLabel %></td>
+    </script>
+
+</div>
+{% endblock %}
+
+{% block inlinejs %}
+    {{ parent() }}
+    <script src="{{ base_url }}/js/school/staff.js"></script>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% for class, messages in flash() %}
+<ul class="list-unstyled alert alert-{{ class }}" role="alert">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endfor %}
