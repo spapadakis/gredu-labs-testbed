@@ -20,7 +20,11 @@ return function (Slim\App $app) {
     };
 
     $container['authentication_adapter'] = function ($c) {
-        return new GrEduLabs\Authentication\Adapter\EventsAdapter($c['events']);
+        return new GrEduLabs\Authentication\Adapter\RedBeanPHP(
+            $c['events'],
+            $c['authentication_identity_class'],
+            $c['authentication_crypt']
+        );
     };
 
     $container['authentication_service'] = function ($c) {
@@ -34,8 +38,21 @@ return function (Slim\App $app) {
         return GrEduLabs\Authentication\Identity::class;
     };
 
+    $container['authentication_crypt'] = function ($c) {
+        $service = new Zend\Crypt\Password\Bcrypt();
+        if (isset($c['settings']['authentication']['bcrypt']['salt'])) {
+            $service->setSalt($c->settings['authentication']['bcrypt']['salt']);
+        }
+        if (isset($c['settings']['authentication']['bcrypt']['cost'])) {
+            $service->setCost($c->settings['authentication']['bcrypt']['cost']);
+        }
+
+        return $service;
+    };
+
     $events('on', 'bootstrap', function () use ($container) {
         $container->extend('view', function ($view, $c) {
+            $view->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
             $view->addExtension(new GrEduLabs\Authentication\Twig\Extension\Identity(
                 $c['authentication_service']
             ));
@@ -44,7 +61,17 @@ return function (Slim\App $app) {
         });
     });
 
-    $container['GrEduLabs\\Authentication\\Action\\User\\Login'] = function ($c) {
+    $events('on', 'authenticate.success', function ($stop, $identity) use ($container) {
+        if (isset($container['logger'])) {
+            $container['logger']->info(sprintf(
+                'Authentication through %s for %s',
+                $identity->authenticationSource,
+                $identity->mail
+            ));
+        }
+    });
+
+    $container[GrEduLabs\Authentication\Action\User\Login::class] = function ($c) {
 
         return new GrEduLabs\Authentication\Action\User\Login(
             $c['view'],
@@ -55,7 +82,7 @@ return function (Slim\App $app) {
         );
     };
 
-    $container['GrEduLabs\\Authentication\\Action\\User\\Logout'] = function ($c) {
+    $container[GrEduLabs\Authentication\Action\User\Logout::class] = function ($c) {
         return new GrEduLabs\Authentication\Action\User\Logout(
             $c['authentication_service'],
             $c['events'],
@@ -64,10 +91,26 @@ return function (Slim\App $app) {
     };
 
     $app->group('/user', function () {
-        $this->map(['GET', 'POST'], '/login', 'GrEduLabs\\Authentication\\Action\\User\\Login')
+        $this->map(['GET', 'POST'], '/login', GrEduLabs\Authentication\Action\User\Login::class)
             ->setName('user.login');
 
-        $this->get('/logout', 'GrEduLabs\\Authentication\\Action\\User\\Logout')
+        $this->get('/logout', GrEduLabs\Authentication\Action\User\Logout::class)
             ->setName('user.logout');
     });
+
+    $nav                   = $container['settings']->get('navigation');
+    $nav['authentication'] = [
+        'login' => [
+            'label' => 'Σύνδεση',
+            'route' => 'user.login',
+            'icon'  => 'unlock',
+        ],
+        'logout' => [
+            'label' => 'Αποσύνδεση',
+            'route' => 'user.logout',
+            'id'    => 'nav-logout',
+            'icon'  => 'lock',
+        ],
+    ];
+    $container['settings']->set('navigation', $nav);
 };

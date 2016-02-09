@@ -17,20 +17,4 @@ return function (Slim\App $app) {
 
         return new Zend\Ldap\Ldap($settings);
     };
-
-    $events = $container['events'];
-
-    $events('on', 'authenticate.success', function (callable $stop, $identity) use ($container) {
-        $ldap = $container['ldap'];
-        $filter = Zend\Ldap\Filter::equals('mail', $identity->mail)
-            ->addAnd(new Zend\Ldap\Filter\StringFilter($container['settings']['sso']['allowed']));
-        $dn = Zend\Ldap\Dn::factory($ldap->getBaseDn())->prepend(['ou' => 'people']);
-        $result = $ldap->search($filter, $dn, Zend\Ldap\Ldap::SEARCH_SCOPE_ONE, ['dn']);
-
-        if (0 === $result->count()) {
-            $stop();
-            $container['authentication_service']->clearIdentity();
-        }
-
-    }, 1000);
 };

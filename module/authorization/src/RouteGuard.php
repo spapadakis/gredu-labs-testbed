@@ -37,13 +37,16 @@ class RouteGuard
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
+        if (!$request->getAttribute('route')) {
+            return $response->withStatus(500);
+        }
         $isAllowed = false;
-
         if ($this->acl->hasResource('route' . $request->getAttribute('route')->getPattern())) {
             $isAllowed = $isAllowed || $this->acl->isAllowed($this->currentUserRole, 'route' . $request->getAttribute('route')->getPattern(), strtolower($request->getMethod()));
         }
 
-        if ($this->acl->hasResource('callable/' . $request->getAttribute('route')->getCallable())) {
+        if (is_string($request->getAttribute('route')->getCallable()) &&
+            $this->acl->hasResource('callable/' . $request->getAttribute('route')->getCallable())) {
             $isAllowed = $isAllowed || $this->acl->isAllowed($this->currentUserRole, 'callable/' . $request->getAttribute('route')->getCallable());
         }
 

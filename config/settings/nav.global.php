@@ -48,18 +48,5 @@ return [
             // ],
 
         ],
-        'main-right' => [
-            'login' => [
-                'label' => 'Σύνδεση',
-                'route' => 'user.login',
-                'icon'  => 'unlock',
-            ],
-            'logout' => [
-                'label' => 'Αποσύνδεση',
-                'route' => 'user.logout',
-                'id'    => 'nav-logout',
-                'icon'  => 'lock',
-            ],
-        ],
     ],
 ];

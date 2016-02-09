@@ -10,7 +10,9 @@
 
 return [
     'view' => [
-        'template_path' => 'module/application/templates',
+        'template_path' => [
+            'module/application/templates',
+        ],
         'twig'          => [
             'cache'       => 'data/cache/templates',
             'debug'       => false,

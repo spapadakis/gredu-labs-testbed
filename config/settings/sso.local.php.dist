@@ -8,18 +8,35 @@
  */
 
 return [
-    'phpcas' => [
-        'serverVersion'         => 'S1',
-        'proxy'                 => false,
-        'serverHostname'        => '',
-        'serverPort'            => 443,
-        'serverUri'             => '/cas',
-        'changeSessionId'       => false,
-        'handleLogoutRequests'  => true,
-        'allowedClients'        => [],
-        'lang'                  => 'CAS_Languages_Greek',
-        'casServerCaCert'       => '',
-        'casServerCnValidate'   => '',
-        'noCasServerValidation' => true,
+    
+    'sso' => [
+        'phpcas' => [
+            'serverVersion'         => 'S1',
+            'proxy'                 => false,
+            'serverHostname'        => '',
+            'serverPort'            => 443,
+            'serverUri'             => '/cas',
+            'changeSessionId'       => false,
+            'handleLogoutRequests'  => true,
+            'allowedClients'        => [],
+            'lang'                  => 'CAS_Languages_Greek',
+            'casServerCaCert'       => '',
+            'casServerCnValidate'   => '',
+            'noCasServerValidation' => true,
+        ],
+    
+        'allowed' => [
+            [
+                'physicaldeliveryofficename' => '/^ΕΠΙΣΗΜΟΣ ΛΟΓΑΡΙΑΣΜΟΣ$/i',
+                'umdobject' => '/^account$/i',
+            ],
+        ],
+    ],
+    'acl' => [
+        'guards' => [
+            'routes' => [
+                ['/user/logout/sso', ['guest'], ['get']],
+            ],
+        ],
     ],
 ];

@@ -11,10 +11,11 @@
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
-    $events    = $container['events'];
 
-    $initCas = function () use ($container) {
-        $settings = $container['settings']['phpcas'];
+    $container['autoloader']->addPsr4('SchSSO\\', __DIR__ . '/src/');
+
+    $container['init_cas'] = $container->protect(function () use ($container) {
+        $settings = $container['settings']['sso']['phpcas'];
         phpCAS::client(
             $settings['serverVersion'],
             $settings['serverHostname'],
@@ -34,60 +35,74 @@ return function (Slim\App $app) {
             phpCAS::setNoCasServerValidation();
         }
         phpCAS::handleLogoutRequests();
-        phpCAS::setDebug('data/log/phpCAS.log');
-    };
+    });
 
-    $events('on', 'bootstrap', function () use ($container) {
-        $container['router']->getNamedRoute('user.login')->add(function ($req, $res, $next) {
-            $method = $req->getMethod();
-            $query = $req->getQueryParams();
-            if ($method === 'GET' && isset($query['ticket'])) {
-                $req = $req->withMethod('POST');
+    $container['is_allowed'] = $container->protect(function ($attributes) use ($container) {
+
+        $allowed = isset($container['settings']['sso']['allowed'])
+            ? $container['settings']['sso']['allowed'] : [];
+
+        foreach ($allowed as $index => $ruleset) {
+            $isAllowed[$index] = true;
+            foreach ($ruleset as $attribute => $rule) {
+                if (!isset($attributes[$attribute])) {
+                    $isAllowed[$index] = false;
+                    break;
+                }
+                if (!is_array($attributes[$attribute])) {
+                    $attributes[$attribute] = [$attributes[$attribute]];
+                }
+                foreach ($attributes[$attribute] as $value) {
+                    $isAllowed[$index] &= (1 === preg_match($rule, $value));
+                }
             }
-
-            return $next($req, $res);
-        });
-    }, 10);
-
-    $events('on', 'authenticate', function (callable $stop) use (&$initCas, $container) {
-
-        $initCas();
-
-        if (!phpCAS::forceAuthentication()) {
-            return false;
         }
 
-        $attributes = phpCAS::getAttributes();
-        $identity = phpCAS::getUser();
-        $filterAttribute = function ($attribute) use ($attributes) {
-            if (!isset($attributes[$attribute])) {
-                return;
-            }
+        return array_reduce($isAllowed, function ($result, $value) {
+            return $result || $value;
+        }, false);
+    });
 
-            if (is_array($attributes[$attribute])) {
-                return $attributes[$attribute];
-            }
-
-            return $attributes[$attribute];
-        };
-
-        $stop();
-
-        $identityClass = $container['authentication_identity_class'];
-
-        return new $identityClass(
-            $identity,
-            $filterAttribute('mail'),
-            $filterAttribute('cn'),
-            $filterAttribute('ou'),
-            'CAS'
+    $container[SchSSO\Adapter\Cas::class] = function ($c) {
+        return new SchSSO\Adapter\Cas(
+            $c['init_cas'],
+            $c['is_allowed'],
+            $c['events'],
+            $c['authentication_identity_class'],
+            $c['router']->pathFor('user.logout.sso')
         );
-    }, -10);
+    };
 
-    $events('on', 'logout', function (callable $stop, GrEduLabs\Authentication\Identity $identity, $redirect = null) use (&$initCas) {
+    $container[SchSSO\Action\Login::class] = function ($c) {
+        $authService = $c['authentication_service'];
+        $authService->setAdapter($c[SchSSO\Adapter\Cas::class]);
+
+        return new SchSSO\Action\Login(
+            $authService,
+            $c['flash'],
+            $c['router']->pathFor('index'),
+            $c['router']->pathFor('user.login')
+        );
+    };
+
+    $container[SchSSO\Action\Logout::class] = function ($c) {
+        return new SchSSO\Action\Logout($c['init_cas']);
+    };
+
+    $events = $container['events'];
+
+    $events('on', 'bootstrap', function () use ($container) {
+        $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
+    });
+
+    $events('on', 'logout', function (
+        callable $stop,
+        GrEduLabs\Authentication\Identity $identity,
+        $redirect = null
+    ) use (&$container) {
 
         if ($identity->authenticationSource === 'CAS') {
-            $initCas();
+            call_user_func($container['init_cas']);
             if (!phpCAS::isAuthenticated()) {
                 return;
             }
@@ -98,4 +113,7 @@ return function (Slim\App $app) {
             phpCAS::logout();
         }
     });
+
+    $app->get('/user/login/sso', SchSSO\Action\Login::class)->setName('user.login.sso');
+    $app->get('/user/logout/sso', SchSSO\Action\Logout::class)->setName('user.logout.sso');
 };

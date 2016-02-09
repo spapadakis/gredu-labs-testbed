@@ -96,9 +96,13 @@ class Navigation extends Twig_Extension
     /**
      *
      */
-    public function nav($root = null)
+    public function nav($root)
     {
-        $navigation = (null !== $root) ? $this->navigation[$root] : $this->navigation;
+        if (!isset($this->navigation[$root]) || !is_array($this->navigation[$root])) {
+            return [];
+        }
+
+        $navigation = $this->navigation[$root];
 
         $aclFilter = function ($page) {
             if (!$this->acl) {

@@ -58,36 +58,10 @@ return function (Slim\App $app) {
         return $logger;
     };
 
-    $container['authenticate_redbean_listener'] = function ($c) {
-        return new GrEduLabs\Application\Authentication\RedbeanListener();
-    };
-
     $container['csrf'] = function ($c) {
         return new \Slim\Csrf\Guard();
     };
 
-    $events = $container['events'];
-    $events('on', 'bootstrap', function () use ($container) {
-        session_name('GrEduLabs');
-        session_start();
-
-        // setup RedbeanPHP
-
-        RedBeanPHP\R::setup(
-            $container['settings']['db']['dsn'],
-            $container['settings']['db']['user'],
-            $container['settings']['db']['pass']
-        );
-
-        define('REDBEAN_MODEL_PREFIX', 'GrEduLabs\\Application\\Model\\');
-
-    }, 10000000);
-
-    $events('on', 'bootstrap', function () use ($container) {
-        $container['router']->getNamedRoute('user.login')->add('csrf');
-    });
-
-    $events('on', 'authenticate', $container['authenticate_redbean_listener']);
 
     $container['GrEduLabs\\Application\\Action\\Index'] = function ($c) {
         return new GrEduLabs\Application\Action\Index($c['view']);
@@ -108,6 +82,32 @@ return function (Slim\App $app) {
     $container['GrEduLabs\\Application\\Action\\School\\Assets'] = function ($c) {
         return new GrEduLabs\Application\Action\School\Assets($c->get('view'));
     };
+
+    $events = $container['events'];
+    $events('on', 'bootstrap', function () use ($container) {
+        session_name('GrEduLabs');
+        session_start();
+
+        // setup RedbeanPHP
+
+        RedBeanPHP\R::setup(
+            $container['settings']['db']['dsn'],
+            $container['settings']['db']['user'],
+            $container['settings']['db']['pass']
+        );
+
+        define('REDBEAN_MODEL_PREFIX', 'GrEduLabs\\Application\\Model\\');
+
+    }, 10000000);
+
+    $events('on', 'bootstrap', function () use ($container) {
+        try {
+            $container['router']->getNamedRoute('user.login')->add('csrf');
+        } catch (\RuntimeException $e) {
+            // eat it
+        }
+    });
+
 
     $app->get('/', 'GrEduLabs\\Application\\Action\\Index')->setName('index');
     $app->group('/school', function () {

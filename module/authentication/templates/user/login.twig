@@ -3,24 +3,12 @@
 {% block content %}
     <h1>Σύνδεση</h1>
     <div class="row">
-        <div class="col-sm-12 col-md-6">
-            <p>Για την σύνδεση των <strong>σχολικών μονάδων</strong>, η σύνδεση πραγματοποιείται μέσω του Κεντρικής Υπηρεσίας Πιστοποίησης χρηστών του Πανελλήνιου Σχολικού Δικτύου.</p>
-            <hr>
-            <form method="post" action="{{ path_for('user.login') }}" id="user-login-form" class="form-horizontal" value="1">
-                <p class="text-center">
-                    <button name="dologin" value="1" type="submit" class="btn btn-lg btn-success">Σύνδεση sch.gr</button>
-                    <input type="hidden" name="{{ csrf_name_key }}" value="{{ csrf_name }}">
-                    <input type="hidden" name="{{ csrf_value_key }}" value="{{ csrf_value }}">
-                </p>
-            </form>
-        </div>
-        <div class="clearfix visible-sm"></div>
-        <div class="col-sm-12 col-md-6">
+        <div class="col-xs-12">
             <p>Αν έχετε ήδη δημιουργήσει λογαριασμό στο σύστημα, συνδεθείτε εδώ.</p>
             <form method="post" action="{{ path_for('user.login') }}" id="user-login-form" class="form-horizontal">
             <div class="form-group">
                 <label class="hidden-sm col-sm-3 control-label">Email</label>
-                <div class="col-xs-12 col-sm-9">
+                <div class="col-xs-12 col-sm-9 col-md-5 col-lg-4">
                     <div class="input-group">
                         <span class="input-group-addon">
                             <i class="fa fa-envelope-o fa-fw"></i>
@@ -31,7 +19,7 @@
             </div>
             <div class="form-group">
                 <label class="hidden-sm col-sm-3 control-label">Password</label>
-                <div class="col-xs-12 col-sm-9">
+                <div class="col-xs-12 col-sm-9 col-md-5 col-lg-4">
                     <div class="input-group">
                         <span class="input-group-addon">
                             <i class="fa fa-key fa-fw"></i>

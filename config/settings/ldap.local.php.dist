@@ -27,7 +27,4 @@ return [
         'tryUsernameSplit'       => true,
         'networkTimeout'         => null,
     ],
-    'sso' => [
-        'allowed' => '&(physicaldeliveryofficename=ΕΠΙΣΗΜΟΣ ΛΟΓΑΡΙΑΣΜΟΣ)(umdobject=account)',
-    ],
 ];

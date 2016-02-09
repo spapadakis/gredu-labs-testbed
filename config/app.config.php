@@ -12,9 +12,9 @@ return [
     'modules' => [
         'module/authentication/bootstrap.php',
         'module/authorization/bootstrap.php',
-        'module/sch_ldap/bootstrap.php',
+        // 'module/sch_ldap/bootstrap.php',
         'module/sch_sso/bootstrap.php',
-        'module/sch_auto_create/bootstrap.php',
+        // 'module/sch_auto_create/bootstrap.php',
         'module/application/bootstrap.php',
     ],
     'cache_config' => 'data/cache/config/settings.php',
