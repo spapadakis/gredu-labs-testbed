@@ -67,21 +67,7 @@ return function (Slim\App $app) {
         return new GrEduLabs\Application\Action\Index($c['view']);
     };
 
-    $container['GrEduLabs\\Application\\Action\\School\\Index'] = function ($c) {
-        return new GrEduLabs\Application\Action\School\Index($c->get('view'));
-    };
 
-    $container['GrEduLabs\\Application\\Action\\School\\Staff'] = function ($c) {
-        return new GrEduLabs\Application\Action\School\Staff($c->get('view'));
-    };
-
-    $container['GrEduLabs\\Application\\Action\\School\\Labs'] = function ($c) {
-        return new GrEduLabs\Application\Action\School\Labs($c->get('view'));
-    };
-
-    $container['GrEduLabs\\Application\\Action\\School\\Assets'] = function ($c) {
-        return new GrEduLabs\Application\Action\School\Assets($c->get('view'));
-    };
 
     $events = $container['events'];
     $events('on', 'bootstrap', function () use ($container) {
@@ -110,10 +96,5 @@ return function (Slim\App $app) {
 
 
     $app->get('/', 'GrEduLabs\\Application\\Action\\Index')->setName('index');
-    $app->group('/school', function () {
-        $this->get('', 'GrEduLabs\\Application\\Action\\School\\Index')->setName('school');
-        $this->get('/staff', 'GrEduLabs\\Application\\Action\\School\\Staff')->setName('school.staff');
-        $this->get('/labs', 'GrEduLabs\\Application\\Action\\School\\Labs')->setName('school.labs');
-        $this->get('/assets', 'GrEduLabs\\Application\\Action\\School\\Assets')->setName('school.assets');
-    });
+
 };

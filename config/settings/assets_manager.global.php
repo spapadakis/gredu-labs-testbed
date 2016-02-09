@@ -8,12 +8,10 @@
  */
 
 return [
-    'acl' => [
-        'guards' => [
-            'routes'    => [
-                ['/user/login', ['guest'], ['get', 'post']],
-                ['/user/logout', ['user'], ['get']],
-            ],
+    'assets' => [
+        'web_dir'    => 'public',
+        'paths'      => [
+            'module/schools/public',
         ],
     ],
 ];

@@ -38,7 +38,7 @@ class RouteGuard
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
         if (!$request->getAttribute('route')) {
-            return $response->withStatus(500);
+            return $response->withStatus(404);
         }
         $isAllowed = false;
         if ($this->acl->hasResource('route' . $request->getAttribute('route')->getPattern())) {

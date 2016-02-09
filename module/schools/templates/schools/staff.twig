@@ -1,6 +1,6 @@
-{% extends "school/index.twig" %}
+{% extends "schools/index.twig" %}
 
-{% import "school/index.twig" as macros %}
+{% import "schools/index.twig" as macros %}
 
 {% block schoolTitle %}
     {{ parent() }} <small>Εκπαιδευτικοί</small>
@@ -100,5 +100,5 @@
 
 {% block inlinejs %}
     {{ parent() }}
-    <script src="{{ base_url }}/js/school/staff.js"></script>
+    <script src="{{ base_url }}/js/schools/staff.js"></script>
 {% endblock %}

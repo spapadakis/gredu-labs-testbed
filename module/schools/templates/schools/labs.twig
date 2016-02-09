@@ -1,6 +1,6 @@
-{% extends "school/index.twig" %}
+{% extends "schools/index.twig" %}
 
-{% import "school/index.twig" as macros %}
+{% import "schools/index.twig" as macros %}
 
 {% block schoolTitle %}
     {{ parent() }} <small>Χώροι</small>
@@ -91,5 +91,5 @@
 
 {% block inlinejs %}
     {{ parent() }}
-    <script src="{{ base_url }}/js/school/labs.js"></script>
+    <script src="{{ base_url }}/js/schools/labs.js"></script>
 {% endblock %}

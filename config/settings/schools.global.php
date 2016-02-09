@@ -9,18 +9,12 @@
 
 return [
     'acl' => [
-        'default_role' => 'guest',
-        'roles'        => [
-            'guest' => [],
-            'user'  => [],
-            'admin' => ['user'],
-        ],
-        'resoures' => [],
         'guards'   => [
-            'resources' => [],
-            'callables' => [],
             'routes'    => [
-                ['/', ['guest', 'user'], ['get']],
+                ['/school', ['user'], ['get']],
+                ['/school/labs', ['user'], ['get']],
+                ['/school/staff', ['user'], ['get']],
+                ['/school/assets', ['user'], ['get']],
             ],
         ],
     ],

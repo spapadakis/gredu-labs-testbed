@@ -10,11 +10,13 @@
 
 return [
     'modules' => [
+        'module/assets_manager/bootstrap.php',
         'module/authentication/bootstrap.php',
         'module/authorization/bootstrap.php',
         // 'module/sch_ldap/bootstrap.php',
         'module/sch_sso/bootstrap.php',
         // 'module/sch_auto_create/bootstrap.php',
+        'module/schools/bootstrap.php',
         'module/application/bootstrap.php',
     ],
     'cache_config' => 'data/cache/config/settings.php',
