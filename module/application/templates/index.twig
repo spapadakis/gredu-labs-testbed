@@ -3,8 +3,8 @@
     <div class="jumbotron">
         <h1>Σχολικά εργαστήρια</h1>
         <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vel volutpat diam, vitae consectetur libero. Sed et sem et nisi aliquet condimentum. Morbi id magna iaculis, dictum lectus vitae, suscipit nisl. Proin molestie dolor vitae pulvinar tristique. Integer egestas varius lorem id scelerisque. Praesent velit metus, egestas facilisis iaculis id, auctor nec mi. Suspendisse ultrices laoreet justo eget viverra.</p>
-    {#{% if not identity() %}
+    {% if not identity() %}
         <p><a class="btn btn-lg btn-success" href="{{ path_for('user.login') }}" role="button">Σύνδεση</a></p>
-    {% endif %}#}
+    {% endif %}
     </div>
 {% endblock %}

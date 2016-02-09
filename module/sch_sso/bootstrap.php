@@ -1,21 +1,19 @@
 <?php
 /**
- * gredu_labs
+ * gredu_labs.
  * 
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
+ *
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
 return function (Slim\App $app) {
 
-    $container = $app->getContainer();  
+    $container = $app->getContainer();
+    $events    = $container['events'];
 
-    
-
-    $events = $container['events'];
-
-    $events('on', 'bootstrap', function () use ($container) {
+    $initCas = function () use ($container) {
         $settings = $container['settings']['phpcas'];
         phpCAS::client(
             $settings['serverVersion'],
@@ -36,25 +34,31 @@ return function (Slim\App $app) {
             phpCAS::setNoCasServerValidation();
         }
         phpCAS::handleLogoutRequests();
+        phpCAS::setDebug('data/log/phpCAS.log');
+    };
 
+    $events('on', 'bootstrap', function () use ($container) {
         $container['router']->getNamedRoute('user.login')->add(function ($req, $res, $next) {
             $method = $req->getMethod();
             $query = $req->getQueryParams();
             if ($method === 'GET' && isset($query['ticket'])) {
-                $req = $req->withoutHeader('Location')
-                    ->withMethod('POST')
-                    ->withQueryParams(array_merge($query, ['dologin' => '1']));
+                $req = $req->withMethod('POST');
             }
+
             return $next($req, $res);
-        }); 
+        });
     }, 10);
 
-    $events('on', 'authenticate', function (callable $stop) use ($container) {
+    $events('on', 'authenticate', function (callable $stop) use (&$initCas, $container) {
+
+        $initCas();
+
         if (!phpCAS::forceAuthentication()) {
             return false;
         }
+
         $attributes = phpCAS::getAttributes();
-        $identity   = phpCAS::getUser();
+        $identity = phpCAS::getUser();
         $filterAttribute = function ($attribute) use ($attributes) {
             if (!isset($attributes[$attribute])) {
                 return;
@@ -69,25 +73,27 @@ return function (Slim\App $app) {
 
         $stop();
 
-        return new GrEduLabs\Authentication\Identity(
+        $identityClass = $container['authentication_identity_class'];
+
+        return new $identityClass(
             $identity,
             $filterAttribute('mail'),
             $filterAttribute('cn'),
             $filterAttribute('ou'),
             'CAS'
         );
-    }, -100000);
+    }, -10);
 
-
-    $events('on', 'logout', function (callable $stop, GrEduLabs\Authentication\Identity $identity, $redirect = null) {
+    $events('on', 'logout', function (callable $stop, GrEduLabs\Authentication\Identity $identity, $redirect = null) use (&$initCas) {
 
         if ($identity->authenticationSource === 'CAS') {
+            $initCas();
             if (!phpCAS::isAuthenticated()) {
                 return;
             }
 
             if ($redirect) {
-                phpCAS::logoutWithRedirectService((string) $redirect);
+                phpCAS::logout(['url' => (string) $redirect]);
             }
             phpCAS::logout();
         }

@@ -1,8 +1,9 @@
 <?php
 /**
- * gredu_labs
+ * gredu_labs.
  * 
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
+ *
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
@@ -14,36 +15,35 @@ use Zend\Authentication\Storage\StorageInterface;
 class PhpSession implements StorageInterface
 {
     /**
-     * Default session namespace
+     * Default session namespace.
      */
     const NAMESPAGE_DEFAULT = 'GrEduLabs_Auth';
 
     /**
-     * Default session object member name
+     * Default session object member name.
      */
     const MEMBER_DEFAULT = 'storage';
 
-
     /**
-     * Session namespace
+     * Session namespace.
      *
      * @var mixed
      */
     protected $namespace = self::NAMESPAGE_DEFAULT;
 
     /**
-     * Session object member
+     * Session object member.
      *
      * @var mixed
      */
     protected $member = self::MEMBER_DEFAULT;
 
     /**
-     * Sets session storage options and initializes session namespace
+     * Sets session storage options and initializes session namespace.
      *
-     * @param  array $session
-     * @param  mixed $namespace
-     * @param  mixed $member
+     * @param array $session
+     * @param mixed $namespace
+     * @param mixed $member
      */
     public function __construct($namespace = null, $member = null)
     {
@@ -56,7 +56,7 @@ class PhpSession implements StorageInterface
     }
 
     /**
-     * Returns the session namespace
+     * Returns the session namespace.
      *
      * @return string
      */
@@ -66,7 +66,7 @@ class PhpSession implements StorageInterface
     }
 
     /**
-     * Returns the name of the session object member
+     * Returns the name of the session object member.
      *
      * @return string
      */
@@ -76,9 +76,10 @@ class PhpSession implements StorageInterface
     }
 
     /**
-     * Returns true if and only if storage is empty
+     * Returns true if and only if storage is empty.
      *
      * @throws \Zend\Authentication\Exception\ExceptionInterface If it is impossible to determine whether storage is empty
+     *
      * @return bool
      */
     public function isEmpty()
@@ -87,11 +88,12 @@ class PhpSession implements StorageInterface
     }
 
     /**
-     * Returns the contents of storage
+     * Returns the contents of storage.
      *
      * Behavior is undefined when storage is empty.
      *
      * @throws \Zend\Authentication\Exception\ExceptionInterface If reading contents from storage is impossible
+     *
      * @return mixed
      */
     public function read()
@@ -100,11 +102,11 @@ class PhpSession implements StorageInterface
     }
 
     /**
-     * Writes $contents to storage
+     * Writes $contents to storage.
      *
-     * @param  mixed $contents
+     * @param mixed $contents
+     *
      * @throws \Zend\Authentication\Exception\ExceptionInterface If writing $contents to storage is impossible
-     * @return void
      */
     public function write($contents)
     {
@@ -112,10 +114,9 @@ class PhpSession implements StorageInterface
     }
 
     /**
-     * Clears contents from storage
+     * Clears contents from storage.
      *
      * @throws \Zend\Authentication\Exception\ExceptionInterface If clearing contents from storage is impossible
-     * @return void
      */
     public function clear()
     {

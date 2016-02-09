@@ -1,8 +1,9 @@
 <?php
 /**
- * gredu_labs
+ * gredu_labs.
  * 
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
+ *
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
@@ -14,9 +15,9 @@ use Slim\Flash\Messages;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
-use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Adapter\ValidatableAdapterInterface;
+use Zend\Authentication\AuthenticationService;
 
 class Login
 {
@@ -46,11 +47,12 @@ class Login
     protected $successUrl;
 
     /**
-     * Constructor
-     * @param Twig $view
+     * Constructor.
+     *
+     * @param Twig                  $view
      * @param AuthenticationService $authService
-     * @param AdapterInterface $authAdapter
-     * @param Messages $flash
+     * @param AdapterInterface      $authAdapter
+     * @param Messages              $flash
      */
     public function __construct(
         Twig $view,
@@ -67,16 +69,16 @@ class Login
     }
 
     public function __invoke(Request $req, Response $res)
-    {        
-        
+    {
         if ($req->isPost()) {
             $adapter = $this->authService->getAdapter();
             if ($adapter instanceof ValidatableAdapterInterface) {
                 $adapter->setIdentity($req->getParam('identity'));
                 $adapter->setCredential($req->getParam('credential'));
             }
-            
+
             $result = $this->authService->authenticate($adapter);
+
             if (!$result->isValid()) {
                 $this->flash->addMessage('danger', reset($result->getMessages()));
 
@@ -84,7 +86,7 @@ class Login
             }
 
             return $res->withRedirect($this->successUrl);
-        } 
+        }
 
         return $this->view->render($res, 'user/login.twig', $this->getCsrfData($req));
     }

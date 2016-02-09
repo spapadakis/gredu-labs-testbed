@@ -1,8 +1,9 @@
 <?php
 /**
- * gredu_labs
+ * gredu_labs.
  * 
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
+ *
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
@@ -10,7 +11,7 @@
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
-    $events = $container['events'];
+    $events    = $container['events'];
 
     $container['autoloader']->addPsr4('GrEduLabs\\Authentication\\', __DIR__ . '/src');
 
@@ -29,12 +30,16 @@ return function (Slim\App $app) {
         );
     };
 
+    $container['authentication_identity_class'] = function ($c) {
+        return GrEduLabs\Authentication\Identity::class;
+    };
 
     $events('on', 'bootstrap', function () use ($container) {
         $container->extend('view', function ($view, $c) {
             $view->addExtension(new GrEduLabs\Authentication\Twig\Extension\Identity(
                 $c['authentication_service']
             ));
+
             return $view;
         });
     });
@@ -64,10 +69,5 @@ return function (Slim\App $app) {
 
         $this->get('/logout', 'GrEduLabs\\Authentication\\Action\\User\\Logout')
             ->setName('user.logout');
-    });
-
-    $events = $container['events'];
-    $events('on', 'bootstrap', function () use ($container) {
-        $container['router']->getNamedRoute('user.login')->add('csrf');
     });
 };

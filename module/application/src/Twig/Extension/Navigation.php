@@ -1,8 +1,9 @@
 <?php
 /**
- * gredu_labs
+ * gredu_labs.
  * 
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
+ *
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
@@ -56,7 +57,7 @@ class Navigation extends Twig_Extension
         $this->currentRole = $currentRole;
     }
 
-     /**
+    /**
      * Extension name.
      *
      * @return string
@@ -76,6 +77,20 @@ class Navigation extends Twig_Extension
         return [
             new Twig_SimpleFunction('nav', [$this, 'nav']),
         ];
+    }
+
+    public function setAcl(AclInterface $acl)
+    {
+        $this->acl = $acl;
+
+        return $this;
+    }
+
+    public function setCurrentRole($role)
+    {
+        $this->currentRole = $role;
+
+        return $this;
     }
 
     /**
@@ -106,7 +121,6 @@ class Navigation extends Twig_Extension
 
             $path           = parse_url($page['href'], PHP_URL_PATH);
             $page['active'] = ($path !== '/' && 0 === strpos($this->request->getUri()->getPath(), $path));
-
 
             if (isset($page['pages']) && is_array($page['pages'])) {
                 $page['pages'] = array_filter(array_map($prepare, $page['pages']), $aclFilter);

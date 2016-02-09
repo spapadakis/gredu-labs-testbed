@@ -1,8 +1,9 @@
 <?php
 /**
- * gredu_labs
+ * gredu_labs.
  *
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
+ *
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
@@ -15,7 +16,6 @@ use Slim\Views\Twig;
 
 class Index
 {
-
     protected $view;
 
     public function __construct(Twig $view)
@@ -28,19 +28,19 @@ class Index
         return $this->view->render($res, 'app-form/index.twig', [
             'assets' => [
                 [
-                    'typeName'        => 'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ',
-                    'labName'         => 'ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡΟΦ/ΚΗΣ 1',
-                    'quantity'        => 2,
+                    'typeName' => 'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ',
+                    'labName'  => 'ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡΟΦ/ΚΗΣ 1',
+                    'quantity' => 2,
                 ],
                 [
-                    'typeName'        => 'LAPTOP',
-                    'labName'         => 'ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡΟΦ/ΚΗΣ 2',
-                    'quantity'        => 1,
+                    'typeName' => 'LAPTOP',
+                    'labName'  => 'ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡΟΦ/ΚΗΣ 2',
+                    'quantity' => 1,
                 ],
                 [
-                    'typeName'        => 'ΠΛΗΚΤΡΟΛΟΓΙΟ',
-                    'labName'         => 'ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡΟΦ/ΚΗΣ 2',
-                    'quantity'        => 10,
+                    'typeName' => 'ΠΛΗΚΤΡΟΛΟΓΙΟ',
+                    'labName'  => 'ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡΟΦ/ΚΗΣ 2',
+                    'quantity' => 10,
                 ],
             ],
             'for_choices' => [
@@ -59,26 +59,26 @@ class Index
             ],
             'lab_choices' => [
                 [
-                    'value'              => 1,
-                    'label'              => 'ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡΟΦ/ΚΗΣ 1',
+                    'value' => 1,
+                    'label' => 'ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡΟΦ/ΚΗΣ 1',
                 ],
                 [
-                    'value'              => 2,
-                    'label'              => 'ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡΟΦ/ΚΗΣ 2',
+                    'value' => 2,
+                    'label' => 'ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡΟΦ/ΚΗΣ 2',
                 ],
             ],
             'type_choices' => [
                 [
-                    'value'            => 1,
-                    'label'            => 'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ',
+                    'value' => 1,
+                    'label' => 'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ',
                 ],
                 [
-                    'value'            => 3,
-                    'label'            => 'LAPTOP',
+                    'value' => 3,
+                    'label' => 'LAPTOP',
                 ],
                 [
-                    'value'            => 2,
-                    'label'            => 'ΠΛΗΚΤΡΟΛΟΓΙΟ',
+                    'value' => 2,
+                    'label' => 'ΠΛΗΚΤΡΟΛΟΓΙΟ',
                 ],
             ],
         ]);
