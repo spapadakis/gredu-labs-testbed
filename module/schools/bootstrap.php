@@ -15,20 +15,45 @@ return function (Slim\App $app) {
     $container['autoloader']->addPsr4('GrEduLabs\\Schools\\', __DIR__ . '/src/');
 
     $container[GrEduLabs\Schools\Action\Index::class] = function ($c) {
-        return new GrEduLabs\Schools\Action\Index($c->get('view'));
+        return new GrEduLabs\Schools\Action\Index(
+            $c->get('view'),
+            $c->get('schoolservice')
+        );
     };
 
     $container[GrEduLabs\Schools\Action\Staff::class] = function ($c) {
-        return new GrEduLabs\Schools\Action\Staff($c->get('view'));
+        return new GrEduLabs\Schools\Action\Staff(
+            $c->get('view'),
+            $c->get('staffservice')
+            );
+    };
+
+    $container[GrEduLabs\Schools\Action\StaffCreate::class] = function ($c) {
+        return new GrEduLabs\Schools\Action\StaffCreate(
+            $c->get('staffservice')
+            );
     };
 
     $container[GrEduLabs\Schools\Action\Labs::class] = function ($c) {
-        return new GrEduLabs\Schools\Action\Labs($c->get('view'));
+        return new GrEduLabs\Schools\Action\Labs(
+            $c->get('view')
+            );
     };
 
     $container[GrEduLabs\Schools\Action\Assets::class] = function ($c) {
         return new GrEduLabs\Schools\Action\Assets($c->get('view'));
     };
+
+    $container['schoolservice'] = function($c){
+        return new GrEduLabs\Schools\Service\SchoolService();
+    };
+
+    $container['staffservice'] = function($c){
+        return new GrEduLabs\Schools\Service\StaffService(
+            $c->get('schoolservice')
+        );
+    };
+
 
     $events = $container['events'];
 
@@ -41,5 +66,6 @@ return function (Slim\App $app) {
         $this->get('/staff', GrEduLabs\Schools\Action\Staff::class)->setName('school.staff');
         $this->get('/labs', GrEduLabs\Schools\Action\Labs::class)->setName('school.labs');
         $this->get('/assets', GrEduLabs\Schools\Action\Assets::class)->setName('school.assets');
+        $this->post('/staff', GrEduLabs\Schools\Action\StaffCreate::class)->setName('school.staffcreate');
     });
 };
