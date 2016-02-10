@@ -11,10 +11,10 @@ return [
     'acl' => [
         'guards'   => [
             'routes'    => [
-                ['/school', ['user'], ['get']],
-                ['/school/labs', ['user'], ['get']],
-                ['/school/staff', ['user'], ['get']],
-                ['/school/assets', ['user'], ['get']],
+                ['/school', ['school'], ['get']],
+                ['/school/labs', ['school'], ['get']],
+                ['/school/staff', ['school'], ['get']],
+                ['/school/assets', ['school'], ['get']],
             ],
         ],
     ],

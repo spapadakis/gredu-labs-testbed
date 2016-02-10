@@ -11,9 +11,10 @@ return [
     'acl' => [
         'default_role' => 'guest',
         'roles'        => [
-            'guest' => [],
-            'user'  => [],
-            'admin' => ['user'],
+            'guest'  => [],
+            'user'   => [],
+            'school' => ['user'],
+            'admin'  => ['user'],
         ],
         'resoures' => [],
         'guards'   => [

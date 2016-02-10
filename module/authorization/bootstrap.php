@@ -22,6 +22,10 @@ return function (Slim\App $app) {
         return new GrEduLabs\Authorization\Acl($settings['acl'], $c);
     };
 
+    $container['acl'] = $container->protect(function () use ($container) {
+        return $container[GrEduLabs\Authorization\Acl::class];
+    });
+
     $container['current_role'] = $container->protect(function () use ($container) {
         $settings    = $container['settings'];
         $defaultRole = $settings['acl']['default_role'];
@@ -40,14 +44,17 @@ return function (Slim\App $app) {
         return new GrEduLabs\Authorization\RouteGuard($c[GrEduLabs\Authorization\Acl::class], $role);
     };
 
-    $container[GrEduLabs\Authorization\RoleListener::class] = function ($c) {
-        return new GrEduLabs\Authorization\RoleListener($c['authentication_storage']);
+    $container[GrEduLabs\Authorization\Listener\RoleProvider::class] = function ($c) {
+        return new GrEduLabs\Authorization\Listener\RoleProvider(
+            $c['authentication_storage'],
+            $c[GrEduLabs\Authorization\Acl::class]
+        );
     };
 
     $events = $container['events'];
 
     $events('on', 'authenticate.success', function ($stop, $identity) use ($container) {
-        $listener = $container[GrEduLabs\Authorization\RoleListener::class];
+        $listener = $container[GrEduLabs\Authorization\Listener\RoleProvider::class];
         $listener($stop, $identity);
     });
 

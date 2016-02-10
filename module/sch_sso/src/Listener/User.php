@@ -8,7 +8,7 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
-namespace SchAutoCreate\Listener;
+namespace SchSSO\Listener;
 
 use Psr\Log\LoggerInterface;
 use RedBeanPHP\R;
@@ -34,7 +34,8 @@ class User
             $user->authentication_source = $identity->authenticationSource;
             $user->password              = '';
             $user->created               = time();
-            $this->logger->info(sprintf('User %s added to database after login', $identity->mail));
+            $user->role                  = 'school';
+            $this->logger->info(sprintf('User %s imported from sso.sch.gr to database', $identity->mail));
         }
         $user->last_login = time();
         R::store($user);
