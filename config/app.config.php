@@ -15,6 +15,7 @@ return [
         'module/authorization/bootstrap.php',
         // 'module/sch_ldap/bootstrap.php',
         'module/sch_sso/bootstrap.php',
+        'module/sch_mm/bootstrap.php',
         // 'module/sch_auto_create/bootstrap.php',
         'module/schools/bootstrap.php',
         'module/application/bootstrap.php',

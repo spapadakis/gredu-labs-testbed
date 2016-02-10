@@ -82,7 +82,7 @@ return function (Slim\App $app) {
             $container['settings']['db']['pass']
         );
 
-        define('REDBEAN_MODEL_PREFIX', 'GrEduLabs\\Application\\Model\\');
+        define('REDBEAN_MODEL_PREFIX', '');
 
     }, 10000000);
 
