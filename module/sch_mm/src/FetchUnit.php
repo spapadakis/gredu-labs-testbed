@@ -29,12 +29,12 @@ class FetchUnit
         $this->httpClient = $httpClient;
     }
 
-    public function __invoke($mmId)
+    public function __invoke($registryNo)
     {
         $config   = $this->httpClient->getConfig();
         $baseUri  = $config['base_uri'];
         $auth     = $config['auth'];
-        $url      = $baseUri->withQueryValue($baseUri, 'registry_no', $mmId);
+        $url      = $baseUri->withQueryValue($baseUri, 'registry_no', $registryNo);
         $response = $this->httpClient->request('GET', $url, ['auth' => $auth]);
 
         $responseData = json_decode($response->getBody()->getContents(), true);

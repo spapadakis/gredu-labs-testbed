@@ -124,7 +124,7 @@ return function (Slim\App $app) {
         $listener = $container[SchSSO\Listener\User::class];
 
         return $listener($stop, $identity);
-    }, 1000);
+    }, 10);
 
     $app->get('/user/login/sso', SchSSO\Action\Login::class)->setName('user.login.sso');
     $app->get('/user/logout/sso', SchSSO\Action\Logout::class)->setName('user.logout.sso');
