@@ -19,8 +19,8 @@ return function (Slim\App $app) {
 
         return new SchMM\FetchUnit(new GuzzleHttp\Client([
             'base_uri' => $settings['sch_mm']['api_url'],
-            'auth' => [
-                $settings['sch_mm']['api_user'], 
+            'auth'     => [
+                $settings['sch_mm']['api_user'],
                 $settings['sch_mm']['api_pass'],
             ],
         ]));

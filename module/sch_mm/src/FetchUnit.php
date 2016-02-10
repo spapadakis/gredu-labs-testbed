@@ -31,16 +31,17 @@ class FetchUnit
 
     public function __invoke($mmId)
     {
-        $config = $this->httpClient->getConfig();
-        $baseUri = $config['base_uri'];
-        $auth = $config['auth'];
-        $url = $baseUri->withQueryValue($baseUri, 'registry_no', $mmId);
+        $config   = $this->httpClient->getConfig();
+        $baseUri  = $config['base_uri'];
+        $auth     = $config['auth'];
+        $url      = $baseUri->withQueryValue($baseUri, 'registry_no', $mmId);
         $response = $this->httpClient->request('GET', $url, ['auth' => $auth]);
-       
+
         $responseData = json_decode($response->getBody()->getContents(), true);
         if (!isset($responseData['data']) || empty($responseData['data'])) {
-            return null;
+            return;
         }
+
         return $responseData['data'][0];
     }
 }
