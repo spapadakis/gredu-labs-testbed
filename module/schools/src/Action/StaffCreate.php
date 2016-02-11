@@ -23,8 +23,19 @@ class StaffCreate
 
     public function __invoke(Request $req, Response $res, array $args = [])
     {
-        $staff = $this->staffservice->getTeacherById(1);
-        $res = $res->withJson($staff->export());
+        $params = $req->getParams();
+        if (array_key_exists('id', $params)){ 
+            $id = $params['id'];
+            unset($params['id']);
+            $id = $this->staffservice->updateTeacher($params, $id);
+            $teacher = $this->staffservice->getTeacherById($id);
+        }
+        else{
+            $id = $this->staffservice->createTeacher($params);
+            $teacher = $this->staffservice->getTeacherById($id);
+        }
+
+        $res = $res->withJson($teacher->export());
         return $res;
     }
 }

@@ -14,4 +14,5 @@ interface StaffServiceInterface
     public function createTeacher(array $data);
     public function getTeacherById($id);
     public function getTeachersBySchoolId($id);
+    public function updateTeacher(array $data, $id);
 }

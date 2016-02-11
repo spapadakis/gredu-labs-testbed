@@ -44,6 +44,15 @@ class StaffService implements StaffServiceInterface
         return $id;
     }
 
+    public function updateTeacher(array $data, $id){
+        $teacher = R::load('teacher', $id);
+        foreach ($data as $key => $value){
+            $teacher[$key] = $value;
+        }
+        $id = R::store($teacher);
+        return $id;
+    }
+
     public function getTeacherById($id)
     {
         $teacher = R::load('teacher', $id);
