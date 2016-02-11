@@ -7,11 +7,12 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
-namespace GrEduLabs\DBService;
+namespace GrEduLabs\Schools\Service;
 
 interface LabServiceInterface
 {
     public function createLab(array $data);
+    public function updateLab(array $data, $id);
     public function getLabById($id);
     public function getLabsBySchoolId($id);
 }

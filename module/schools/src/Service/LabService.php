@@ -7,7 +7,7 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
-namespace GrEduLabs\School\Service;
+namespace GrEduLabs\Schools\Service;
 
 use RedBeanPHP\R;
 
@@ -23,36 +23,38 @@ class LabService implements LabServiceInterface
         $this->schoolService = $schoolService;
         $this->staffService = $staffService;
     }
+
     public function createLab(array $data)
     {
         $lab = R::dispense('lab');
-        $required = ['name', 'school', 'area'];
+        $required = ['name', 'school_id', 'area'];
         foreach ($required as $value){
             if (array_key_exists($value, $data)){
-                if ($value == 'school')
-                {
-                    $school_id = $data[$value];
-                }
-                else
-                {
                 $lab[$value] = $data[$value];
-                }
             }
             else
             {
                 return -1;
             }
         }
-        if (array_key_exists('teacher', $data)) {
-            $teacher_id = $data['teacher'];
+
+        if (array_key_exists('teacher_id', $data)) {
+            $lab['teacher_id'] = $data['teacher_id'];
         }
-        $school = $this->schoolService->getSchool($school_id);
-        $teacher = $this->staffService->getTeacherById($teacher_id);
-        $lab->school = $school;
-        $lab->teacher = $teacher;
+
         $id = R::store($lab);
         return $id;
     }
+
+    public function updateLab(array $data, $id){
+        $lab= R::load('lab', $id);
+        foreach ($data as $key => $value){
+            $lab[$key] = $value;
+        }
+        $id = R::store($lab);
+        return $id;
+    }
+
     public function getLabById($id)
     {
         $lab = R::load('lab', $id);

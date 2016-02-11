@@ -40,6 +40,12 @@ return function (Slim\App $app) {
             );
     };
 
+    $container[GrEduLabs\Schools\Action\LabCreate::class] = function ($c) {
+        return new GrEduLabs\Schools\Action\LabCreate(
+            $c->get('labservice')
+            );
+    };
+
     $container[GrEduLabs\Schools\Action\Assets::class] = function ($c) {
         return new GrEduLabs\Schools\Action\Assets($c->get('view'));
     };
@@ -54,6 +60,13 @@ return function (Slim\App $app) {
         );
     };
 
+    $container['labservice'] = function($c){
+        return new GrEduLabs\Schools\Service\LabService(
+            $c->get('schoolservice'),
+            $c->get('staffservice')
+        );
+    };
+
 
     $events = $container['events'];
 
@@ -64,8 +77,9 @@ return function (Slim\App $app) {
     $app->group('/school', function () {
         $this->get('', GrEduLabs\Schools\Action\Index::class)->setName('school');
         $this->get('/staff', GrEduLabs\Schools\Action\Staff::class)->setName('school.staff');
-        $this->get('/labs', GrEduLabs\Schools\Action\Labs::class)->setName('school.labs');
-        $this->get('/assets', GrEduLabs\Schools\Action\Assets::class)->setName('school.assets');
         $this->post('/staff', GrEduLabs\Schools\Action\StaffCreate::class)->setName('school.staffcreate');
+        $this->get('/labs', GrEduLabs\Schools\Action\Labs::class)->setName('school.labs');
+        $this->post('/labs', GrEduLabs\Schools\Action\LabCreate::class)->setName('school.labcreate');
+        $this->get('/assets', GrEduLabs\Schools\Action\Assets::class)->setName('school.assets');
     });
 };
