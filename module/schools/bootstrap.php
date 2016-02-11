@@ -67,6 +67,13 @@ return function (Slim\App $app) {
         );
     };
 
+    $container['assetservice'] = function($c){
+        return new GrEduLabs\Schools\Service\AssetService(
+            $c->get('schoolservice'),
+            $c->get('labservice')
+        );
+    };
+
 
     $events = $container['events'];
 
