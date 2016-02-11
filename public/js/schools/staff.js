@@ -114,7 +114,6 @@
             $.post("", data).
                 done(function(response){
                     that.form.data('done')(response); 
-                    console.log(response);
                     that.form.data('done', undefined);
                     that.hide();
                 });
