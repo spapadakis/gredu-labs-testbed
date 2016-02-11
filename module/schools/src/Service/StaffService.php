@@ -38,9 +38,7 @@ class StaffService implements StaffServiceInterface
                 $$value = '';
             }
         }
-        $school          = $this->schoolService->getSchool($teacher['school_id']);
-        $teacher->school = $school;
-        $id              = R::store($teacher);
+        $id = R::store($teacher);
         return $id;
     }
 
