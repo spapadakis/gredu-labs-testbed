@@ -73,11 +73,6 @@ return function (Slim\App $app) {
         );
     };
 
-    $container[SchSSO\Listener\User::class] = function ($c) {
-        return new SchSSO\Listener\User($c['logger']);
-    };
-
-
     $container[SchSSO\Action\Login::class] = function ($c) {
         $authService = $c['authentication_service'];
         $authService->setAdapter($c[SchSSO\Adapter\Cas::class]);
@@ -118,13 +113,6 @@ return function (Slim\App $app) {
             phpCAS::logout();
         }
     });
-
-
-    $events('on', 'authenticate.success', function ($stop, $identity) use ($container) {
-        $listener = $container[SchSSO\Listener\User::class];
-
-        return $listener($stop, $identity);
-    }, 10);
 
     $app->get('/user/login/sso', SchSSO\Action\Login::class)->setName('user.login.sso');
     $app->get('/user/logout/sso', SchSSO\Action\Logout::class)->setName('user.logout.sso');

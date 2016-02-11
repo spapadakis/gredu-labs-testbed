@@ -14,14 +14,33 @@ return function (Slim\App $app) {
 
     $container['autoloader']->addPsr4('SchSync\\', __DIR__ . '/src');
 
-    $container[SchSync\Listener\CreateSchool::class] = function ($c) {
-        return new SchSync\Listener\CreateSchool($c['ldap'], $c[SchMM\FetchUnit::class]);
-    };
+
 
     $events = $container['events'];
 
-    $events('on', 'authenticate.success', function ($stop, $identity) use ($container) {
-        $listener = $container[SchSync\Listener\CreateSchool::class];
-        $listener($stop, $identity);
-    }, 20);
+    $events('on', 'bootstrap', function () use ($app, $container) {
+        $container[SchSync\Middleware\CreateUser::class] = function ($c) {
+            return new SchSync\Middleware\CreateUser(
+                $c['authentication_service'],
+                $c['router']->pathFor('user.login'),
+                $c['router']->pathFor('user.logout.sso'),
+                $c['flash'],
+                $c['logger']
+            );
+        };
+        $container[SchSync\Middleware\CreateSchool::class] = function ($c) {
+            return new SchSync\Middleware\CreateSchool(
+                $c['ldap'],
+                $c[SchMM\FetchUnit::class],
+                $c['authentication_service'],
+                $c['router']->pathFor('user.login'),
+                $c['router']->pathFor('user.logout.sso'),
+                $c['flash'],
+                $c['logger']
+            );
+        };
+        $container['router']->getNamedRoute('user.login.sso')
+            ->add(SchSync\Middleware\CreateSchool::class)
+            ->add(SchSync\Middleware\CreateUser::class);
+    });
 };
