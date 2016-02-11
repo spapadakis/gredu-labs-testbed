@@ -28,20 +28,20 @@ class RedBeanPHP extends AbstractAdapter
     protected $events;
 
     /**
-     * @var string
+     * @var callable
      */
-    protected $identityClass;
+    protected $resolveIdentityClass;
 
     /**
      * @var PasswordInterface
      */
     protected $crypt;
 
-    public function __construct(callable $events, $identityClass, PasswordInterface $crypt)
+    public function __construct(callable $events, callable $resolveIdentityClass, PasswordInterface $crypt)
     {
-        $this->events        = $events;
-        $this->identityClass = (string) $identityClass;
-        $this->crypt         = $crypt;
+        $this->events               = $events;
+        $this->resolveIdentityClass = $resolveIdentityClass;
+        $this->crypt                = $crypt;
     }
 
     public function authenticate()
@@ -69,8 +69,9 @@ class RedBeanPHP extends AbstractAdapter
             return new Result(Result::FAILURE_CREDENTIAL_INVALID, null, [self::$failMessage]);
         }
 
-        $identityClass = $this->identityClass;
+        $identityClass = call_user_func($this->resolveIdentityClass);
         $identity      = new $identityClass(
+            $user->id,
             $user->uid,
             $user->mail,
             $user->displayName,

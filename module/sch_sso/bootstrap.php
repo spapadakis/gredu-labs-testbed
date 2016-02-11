@@ -68,7 +68,7 @@ return function (Slim\App $app) {
             $c['init_cas'],
             $c['is_allowed'],
             $c['events'],
-            $c['authentication_identity_class'],
+            $c['identity_class_resolver'],
             $c['router']->pathFor('user.logout.sso')
         );
     };
@@ -114,6 +114,11 @@ return function (Slim\App $app) {
         }
     });
 
-    $app->get('/user/login/sso', SchSSO\Action\Login::class)->setName('user.login.sso');
-    $app->get('/user/logout/sso', SchSSO\Action\Logout::class)->setName('user.logout.sso');
+    $events('on', 'bootstrap', function () use ($app, $container) {
+        $app->get('/user/login/sso', SchSSO\Action\Login::class)
+            ->add(GrEduLabs\Authorization\Middleware\RoleProvider::class)
+            ->setName('user.login.sso');
+        $app->get('/user/logout/sso', SchSSO\Action\Logout::class)
+            ->setName('user.logout.sso');
+    }, 10);
 };

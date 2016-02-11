@@ -44,6 +44,13 @@ return function (Slim\App $app) {
         return new GrEduLabs\Authorization\RouteGuard($c[GrEduLabs\Authorization\Acl::class], $role);
     };
 
+    $container[GrEduLabs\Authorization\Middleware\RoleProvider::class] = function ($c) {
+        return new GrEduLabs\Authorization\Middleware\RoleProvider(
+            $c['authentication_service'],
+            $c[GrEduLabs\Authorization\Acl::class]
+        );
+    };
+
     $container[GrEduLabs\Authorization\Listener\RoleProvider::class] = function ($c) {
         return new GrEduLabs\Authorization\Listener\RoleProvider(
             $c['authentication_storage'],
@@ -53,15 +60,12 @@ return function (Slim\App $app) {
 
     $events = $container['events'];
 
-    $events('on', 'authenticate.success', function ($stop, $identity) use ($container) {
-        $listener = $container[GrEduLabs\Authorization\Listener\RoleProvider::class];
-        $listener($stop, $identity);
-    });
-
     $events('on', 'bootstrap', function () use ($app, $container) {
 
-        $container->extend('authentication_identity_class', function ($c) {
-            return GrEduLabs\Authorization\Identity::class;
+        $container->extend('identity_class_resolver', function () {
+            return function () {
+                return 'GrEduLabs\\Authorization\\Identity';
+            };
         });
 
         $container->extend(GrEduLabs\Application\Twig\Extension\Navigation::class, function ($navigation, $c) {
@@ -69,6 +73,13 @@ return function (Slim\App $app) {
                 ->setAcl($c[GrEduLabs\Authorization\Acl::class])
                 ->setCurrentRole(call_user_func($c['current_role']));
         });
+
+        foreach ($container['router']->getRoutes() as $route) {
+            if ('user.login' === $route->getName()) {
+                $route->add(GrEduLabs\Authorization\Middleware\RoleProvider::class);
+                break;
+            }
+        }
 
         $app->add(GrEduLabs\Authorization\RouteGuard::class);
     });

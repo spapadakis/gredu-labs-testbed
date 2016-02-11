@@ -12,6 +12,14 @@ return function (Slim\App $app) {
 
     $container = $app->getContainer();
 
+    // setup RedbeanPHP
+    define('REDBEAN_MODEL_PREFIX', '');
+    RedBeanPHP\R::setup(
+        $container['settings']['db']['dsn'],
+        $container['settings']['db']['user'],
+        $container['settings']['db']['pass']
+    );
+
     $container['autoloader']->addPsr4('GrEduLabs\\Application\\', __DIR__ . '/src');
 
     $container['view'] = function ($c) {
@@ -68,29 +76,19 @@ return function (Slim\App $app) {
     };
 
 
-
     $events = $container['events'];
+
     $events('on', 'bootstrap', function () use ($container) {
         session_name('GrEduLabs');
         session_start();
-
-        // setup RedbeanPHP
-
-        RedBeanPHP\R::setup(
-            $container['settings']['db']['dsn'],
-            $container['settings']['db']['user'],
-            $container['settings']['db']['pass']
-        );
-
-        define('REDBEAN_MODEL_PREFIX', '');
-
-    }, 10000000);
+    }, 100000000000);
 
     $events('on', 'bootstrap', function () use ($container) {
-        try {
-            $container['router']->getNamedRoute('user.login')->add('csrf');
-        } catch (\RuntimeException $e) {
-            // eat it
+        foreach ($container['router']->getRoutes() as $route) {
+            if ('user.login' === $route->getName()) {
+                $route->add('csrf');
+                break;
+            }
         }
     });
 

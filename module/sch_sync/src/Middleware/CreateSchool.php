@@ -113,6 +113,7 @@ class CreateSchool
         $school = R::findOne('school', 'registry_no = ?', [$registryNo]);
         try {
             if (!$school) {
+                R::begin();
                 $school                     = R::dispense('school');
                 $school->registry_no        = $unit['registry_no'];
                 $school->name               = $unit['name'];
@@ -128,10 +129,17 @@ class CreateSchool
                 $school->eduadmin_id        = $unit['edu_admin_id'];
                 $school->created            = time();
                 $school->creator            = $identity->mail;
-                R::store($school);
+                $school_id                  = R::store($school);
                 $this->logger->info(sprintf('School %s imported from MM to database', $registryNo), ['creator' => $identity->mail]);
+
+                $user            = R::load('user', $identity->id);
+                $user->school_id = $school_id;
+                R::store($user);
+                $this->logger->info(sprintf('Set school %s to user %s', $registryNo, $identity->mail));
+                R::commit();
             }
         } catch (\Exception $e) {
+            R::rollback();
             $this->logger->error(sprintf('Problem inserting school %s form MM in database', $registryNo));
             $this->logger->debug('Exception', [$e->getMessage(), $e->getTraceAsString()]);
 

@@ -14,6 +14,8 @@ use JsonSerializable;
 
 class Identity implements JsonSerializable
 {
+    protected $id;
+
     protected $uid;
 
     protected $mail;
@@ -24,8 +26,9 @@ class Identity implements JsonSerializable
 
     protected $authenticationSource;
 
-    public function __construct($uid, $mail, $displayName, $officeName, $authenticationSource)
+    public function __construct($id, $uid, $mail, $displayName, $officeName, $authenticationSource)
     {
+        $this->id                   = $id;
         $this->uid                  = $uid;
         $this->mail                 = $mail;
         $this->displayName          = $displayName;
@@ -47,14 +50,15 @@ class Identity implements JsonSerializable
         return $this->displayName;
     }
 
-    public function getUid()
+    public function getId()
     {
-        return $this->uid;
+        return $this->id;
     }
 
     public function toArray()
     {
         return [
+            'id'                   => $this->id,
             'uid'                  => $this->uid,
             'mail'                 => $this->mail,
             'displayName'          => $this->displayName,

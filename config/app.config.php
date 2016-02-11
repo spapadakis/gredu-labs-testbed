@@ -10,6 +10,7 @@
 
 return [
     'modules' => [
+        'module/application/bootstrap.php',
         'module/assets_manager/bootstrap.php',
         'module/authentication/bootstrap.php',
         'module/authorization/bootstrap.php',
@@ -19,7 +20,6 @@ return [
         'module/sch_inventory/bootstrap.php',
         'module/sch_sync/bootstrap.php',
         'module/schools/bootstrap.php',
-        'module/application/bootstrap.php',
     ],
     'cache_config' => 'data/cache/config/settings.php',
 ];

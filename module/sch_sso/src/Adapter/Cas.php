@@ -34,7 +34,7 @@ class Cas implements AdapterInterface
     /**
      * @var string
      */
-    protected $identityClass;
+    protected $resolveIdentityClass;
 
     /**
      * @var string
@@ -46,14 +46,14 @@ class Cas implements AdapterInterface
         callable $initCas,
         callable $isAllowed,
         callable $events,
-        $identityClass,
+        callable $resolveIdentityClass,
         $ssoLogoutUrl
     ) {
-        $this->initCas       = $initCas;
-        $this->isAllowed     = $isAllowed;
-        $this->events        = $events;
-        $this->identityClass = (string) $identityClass;
-        $this->ssoLogoutUrl  = (string) $ssoLogoutUrl;
+        $this->initCas              = $initCas;
+        $this->isAllowed            = $isAllowed;
+        $this->events               = $events;
+        $this->resolveIdentityClass = $resolveIdentityClass;
+        $this->ssoLogoutUrl         = (string) $ssoLogoutUrl;
     }
 
     public function authenticate()
@@ -90,8 +90,9 @@ class Cas implements AdapterInterface
             return $attributes[$attribute];
         };
 
-        $identityClass = $this->identityClass;
+        $identityClass = call_user_func($this->resolveIdentityClass);
         $identity      = new $identityClass(
+            null,
             $identity,
             $filterAttribute('mail'),
             $filterAttribute('cn'),

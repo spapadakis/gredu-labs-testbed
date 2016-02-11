@@ -15,12 +15,12 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use RedBeanPHP\R;
 use Slim\Flash\Messages;
-use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\Authentication\AuthenticationService;
 
 class CreateUser
 {
     /**
-     * @var AuthenticationServiceInterface
+     * @var AuthenticationService
      */
     private $authService;
 
@@ -45,7 +45,7 @@ class CreateUser
     private $logger;
 
     public function __construct(
-        AuthenticationServiceInterface $authService,
+        AuthenticationService $authService,
         $userErrorRedirectUrl,
         $ssoLogoutUrl,
         Messages $flash,
@@ -84,7 +84,18 @@ class CreateUser
                 ));
             }
             $user->last_login = time();
-            R::store($user);
+            $user_id          = R::store($user);
+
+            $identityClass = get_class($identity);
+            $newIdentity   = new $identityClass(
+                $user_id,
+                $user->uid,
+                $user->mail,
+                $user->display_name,
+                $user->office_name,
+                $user->authentication_source
+            );
+            $this->authService->getStorage()->write($newIdentity);
         } catch (\Exception $e) {
             $this->authService->clearIdentity();
             $this->flash->addMessage(

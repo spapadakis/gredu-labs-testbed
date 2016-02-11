@@ -25,6 +25,12 @@ class Index
 
     public function __invoke(Request $req, Response $res, array $args = [])
     {
-        return $this->view->render($res, 'schools/index.twig');
+        $identity = $req->getAttribute('identity');
+        $user     = \RedBeanPHP\R::load('user', $identity->id);
+        $school   = $user->school;
+
+        return $this->view->render($res, 'schools/index.twig', [
+            'school' => $school->export(),
+        ]);
     }
 }
