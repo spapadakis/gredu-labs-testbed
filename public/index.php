@@ -54,6 +54,9 @@ array_walk($appConfig['modules'], function ($module) use ($app) {
 });
 
 $events = $container['events'];
-$events('trigger', 'bootstrap');
+
+$events('trigger', 'app.autoload', $container['autoloader']);
+$events('trigger', 'app.services', $container);
+$events('trigger', 'app.bootstrap', $app, $container);
 
 $app->run();

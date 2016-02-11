@@ -11,14 +11,19 @@
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
+    $events    = $container['events'];
 
-    $container['autoloader']->addPsr4('SchInventory\\', __DIR__ . '/src/');
+    $events('on', 'app.autoload', function ($stop, $autoloader) {
+        $autoloader->addPsr4('SchInventory\\', __DIR__ . '/src/');
+    });
 
-    $container['SchInventory\\Service'] = function ($c) {
-        $settings = $c['settings'];
+    $events('on', 'app.services', function ($stop, $container) {
+        $container['SchInventory\\Service'] = function ($c) {
+            $settings = $c['settings'];
 
-        return new SchInventory\GuzzleHttpService(
-            new GuzzleHttp\Client($settings['inventory'])
-        );
-    };
+            return new SchInventory\GuzzleHttpService(
+                new GuzzleHttp\Client($settings['inventory'])
+            );
+        };
+    });
 };

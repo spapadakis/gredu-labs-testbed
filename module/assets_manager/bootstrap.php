@@ -71,7 +71,7 @@ return function (Slim\App $app) {
 
     $container = $app->getContainer();
     $events    = $container['events'];
-    $events('on', 'bootstrap', function () use ($app, $container, $mimeTypes) {
+    $events('on', 'app.bootstrap', function ($stop, $app, $container) use ($mimeTypes) {
             $app->add(function (
                   ServerRequestInterface $req,
                   ResponseInterface $res,

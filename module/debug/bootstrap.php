@@ -11,24 +11,29 @@
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
+    $events    = $container['events'];
 
-    $container['settings']->set('displayErrorDetails', true);
-
-    $container->extend('view', function ($view) {
-        $view->addExtension(new Twig_Extension_Debug());
-        $view->getEnvironment()->enableDebug();
-
-        return $view;
+    $events('on', 'app.services', function ($stop, $container) {
+        $container['settings']->set('displayErrorDetails', true);
     });
 
-    $container->extend('logger', function ($logger, $c) {
-        $settings = $c['settings'];
+    $events('on', 'app.services', function ($stop, $container) {
+        $container->extend('view', function ($view) {
+            $view->addExtension(new Twig_Extension_Debug());
+            $view->getEnvironment()->enableDebug();
 
-        $logger->pushHandler(new Monolog\Handler\StreamHandler(
-            $settings['logger']['debug_path'],
-            Monolog\Logger::DEBUG
-        ));
+            return $view;
+        });
 
-        return $logger;
-    });
+        $container->extend('logger', function ($logger, $c) {
+            $settings = $c['settings'];
+
+            $logger->pushHandler(new Monolog\Handler\StreamHandler(
+                $settings['logger']['debug_path'],
+                Monolog\Logger::DEBUG
+            ));
+
+            return $logger;
+        });
+    }, -10);
 };

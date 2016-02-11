@@ -11,35 +11,40 @@
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
+    $events    = $container['events'];
 
-    $container['autoloader']->addPsr4('GrEduLabs\\Schools\\', __DIR__ . '/src/');
+    $events('on', 'app.autoload', function ($stop, $autoloader) {
+        $autoloader->addPsr4('GrEduLabs\\Schools\\', __DIR__ . '/src/');
+    });
 
-    $container[GrEduLabs\Schools\Action\Index::class] = function ($c) {
-        return new GrEduLabs\Schools\Action\Index($c->get('view'));
-    };
+    $events('on', 'app.services', function ($stop, $container) {
+        $container[GrEduLabs\Schools\Action\Index::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Index($c->get('view'));
+        };
 
-    $container[GrEduLabs\Schools\Action\Staff::class] = function ($c) {
-        return new GrEduLabs\Schools\Action\Staff($c->get('view'));
-    };
+        $container[GrEduLabs\Schools\Action\Staff::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Staff($c->get('view'));
+        };
 
-    $container[GrEduLabs\Schools\Action\Labs::class] = function ($c) {
-        return new GrEduLabs\Schools\Action\Labs($c->get('view'));
-    };
+        $container[GrEduLabs\Schools\Action\Labs::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Labs($c->get('view'));
+        };
 
-    $container[GrEduLabs\Schools\Action\Assets::class] = function ($c) {
-        return new GrEduLabs\Schools\Action\Assets($c->get('view'));
-    };
+        $container[GrEduLabs\Schools\Action\Assets::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Assets($c->get('view'));
+        };
+    });
 
-    $events = $container['events'];
-
-    $events('on', 'bootstrap', function () use ($container) {
+    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
+
+        $app->group('/school', function () {
+            $this->get('', GrEduLabs\Schools\Action\Index::class)->setName('school');
+            $this->get('/staff', GrEduLabs\Schools\Action\Staff::class)->setName('school.staff');
+            $this->get('/labs', GrEduLabs\Schools\Action\Labs::class)->setName('school.labs');
+            $this->get('/assets', GrEduLabs\Schools\Action\Assets::class)->setName('school.assets');
+        });
     });
 
-    $app->group('/school', function () {
-        $this->get('', GrEduLabs\Schools\Action\Index::class)->setName('school');
-        $this->get('/staff', GrEduLabs\Schools\Action\Staff::class)->setName('school.staff');
-        $this->get('/labs', GrEduLabs\Schools\Action\Labs::class)->setName('school.labs');
-        $this->get('/assets', GrEduLabs\Schools\Action\Assets::class)->setName('school.assets');
-    });
+
 };

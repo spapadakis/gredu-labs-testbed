@@ -11,18 +11,24 @@
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
+    $events    = $container['events'];
 
-    $container['autoloader']->addPsr4('SchMM\\', __DIR__ . '/src/');
+    $events('on', 'app.autoload', function ($stop, $autoloader) {
+        $autoloader->addPsr4('SchMM\\', __DIR__ . '/src/');
+    });
 
-    $container[SchMM\FetchUnit::class] = function ($c) {
-        $settings = $c['settings'];
+    $events('on', 'app.services', function ($stop, $container) {
+        $container[SchMM\FetchUnit::class] = function ($c) {
+            $settings = $c['settings'];
 
-        return new SchMM\FetchUnit(new GuzzleHttp\Client([
-            'base_uri' => $settings['sch_mm']['api_url'],
-            'auth'     => [
-                $settings['sch_mm']['api_user'],
-                $settings['sch_mm']['api_pass'],
-            ],
-        ]));
-    };
+            return new SchMM\FetchUnit(new GuzzleHttp\Client([
+                'base_uri' => $settings['sch_mm']['api_url'],
+                'auth'     => [
+                    $settings['sch_mm']['api_user'],
+                    $settings['sch_mm']['api_pass'],
+                ],
+            ]));
+        };
+    });
+
 };

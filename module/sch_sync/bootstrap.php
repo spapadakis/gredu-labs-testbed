@@ -11,33 +11,36 @@
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
+    $events    = $container['events'];
 
-    $container['autoloader']->addPsr4('SchSync\\', __DIR__ . '/src');
+    $events('on', 'app.autoload', function ($stop, $autoloader) {
+        $autoloader->addPsr4('SchSync\\', __DIR__ . '/src');
+    });
 
-    $container[SchSync\Middleware\CreateUser::class] = function ($c) {
-        return new SchSync\Middleware\CreateUser(
-            $c['authentication_service'],
-            $c['router']->pathFor('user.login'),
-            $c['router']->pathFor('user.logout.sso'),
-            $c['flash'],
-            $c['logger']
-        );
-    };
-    $container[SchSync\Middleware\CreateSchool::class] = function ($c) {
-        return new SchSync\Middleware\CreateSchool(
-            $c['ldap'],
-            $c[SchMM\FetchUnit::class],
-            $c['authentication_service'],
-            $c['router']->pathFor('user.login'),
-            $c['router']->pathFor('user.logout.sso'),
-            $c['flash'],
-            $c['logger']
-        );
-    };
+    $events('on', 'app.services', function ($stop, $container) {
+        $container[SchSync\Middleware\CreateUser::class] = function ($c) {
+            return new SchSync\Middleware\CreateUser(
+                $c['authentication_service'],
+                $c['router']->pathFor('user.login'),
+                $c['router']->pathFor('user.logout.sso'),
+                $c['flash'],
+                $c['logger']
+            );
+        };
+        $container[SchSync\Middleware\CreateSchool::class] = function ($c) {
+            return new SchSync\Middleware\CreateSchool(
+                $c['ldap'],
+                $c[SchMM\FetchUnit::class],
+                $c['authentication_service'],
+                $c['router']->pathFor('user.login'),
+                $c['router']->pathFor('user.logout.sso'),
+                $c['flash'],
+                $c['logger']
+            );
+        };
+    });
 
-    $events = $container['events'];
-
-    $events('on', 'bootstrap', function () use ($container) {
+    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
         foreach ($container['router']->getRoutes() as $route) {
             if ('user.login.sso' === $route->getName()) {
                 $route->add(SchSync\Middleware\CreateUser::class)

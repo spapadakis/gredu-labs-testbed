@@ -11,10 +11,13 @@
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
+    $events    = $container['events'];
 
-    $container['ldap'] = function ($c) {
-        $settings = $c['settings']['ldap'];
+    $events('on', 'app.services', function ($stop, $container) {
+        $container['ldap'] = function ($c) {
+            $settings = $c['settings']['ldap'];
 
-        return new Zend\Ldap\Ldap($settings);
-    };
+            return new Zend\Ldap\Ldap($settings);
+        };
+    });
 };

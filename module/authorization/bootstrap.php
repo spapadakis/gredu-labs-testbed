@@ -11,57 +11,59 @@
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
+    $events    = $container['events'];
 
-    $container['autoloader']->addPsr4('GrEduLabs\\Authorization\\', __DIR__ . '/src');
-
-    $container['settings']->set('determineRouteBeforeAppMiddleware', true);
-
-    $container[GrEduLabs\Authorization\Acl::class] = function ($c) {
-        $settings = $c['settings'];
-
-        return new GrEduLabs\Authorization\Acl($settings['acl'], $c);
-    };
-
-    $container['acl'] = $container->protect(function () use ($container) {
-        return $container[GrEduLabs\Authorization\Acl::class];
+    $events('on', 'app.autoload', function ($stop, $autoloader) {
+        $autoloader->addPsr4('GrEduLabs\\Authorization\\', __DIR__ . '/src');
     });
 
-    $container['current_role'] = $container->protect(function () use ($container) {
-        $settings    = $container['settings'];
-        $defaultRole = $settings['acl']['default_role'];
-        $identity    = $container['authentication_service']->getIdentity();
-        if ($identity && $identity instanceof GrEduLabs\Authorization\RoleAwareInterface &&
-            ($role = $identity->getRole())) {
-            return $role;
-        }
+    $events('on', 'app.services', function ($stop, $container) {
+        $container['settings']->set('determineRouteBeforeAppMiddleware', true);
 
-        return $defaultRole;
+        $container[GrEduLabs\Authorization\Acl::class] = function ($c) {
+            $settings = $c['settings'];
+
+            return new GrEduLabs\Authorization\Acl($settings['acl'], $c);
+        };
+
+        $container['acl'] = $container->protect(function () use ($container) {
+            return $container[GrEduLabs\Authorization\Acl::class];
+        });
+
+        $container['current_role'] = $container->protect(function () use ($container) {
+            $settings    = $container['settings'];
+            $defaultRole = $settings['acl']['default_role'];
+            $identity    = $container['authentication_service']->getIdentity();
+            if ($identity && $identity instanceof GrEduLabs\Authorization\RoleAwareInterface &&
+                ($role = $identity->getRole())) {
+                return $role;
+            }
+
+            return $defaultRole;
+        });
+
+        $container[GrEduLabs\Authorization\RouteGuard::class] = function ($c) {
+            $role = call_user_func($c['current_role']);
+
+            return new GrEduLabs\Authorization\RouteGuard($c[GrEduLabs\Authorization\Acl::class], $role);
+        };
+
+        $container[GrEduLabs\Authorization\Middleware\RoleProvider::class] = function ($c) {
+            return new GrEduLabs\Authorization\Middleware\RoleProvider(
+                $c['authentication_service'],
+                $c[GrEduLabs\Authorization\Acl::class]
+            );
+        };
+
+        $container[GrEduLabs\Authorization\Listener\RoleProvider::class] = function ($c) {
+            return new GrEduLabs\Authorization\Listener\RoleProvider(
+                $c['authentication_storage'],
+                $c[GrEduLabs\Authorization\Acl::class]
+            );
+        };
     });
 
-    $container[GrEduLabs\Authorization\RouteGuard::class] = function ($c) {
-        $role = call_user_func($c['current_role']);
-
-        return new GrEduLabs\Authorization\RouteGuard($c[GrEduLabs\Authorization\Acl::class], $role);
-    };
-
-    $container[GrEduLabs\Authorization\Middleware\RoleProvider::class] = function ($c) {
-        return new GrEduLabs\Authorization\Middleware\RoleProvider(
-            $c['authentication_service'],
-            $c[GrEduLabs\Authorization\Acl::class]
-        );
-    };
-
-    $container[GrEduLabs\Authorization\Listener\RoleProvider::class] = function ($c) {
-        return new GrEduLabs\Authorization\Listener\RoleProvider(
-            $c['authentication_storage'],
-            $c[GrEduLabs\Authorization\Acl::class]
-        );
-    };
-
-    $events = $container['events'];
-
-    $events('on', 'bootstrap', function () use ($app, $container) {
-
+    $events('on', 'app.services', function ($stop, $container) {
         $container->extend('identity_class_resolver', function () {
             return function () {
                 return 'GrEduLabs\\Authorization\\Identity';
@@ -73,7 +75,9 @@ return function (Slim\App $app) {
                 ->setAcl($c[GrEduLabs\Authorization\Acl::class])
                 ->setCurrentRole(call_user_func($c['current_role']));
         });
+    }, -10);
 
+    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
         foreach ($container['router']->getRoutes() as $route) {
             if ('user.login' === $route->getName()) {
                 $route->add(GrEduLabs\Authorization\Middleware\RoleProvider::class);

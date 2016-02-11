@@ -11,82 +11,85 @@
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
-
-    $container['autoloader']->addPsr4('GrEduLabs\\Authentication\\', __DIR__ . '/src');
-
-    $container['authentication_storage'] = function ($c) {
-        return new GrEduLabs\Authentication\Storage\PhpSession();
-    };
-
-    $container['authentication_adapter'] = function ($c) {
-        return new GrEduLabs\Authentication\Adapter\RedBeanPHP(
-            $c['events'],
-            $c['identity_class_resolver'],
-            $c['authentication_crypt']
-        );
-    };
-
-    $container['authentication_service'] = function ($c) {
-        return new Zend\Authentication\AuthenticationService(
-            $c['authentication_storage'],
-            $c['authentication_adapter']
-        );
-    };
-
-    $container['identity_class_resolver'] = $container->protect(function () {
-        return 'GrEduLabs\\Authentication\\Identity';
-    });
-
-    $container['authentication_crypt'] = function ($c) {
-        $service = new Zend\Crypt\Password\Bcrypt();
-        if (isset($c['settings']['authentication']['bcrypt']['salt'])) {
-            $service->setSalt($c->settings['authentication']['bcrypt']['salt']);
-        }
-        if (isset($c['settings']['authentication']['bcrypt']['cost'])) {
-            $service->setCost($c->settings['authentication']['bcrypt']['cost']);
-        }
-
-        return $service;
-    };
-
-    $container[GrEduLabs\Authentication\Action\User\Login::class] = function ($c) {
-
-        return new GrEduLabs\Authentication\Action\User\Login(
-            $c['view'],
-            $c['authentication_service'],
-            $c['flash'],
-            $c['csrf'],
-            $c['router']->pathFor('index')
-        );
-    };
-
-    $container[GrEduLabs\Authentication\Action\User\Logout::class] = function ($c) {
-        return new GrEduLabs\Authentication\Action\User\Logout(
-            $c['authentication_service'],
-            $c['events'],
-            $c['router']->pathFor('index')
-        );
-    };
-
-    $nav                   = $container['settings']->get('navigation');
-    $nav['authentication'] = [
-        'login' => [
-            'label' => 'Σύνδεση',
-            'route' => 'user.login',
-            'icon'  => 'unlock',
-        ],
-        'logout' => [
-            'label' => 'Αποσύνδεση',
-            'route' => 'user.logout',
-            'id'    => 'nav-logout',
-            'icon'  => 'lock',
-        ],
-    ];
-    $container['settings']->set('navigation', $nav);
-
     $events    = $container['events'];
 
-    $events('on', 'bootstrap', function () use ($app, $container) {
+    $events('on', 'app.autoload', function ($stop, $autoloader) {
+        $autoloader->addPsr4('GrEduLabs\\Authentication\\', __DIR__ . '/src');
+    });
+
+    $events('on', 'app.services', function ($stop, $container) {
+        $container['authentication_storage'] = function ($c) {
+            return new GrEduLabs\Authentication\Storage\PhpSession();
+        };
+
+        $container['authentication_adapter'] = function ($c) {
+            return new GrEduLabs\Authentication\Adapter\RedBeanPHP(
+                $c['events'],
+                $c['identity_class_resolver'],
+                $c['authentication_crypt']
+            );
+        };
+
+        $container['authentication_service'] = function ($c) {
+            return new Zend\Authentication\AuthenticationService(
+                $c['authentication_storage'],
+                $c['authentication_adapter']
+            );
+        };
+
+        $container['identity_class_resolver'] = $container->protect(function () {
+            return 'GrEduLabs\\Authentication\\Identity';
+        });
+
+        $container['authentication_crypt'] = function ($c) {
+            $service = new Zend\Crypt\Password\Bcrypt();
+            if (isset($c['settings']['authentication']['bcrypt']['salt'])) {
+                $service->setSalt($c->settings['authentication']['bcrypt']['salt']);
+            }
+            if (isset($c['settings']['authentication']['bcrypt']['cost'])) {
+                $service->setCost($c->settings['authentication']['bcrypt']['cost']);
+            }
+
+            return $service;
+        };
+
+        $container[GrEduLabs\Authentication\Action\User\Login::class] = function ($c) {
+
+            return new GrEduLabs\Authentication\Action\User\Login(
+                $c['view'],
+                $c['authentication_service'],
+                $c['flash'],
+                $c['csrf'],
+                $c['router']->pathFor('index')
+            );
+        };
+
+        $container[GrEduLabs\Authentication\Action\User\Logout::class] = function ($c) {
+            return new GrEduLabs\Authentication\Action\User\Logout(
+                $c['authentication_service'],
+                $c['events'],
+                $c['router']->pathFor('index')
+            );
+        };
+
+        $nav                   = $container['settings']->get('navigation');
+        $nav['authentication'] = [
+            'login' => [
+                'label' => 'Σύνδεση',
+                'route' => 'user.login',
+                'icon'  => 'unlock',
+            ],
+            'logout' => [
+                'label' => 'Αποσύνδεση',
+                'route' => 'user.logout',
+                'id'    => 'nav-logout',
+                'icon'  => 'lock',
+            ],
+        ];
+        $container['settings']->set('navigation', $nav);
+    });
+
+    $events('on', 'app.services', function ($stop, $container) {
         $container->extend('view', function ($view, $c) {
             $view->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
             $view->addExtension(new GrEduLabs\Authentication\Twig\Extension\Identity(
@@ -95,7 +98,9 @@ return function (Slim\App $app) {
 
             return $view;
         });
+    }, -10);
 
+    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
         $app->group('/user', function () {
             $this->map(['GET', 'POST'], '/login', GrEduLabs\Authentication\Action\User\Login::class)
                 ->setName('user.login');
