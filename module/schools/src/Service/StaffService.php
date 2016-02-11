@@ -21,21 +21,16 @@ class StaffService implements StaffServiceInterface
 
     public function createTeacher(array $data)
     {
+        unset($data['id']);
         $teacher  = R::dispense('teacher');
-        $required = ['school_id', 'name', 'surname', 'phoneNumber', 'labSupervisor', 'schoolPrincipal'];
-        $optional = ['speciality', 'email'];
+        $required = ['school_id', 'name','email', 'surname', 'telephone',
+                     'position', 'branch'];
+        $data['school_id'] = 1;
         foreach ($required as $value) {
             if (array_key_exists($value, $data)) {
                 $teacher[$value] = $data[$value];
             } else {
                 return -1;
-            }
-        }
-        foreach ($optional as $value) {
-            if (array_key_exists($value, $data)) {
-                $teacher[$value] = $data[$value];
-            } else {
-                $$value = '';
             }
         }
         $id = R::store($teacher);

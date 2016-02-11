@@ -109,13 +109,15 @@
                 hash[pair.name] = pair.value;
                 return hash;
             }, {});
+            var that = this;
             evt.preventDefault();
-            if (!data.id) {
-                data.id = (100 * Math.random()).toFixed(0);
-            }
-            this.form.data('done')(data);
-            this.form.data('done', undefined);
-            this.hide();
+            $.post("", data).
+                done(function(response){
+                    that.form.data('done')(response); 
+                    console.log(response);
+                    that.form.data('done', undefined);
+                    that.hide();
+                });
         }
     });
 
