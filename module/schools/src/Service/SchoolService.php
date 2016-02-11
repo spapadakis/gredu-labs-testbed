@@ -16,8 +16,9 @@ class SchoolService implements SchoolServiceInterface
     public function createSchool(array $data)
     {
         $school   = R::dispense('school');
-        $required = ['registryNo', 'educationLevel', 'unitType', 'category', 'eduAdmin', 'regionEduAdmin'];
-        $optional = ['streetAddress', 'phoneNumber', 'faxNumber', 'email'];
+        $required = ['registry_no', 'name', 'municipality','schooltype_id', 'prefecture_id', 'educationlevel_id',
+                     'eduadmin_id', 'created', 'creator'];
+        $optional = ['street_address', 'postal_code', 'phone_number', 'fax_number', 'email'];
         foreach ($required as $value) {
             if (array_key_exists($value, $data)) {
                 $school[$value] = $data[$value];
