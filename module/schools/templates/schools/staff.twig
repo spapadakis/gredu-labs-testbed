@@ -43,7 +43,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="3" class="text-center text-muted">
+                        <td colspan="6" class="text-center text-muted no-records">
                             Δεν έχει καταχωρηθεί προσωπικό.
                         </td>
                     </tr>
@@ -71,7 +71,7 @@
                         {{ macros.input('surname', 'Επώνυμο', '', 'text', {'required': ''}) }}
                         {{ macros.input('telephone', 'Τηλέφωνο','', 'tel', {'required': ''}) }}
                         {{ macros.input('email', 'Email','', 'email', {'required': ''}) }}
-                        {{ macros.select('branch', 'Ειδικότητα', branches, '', {'required': ''}) }}
+                        {{ macros.select('branch_id', 'Ειδικότητα', branches, '', {'required': ''}) }}
                         {{ macros.select('position', 'Θέση', positions, '', {'multiple': '', 'required': ''}) }}
                         <input type="hidden" name="id" value="">
                     </div>

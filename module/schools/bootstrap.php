@@ -54,28 +54,32 @@ return function (Slim\App $app) {
             return new GrEduLabs\Schools\Action\Assets($c->get('view'));
         };
 
-        $container['schoolservice'] = function($c){
-	    return new GrEduLabs\Schools\Service\SchoolService();
+        $container['schoolservice'] = function ($c) {
+            return new GrEduLabs\Schools\Service\SchoolService();
         };
 
-        $container['staffservice'] = function($c){
-	    return new GrEduLabs\Schools\Service\StaffService(
-	        $c->get('schoolservice')
-	    );
+        $container['staffservice'] = function ($c) {
+            return new GrEduLabs\Schools\Service\StaffService(
+                $c->get('schoolservice')
+            );
         };
 
-        $container['labservice'] = function($c){
-	    return new GrEduLabs\Schools\Service\LabService(
-	        $c->get('schoolservice'),
-	        $c->get('staffservice')
-	    );
+        $container['labservice'] = function ($c) {
+            return new GrEduLabs\Schools\Service\LabService(
+                $c->get('schoolservice'),
+                $c->get('staffservice')
+            );
         };
 
-        $container['assetservice'] = function($c){
-	    return new GrEduLabs\Schools\Service\AssetService(
-	        $c->get('schoolservice'),
-	        $c->get('labservice')
-	    );
+        $container['assetservice'] = function ($c) {
+            return new GrEduLabs\Schools\Service\AssetService(
+                $c->get('schoolservice'),
+                $c->get('labservice')
+            );
+        };
+
+        $container[GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity::class] = function ($c) {
+            return new GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity($c['authentication_service']);
         };
 
     });
@@ -90,5 +94,6 @@ return function (Slim\App $app) {
             $this->get('/labs', GrEduLabs\Schools\Action\Labs::class)->setName('school.labs');
             $this->post('/labs', GrEduLabs\Schools\Action\LabCreate::class)->setName('school.labcreate');
             $this->get('/assets', GrEduLabs\Schools\Action\Assets::class)->setName('school.assets');
-        });
+        })->add(GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity::class);
+    });
 };

@@ -17,24 +17,22 @@ class LabService implements LabServiceInterface
     protected $staffService;
 
     public function __construct(
-        SchoolServiceInterface $schoolService, 
+        SchoolServiceInterface $schoolService,
         StaffServiceInterface $staffService
     ) {
         $this->schoolService = $schoolService;
-        $this->staffService = $staffService;
+        $this->staffService  = $staffService;
     }
 
     public function createLab(array $data)
     {
-        $lab = R::dispense('lab');
-        $required = ['school_id', 'name', 'type', 'area', 'in_school_use', 'out_school_use', 
-                     'courses', 'attachment', 'has_network', 'has_server' ];
-        foreach ($required as $value){
-            if (array_key_exists($value, $data)){
+        $lab      = R::dispense('lab');
+        $required = ['school_id', 'name', 'type', 'area', 'in_school_use', 'out_school_use',
+                     'courses', 'attachment', 'has_network', 'has_server', ];
+        foreach ($required as $value) {
+            if (array_key_exists($value, $data)) {
                 $lab[$value] = $data[$value];
-            }
-            else
-            {
+            } else {
                 return -1;
             }
         }
@@ -44,27 +42,32 @@ class LabService implements LabServiceInterface
         }
 
         $id = R::store($lab);
+
         return $id;
     }
 
-    public function updateLab(array $data, $id){
+    public function updateLab(array $data, $id)
+    {
         $lab= R::load('lab', $id);
-        foreach ($data as $key => $value){
+        foreach ($data as $key => $value) {
             $lab[$key] = $value;
         }
         $id = R::store($lab);
+
         return $id;
     }
 
     public function getLabById($id)
     {
         $lab = R::load('lab', $id);
+
         return $lab;
     }
     public function getLabsBySchoolId($id)
     {
         $school = $this->schoolService->getSchool($id);
-        $labs = $school->ownLab;
+        $labs   = $school->ownLab;
+
         return $labs;
     }
 }

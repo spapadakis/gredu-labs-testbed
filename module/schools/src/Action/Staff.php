@@ -20,24 +20,28 @@ class Staff
 
     public function __construct(Twig $view, $staffservice)
     {
-        $this->view = $view;
+        $this->view         = $view;
         $this->staffservice = $staffservice;
     }
 
     public function __invoke(Request $req, Response $res, array $args = [])
     {
         $staff = $this->staffservice->getTeachersBySchoolId(1);
+
         return $this->view->render($res, 'schools/staff.twig', [
-            'staff' => $staff, 
+            'staff'     => array_map(function ($employee) {
+                return array_merge($employee->export(), [
+                    'branch' => $employee->branch->name,
+                ]);
+            }, $staff),
             'positions' => [
                 ['value' => 1, 'label' => 'Εκπαδευτικός'],
                 ['value' => 2, 'label' => 'Διευθυντής σχολείου'],
                 ['value' => 3, 'label' => 'Υπεύθυνος εργαστηρίου'],
             ],
-            'branches' => [
-                ['value' => 'branch1', 'label' => 'branch'],
-                ['value' => 'branch2', 'label' => 'branch2'],
-            ],
+            'branches' => array_map(function ($branch) {
+                return ['value' => $branch['id'], 'label' => $branch['name']];
+            }, $this->staffservice->getBranches()),
         ]);
     }
 }

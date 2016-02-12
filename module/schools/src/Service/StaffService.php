@@ -24,8 +24,8 @@ class StaffService implements StaffServiceInterface
         unset($data['id']);
         $teacher  = R::dispense('teacher');
         $required = ['school_id', 'name','email', 'surname', 'telephone',
-                     'position', 'branch'];
-        $data['school_id'] = 1;
+                     'position', 'branch_id', ];
+
         foreach ($required as $value) {
             if (array_key_exists($value, $data)) {
                 $teacher[$value] = $data[$value];
@@ -34,21 +34,25 @@ class StaffService implements StaffServiceInterface
             }
         }
         $id = R::store($teacher);
+
         return $id;
     }
 
-    public function updateTeacher(array $data, $id){
+    public function updateTeacher(array $data, $id)
+    {
         $teacher = R::load('teacher', $id);
-        foreach ($data as $key => $value){
+        foreach ($data as $key => $value) {
             $teacher[$key] = $value;
         }
         $id = R::store($teacher);
+
         return $id;
     }
 
     public function getTeacherById($id)
     {
         $teacher = R::load('teacher', $id);
+
         return $teacher;
     }
 
@@ -56,6 +60,14 @@ class StaffService implements StaffServiceInterface
     {
         $school   = $this->schoolService->getSchool($id);
         $teachers = $school->ownTeacher;
+
         return $teachers;
+    }
+
+    public function getBranches()
+    {
+        return array_map(function ($branch) {
+            return $branch->export();
+        }, R::find('branch', 'ORDER BY name ASC'));
     }
 }

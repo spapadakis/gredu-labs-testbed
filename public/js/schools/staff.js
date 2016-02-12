@@ -57,6 +57,7 @@
             evt.preventDefault();
             this.modal.render(function (data) {
                 that.model.add(data);
+                that.$el.find('.no-records').remove();
             });
             return this;
         },
@@ -116,6 +117,8 @@
                     that.form.data('done')(response); 
                     that.form.data('done', undefined);
                     that.hide();
+                }).fail(function (xhr, err) {
+                    alert(xhr.statusText);
                 });
         }
     });

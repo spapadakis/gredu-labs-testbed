@@ -13,7 +13,7 @@ return [
             'routes'    => [
                 ['/school', ['school'], ['get']],
                 ['/school/labs', ['school'], ['get']],
-                ['/school/staff', ['school'], ['get']],
+                ['/school/staff', ['school'], ['get', 'post']],
                 ['/school/assets', ['school'], ['get']],
             ],
         ],

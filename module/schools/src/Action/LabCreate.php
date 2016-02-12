@@ -24,18 +24,18 @@ class LabCreate
     public function __invoke(Request $req, Response $res, array $args = [])
     {
         $params = $req->getParams();
-        if (array_key_exists('id', $params)){ 
+        if (array_key_exists('id', $params)) {
             $id = $params['id'];
             unset($params['id']);
-            $id = $this->labservice->updateLab($params, $id);
+            $id  = $this->labservice->updateLab($params, $id);
             $lab = $this->labservice->getLabById($id);
-        }
-        else{
-            $id = $this->labservice->createLab($params);
+        } else {
+            $id  = $this->labservice->createLab($params);
             $lab = $this->labservice->getLabById($id);
         }
 
         $res = $res->withJson($lab->export());
+
         return $res;
     }
 }

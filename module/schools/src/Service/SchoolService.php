@@ -17,7 +17,7 @@ class SchoolService implements SchoolServiceInterface
     {
         $school   = R::dispense('school');
         $required = ['registry_no', 'name', 'municipality','schooltype_id', 'prefecture_id',
-                     'educationlevel_id', 'eduadmin_id', 'created', 'creator'];
+                     'educationlevel_id', 'eduadmin_id', 'created', 'creator', ];
         $optional = ['street_address', 'postal_code', 'phone_number', 'fax_number', 'email'];
         foreach ($required as $value) {
             if (array_key_exists($value, $data)) {
@@ -34,11 +34,13 @@ class SchoolService implements SchoolServiceInterface
             }
         }
         $id = R::store($school);
+
         return $id;
     }
     public function getSchool($id)
     {
         $school = R::load('school', $id);
+
         return $school;
     }
 }
