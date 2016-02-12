@@ -18,26 +18,17 @@ class Staff
 {
     protected $view;
 
-    public function __construct(Twig $view)
+    public function __construct(Twig $view, $staffservice)
     {
         $this->view = $view;
+        $this->staffservice = $staffservice;
     }
 
     public function __invoke(Request $req, Response $res, array $args = [])
     {
+        $staff = $this->staffservice->getTeachersBySchoolId(1);
         return $this->view->render($res, 'schools/staff.twig', [
-            'staff' => array_fill(0, 1,
-                [
-                    'id'            => 150,
-                    'name'          => 'test',
-                    'surname'       => 'test2',
-                    'branch'        => 'Some branch',
-                    'telephone'     => '2413123212',
-                    'email'         => 'test@test.com',
-                    'positionLabel' => 'Εκπαδευτικός',
-                    'position'      => 1,
-                ]
-            ),
+            'staff' => $staff, 
             'positions' => [
                 ['value' => 1, 'label' => 'Εκπαδευτικός'],
                 ['value' => 2, 'label' => 'Διευθυντής σχολείου'],
