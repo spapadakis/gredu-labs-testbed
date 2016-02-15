@@ -1,0 +1,162 @@
+{% extends "layout.twig" %}
+
+{% macro itemSelect(name, label, options, selected) %}
+    <select class="form-control input-sm" name="items[<%= index %>][{{ name }}]">
+    <option value="" disabled selected>{{ label|striptags }}</option>
+    {% for option in options %}
+        <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
+            {{ option.label }}
+        </option>
+    {% endfor %}
+    </select>
+{% endmacro %}
+
+{% macro itemCount(name, label, value) %}
+    <div class="form-group">
+        <div class="col-xs-12 col-sm-12 col-md-9">
+            <input placeholder="{{ label|striptags }}" class="form-control input-sm"
+                type="number" name="items[<%= index %>][{{ name }}]" value="{{ value|default('')|raw }}">
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro select(name, label, options, selected) %}
+    <div class="form-group">
+        <label class="control-label hidden-xs hidden-sm" for="el-{{ name }}">{{ label|raw }}</label>
+        <select class="form-control" name="{{ name }}" id="el-{{ name }}">
+            <option value="" disabled selected>{{ label|striptags }}</option>
+            {% for option in options %}
+            <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
+                {{ option.label }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro yesno(name, label) %}
+    <div class="form-group">
+        <label class="control-label hidden-xs hidden-sm" for="el-{{ name }}">{{ label|raw }}</label>
+        <select class="form-control" name="{{ name }}" id="el-{{ name }}">
+            <option value="" disabled selected>{{ label|striptags }}</option>
+            <option value="1">Ναι</option>
+            <option value="0">Όχι</option>
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro text(name, label, value) %}
+    <div class="form-group">
+        <label class="control-label hidden-xs hidden-sm" for="el-{{ name }}">{{ label|raw }}</label>
+        <textarea class="form-control" name="{{ name }}" id="el-{{ name }}" placeholder="{{ label|striptags }}">{{ value|default('') }}</textarea>
+    </div>
+{% endmacro %}
+
+{% import _self as macros %}
+
+{% block content %}
+<div id="app-form">
+    <h1>
+    {% block title %}
+        Αίτηση <small>για νέο εξοπλισμό</small>
+    {% endblock %}
+    </h1>
+    <form method="post" action="{{ path_for('app-form.submit') }}">
+        <div class="form-group">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent pulvinar tincidunt 
+                    odio, vel pretium mauris imperdiet at. In tempor fermentum enim, euismod posuere 
+                    purus venenatis sit amet. Sed tincidunt, sapien et varius congue, orci urna rutrum 
+                    magna, in porttitor tellus ante nec quam. Praesent non ante commodo, ornare tellus 
+                    ut, commodo dolor.</p>
+        </div>
+        <fieldset>
+            <legend>Υπάρχον εξοπλισμός</legend>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Χώρος</th>
+                            <th>Τύπος</th>
+                            <th>Πλήθος</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for asset in assets %}
+                        <tr>
+                            <td>{{ asset.labName }}</td>
+                            <td>{{ asset.typeName }}</td>
+                            <td>{{ asset.quantity }}</td>
+                        </tr>
+                    {% else %} 
+                        <tr>
+                            <td colspan="6" class="text-center">Δεν έχει καταχωρηθεί εξοπλισμός</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Νέος εξοπλισμός</legend>
+            <div class="form-group" id="items-list">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>Χώρος</th>
+                                <th>Τύπος</th>
+                                <th>Πλήθος</th>
+                                <th>Αιτιολογία χρήσης</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-right">
+                                    <button type="button" class="btn btn-sm btn-primary add-row">
+                                        <i class="fa fa-plus"></i>
+                                        Προσθήκη εξοπλισμού
+                                    </button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Επιπλέον</legend>
+            {{ macros.select('for', 'Αίτημα του σχολείου για', for_choices) }}
+            {{ macros.yesno('new-lab-perspective', 'Ύπαρξη - προοπτική αίθουσας για δημιουργία νέου εργαστηρίου')}}
+            {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', '') }}
+
+        </fieldset>
+        <hr>
+        <div class="form-group text-center">
+            <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
+        </div>
+    </form>
+    <script type="text/template" id="app-form-item-row-template">
+        <td>{{ macros.itemSelect('lab', 'Χώρος', lab_choices) }}</td>
+        <td>{{ macros.itemSelect('type', 'Τύπος', type_choices) }}</td>
+        <td>{{ macros.itemCount('count', 'Πλήθος') }}</td>
+        <td><textarea class="form-control input-sm" rows="1" cols="20" name="items[<%= index %>][comments]" placeholder="Αιτιολογία χρήσης"></textarea></td>
+        <td><button type="button" class="btn btn-xs text-danger remove-row">
+            <i class="fa fa-remove"></i>
+        </button</td>
+    </script>
+</div>
+{% endblock %}
+
+{% block inlinejs %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"></script>
+    <script src="{{ base_url }}/js/app-form/index.js"></script>
+{% endblock %}
