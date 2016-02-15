@@ -29,16 +29,7 @@ class Staff
         $staff = $this->staffservice->getTeachersBySchoolId(1);
 
         return $this->view->render($res, 'schools/staff.twig', [
-            'staff'     => array_map(function ($employee) {
-                return array_merge($employee->export(), [
-                    'branch' => $employee->branch->name,
-                ]);
-            }, $staff),
-            'positions' => [
-                ['value' => 1, 'label' => 'Εκπαδευτικός'],
-                ['value' => 2, 'label' => 'Διευθυντής σχολείου'],
-                ['value' => 3, 'label' => 'Υπεύθυνος εργαστηρίου'],
-            ],
+            'staff'     => $staff,
             'branches' => array_map(function ($branch) {
                 return ['value' => $branch['id'], 'label' => $branch['name']];
             }, $this->staffservice->getBranches()),

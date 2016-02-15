@@ -14,6 +14,23 @@
 </div>
 {% endmacro %}
 
+{% macro checkbox(name, label, checked, attributes) %}
+<div class="form-group">
+    <div class="col-xs-12 col-sm-12 col-md-9 col-md-offset-3">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="{{ name}}" id="el-{{ name }}"
+                    {% if checked %} checked{% endif %} 
+                        {% for attr_name, attr_value in attributes|default({}) %}
+                        {{ attr_name }}="{{ attr_value }}"
+                    {% endfor %}>
+                {{ label|raw }}
+            </label>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
 {% macro file(name, label, value, attributes) %}
 <div class="form-group">
     <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>

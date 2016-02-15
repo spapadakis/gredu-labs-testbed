@@ -13,14 +13,18 @@ use RedBeanPHP\R;
 
 class StaffService implements StaffServiceInterface
 {
-    protected $schoolService;
-    public function __construct(SchoolServiceInterface $schoolService)
+    private $filter;
+
+    public function __construct(callable $filter)
     {
-        $this->schoolService = $schoolService;
+        $this->filter = $filter;
     }
 
     public function createTeacher(array $data)
     {
+        $data = call_user_func($this->filter, $data, true);
+        var_dump($data);
+        die();
         unset($data['id']);
         $teacher  = R::dispense('teacher');
         $required = ['school_id', 'name','email', 'surname', 'telephone',
@@ -40,34 +44,52 @@ class StaffService implements StaffServiceInterface
 
     public function updateTeacher(array $data, $id)
     {
-        $teacher = R::load('teacher', $id);
-        foreach ($data as $key => $value) {
-            $teacher[$key] = $value;
-        }
-        $id = R::store($teacher);
+        try {
+            $teacher = R::load('teacher', $id);
+            foreach ($data as $key => $value) {
+                $teacher[$key] = $value;
+            }
+            $id = R::store($teacher);
 
-        return $id;
+            return $id;
+        } catch (\Exception $e) {
+
+        }
     }
 
     public function getTeacherById($id)
     {
         $teacher = R::load('teacher', $id);
 
-        return $teacher;
+        return $this->export($teacher);
     }
 
     public function getTeachersBySchoolId($id)
     {
-        $school   = $this->schoolService->getSchool($id);
-        $teachers = $school->ownTeacher;
+        $teachers = R::findAll('teacher', 'school_id = ?', [$id]);
 
-        return $teachers;
+        return array_map([$this, 'export'], $teachers);
     }
 
     public function getBranches()
     {
         return array_map(function ($branch) {
             return $branch->export();
-        }, R::find('branch', 'ORDER BY name ASC'));
+        }, R::findAll('branch', 'ORDER BY name ASC'));
+    }
+
+    private function export($teacherBean)
+    {
+        $position = [];
+        if ($teacherBean->is_principle) {
+            $position[] = 'Διευθυντής';
+        }
+        if ($teacherBean->is_responsible) {
+            $position[] = 'Υπεύθυνος εργαστηρίου';
+        }
+        return array_merge($teacherBean->export(), [
+            'branch' => $teacherBean->branch->name,
+            'position' => implode(', ', $position),
+        ]);
     }
 }

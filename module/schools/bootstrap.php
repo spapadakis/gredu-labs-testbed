@@ -60,7 +60,7 @@ return function (Slim\App $app) {
 
         $container['staffservice'] = function ($c) {
             return new GrEduLabs\Schools\Service\StaffService(
-                $c->get('schoolservice')
+                new GrEduLabs\Schools\Filter\Teacher()
             );
         };
 

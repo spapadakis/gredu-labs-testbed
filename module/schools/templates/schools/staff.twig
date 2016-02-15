@@ -39,12 +39,12 @@
                             <a href="mailto:{{ employee.email }}">{{ employee.email }}</a>
                         </td>
                         <td class="branch">{{ employee.branch }}</td>
-                        <td class="positionLabel">{{ employee.positionLabel }}</td>
+                        <td class="position">{{ employee.position }}</td>
                     </tr>
                     {% else %}
                     <tr>
                         <td colspan="6" class="text-center text-muted no-records">
-                            Δεν έχει καταχωρηθεί προσωπικό.
+                            Δεν έχουν καταχωρηθεί εκπαιδευτικοί.
                         </td>
                     </tr>
                 {% endfor %}
@@ -72,7 +72,8 @@
                         {{ macros.input('telephone', 'Τηλέφωνο','', 'tel', {'required': ''}) }}
                         {{ macros.input('email', 'Email','', 'email', {'required': ''}) }}
                         {{ macros.select('branch_id', 'Ειδικότητα', branches, '', {'required': ''}) }}
-                        {{ macros.select('position', 'Θέση', positions, '', {'multiple': '', 'required': ''}) }}
+                        {{ macros.checkbox('is_principle', 'Διευθυντής') }}
+                        {{ macros.checkbox('is_responsible', 'Υπεύθυνος εργαστηρίου') }}
                         <input type="hidden" name="id" value="">
                     </div>
                     <div class="modal-footer">
