@@ -1,5 +1,0 @@
-<?php return [
-    'inventory' => [
-        'base_uri' => '',
-    ],
-];

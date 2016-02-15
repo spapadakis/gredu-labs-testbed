@@ -1,4 +1,0 @@
-<?php return [
-    'determineRouteBeforeAppMiddleware' => false,
-    'displayErrorDetails'               => false,
-];
