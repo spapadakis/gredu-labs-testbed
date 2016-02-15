@@ -25,16 +25,22 @@ return function (Slim\App $app) {
             );
         };
 
-        $container[GrEduLabs\Schools\Action\Staff::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Staff(
+        $container[GrEduLabs\Schools\Action\Staff\ListAll::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Staff\ListAll(
                 $c->get('view'),
-                $c->get('staffservice')
+                $c->get(GrEduLabs\Schools\Service\StaffService::class)
             );
         };
 
-        $container[GrEduLabs\Schools\Action\StaffCreate::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\StaffCreate(
-                $c->get('staffservice')
+        $container[GrEduLabs\Schools\Action\Staff\PersistTeacher::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Staff\PersistTeacher(
+                $c->get(GrEduLabs\Schools\Service\StaffService::class)
+            );
+        };
+
+        $container[GrEduLabs\Schools\Action\Staff\DeleteTeacher::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Staff\DeleteTeacher(
+                $c->get(GrEduLabs\Schools\Service\StaffService::class)
             );
         };
 
@@ -58,9 +64,17 @@ return function (Slim\App $app) {
             return new GrEduLabs\Schools\Service\SchoolService();
         };
 
-        $container['staffservice'] = function ($c) {
-            return new GrEduLabs\Schools\Service\StaffService(
-                new GrEduLabs\Schools\Filter\Teacher()
+        $container[GrEduLabs\Schools\InputFilter\Teacher::class] = function ($c) {
+            return new GrEduLabs\Schools\InputFilter\Teacher();
+        };
+
+        $container[GrEduLabs\Schools\Service\StaffService::class] = function ($c) {
+            return new GrEduLabs\Schools\Service\StaffService();
+        };
+
+        $container[GrEduLabs\Schools\Middleware\InputFilterTeacher::class] = function ($c) {
+            return new GrEduLabs\Schools\Middleware\InputFilterTeacher(
+                $c->get(GrEduLabs\Schools\InputFilter\Teacher::class)
             );
         };
 
@@ -89,8 +103,13 @@ return function (Slim\App $app) {
 
         $app->group('/school', function () {
             $this->get('', GrEduLabs\Schools\Action\Index::class)->setName('school');
-            $this->get('/staff', GrEduLabs\Schools\Action\Staff::class)->setName('school.staff');
-            $this->post('/staff', GrEduLabs\Schools\Action\StaffCreate::class)->setName('school.staffcreate');
+            $this->get('/staff', GrEduLabs\Schools\Action\Staff\ListAll::class)->setName('school.staff');
+            $this->post('/staff', GrEduLabs\Schools\Action\Staff\PersistTeacher::class)
+                ->add(GrEduLabs\Schools\Middleware\InputFilterTeacher::class)
+                ->setName('school.staffcreate');
+            $this->delete('/staff/{id:[1-9][0-9]*}', GrEduLabs\Schools\Action\Staff\DeleteTeacher::class)
+                ->setName('school.staffdelete');
+
             $this->get('/labs', GrEduLabs\Schools\Action\Labs::class)->setName('school.labs');
             $this->post('/labs', GrEduLabs\Schools\Action\LabCreate::class)->setName('school.labcreate');
             $this->get('/assets', GrEduLabs\Schools\Action\Assets::class)->setName('school.assets');

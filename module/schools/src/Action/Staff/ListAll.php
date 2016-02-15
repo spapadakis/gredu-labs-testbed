@@ -8,31 +8,37 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
-namespace GrEduLabs\Schools\Action;
+namespace GrEduLabs\Schools\Action\Staff;
 
+use GrEduLabs\Schools\Service\StaffServiceInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
 
-class Staff
+class ListAll
 {
-    protected $view;
+    private $view;
+    private $staffService;
 
-    public function __construct(Twig $view, $staffservice)
+    public function __construct(Twig $view, StaffServiceInterface $staffService)
     {
         $this->view         = $view;
-        $this->staffservice = $staffservice;
+        $this->staffService = $staffService;
     }
 
     public function __invoke(Request $req, Response $res, array $args = [])
     {
-        $staff = $this->staffservice->getTeachersBySchoolId(1);
+        $school = $req->getAttribute('school', false);
+        if (!$school) {
+            return $res->withStatus(403, 'No school');
+        }
+        $staff = $this->staffService->getTeachersBySchoolId($school->id);
 
         return $this->view->render($res, 'schools/staff.twig', [
             'staff'     => $staff,
-            'branches' => array_map(function ($branch) {
+            'branches'  => array_map(function ($branch) {
                 return ['value' => $branch['id'], 'label' => $branch['name']];
-            }, $this->staffservice->getBranches()),
+            }, $this->staffService->getBranches()),
         ]);
     }
 }

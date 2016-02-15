@@ -18,12 +18,12 @@
 <div class="form-group">
     <div class="col-xs-12 col-sm-12 col-md-9 col-md-offset-3">
         <div class="checkbox">
-            <label>
-                <input type="checkbox" name="{{ name}}" id="el-{{ name }}"
-                    {% if checked %} checked{% endif %} 
-                        {% for attr_name, attr_value in attributes|default({}) %}
+            <label for="el-{{ name }}">
+                <input type="checkbox" name="{{ name }}" id="el-{{ name }}" 
+                    {% for attr_name, attr_value in attributes|default({}) %}
                         {{ attr_name }}="{{ attr_value }}"
-                    {% endfor %}>
+                    {% endfor %}
+                    {% if checked %} checked{% endif %} value="asdasdasd">
                 {{ label|raw }}
             </label>
         </div>

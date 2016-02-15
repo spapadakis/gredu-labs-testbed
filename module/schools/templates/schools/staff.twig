@@ -8,7 +8,7 @@
 
 {% block navItems %}
     <li role="presentation" class="pull-right">
-        <a href="#" class="btn btn-primary btn-add-employee" title="Καταχώρηση εκπαιδευτικού">
+        <a href="#" class="btn btn-primary btn-add-teacher" title="Καταχώρηση εκπαιδευτικού">
             <i class="visible-xs fa fa-plus"></i>
             <span class="hidden-xs">Καταχώρηση εκπαιδευτικού</span>
         </a>
@@ -30,16 +30,16 @@
                 </tr>
             </thead>
             <tbody>
-                {% for employee in staff %}
-                    <tr data-employee="{{ employee|json_encode }}" data-id="{{ employee.id }}">
-                        <td class="name">{{ employee.name }}</td>
-                        <td class="surname">{{ employee.surname }}</td>
-                        <td class="telephone">{{ employee.telephone }}</td>
+                {% for teacher in staff %}
+                    <tr data-teacher="{{ teacher|json_encode }}" data-id="{{ teacher.id }}">
+                        <td class="name">{{ teacher.name }}</td>
+                        <td class="surname">{{ teacher.surname }}</td>
+                        <td class="telephone">{{ teacher.telephone }}</td>
                         <td class="email">
-                            <a href="mailto:{{ employee.email }}">{{ employee.email }}</a>
+                            <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
                         </td>
-                        <td class="branch">{{ employee.branch }}</td>
-                        <td class="position">{{ employee.position }}</td>
+                        <td class="branch">{{ teacher.branch }}</td>
+                        <td class="position">{{ teacher.position }}</td>
                     </tr>
                     {% else %}
                     <tr>
@@ -56,8 +56,8 @@
             </tfoot>
         </table>
     </div>
-    <div class="modal fade" id="employee-form-modal" tabindex="-1" role="dialog" aria-labelledby="employee-from">
-        <form class="form-horizontal">
+    <div class="modal fade" id="teacher-form-modal" tabindex="-1" role="dialog" aria-labelledby="teacher-from">
+        <form class="form-horizontal" data-url="{{ path_for('school.staff') }}">
             <div class="modal-dialog" role="form">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -77,6 +77,7 @@
                         <input type="hidden" name="id" value="">
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-danger pull-left remove">Διαγραφή</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Κλείσιμο</button>
                         <button type="submit" class="btn btn-primary">Αποθήκευση</button>
                     </div>
@@ -85,15 +86,15 @@
         </form>
     </div>
 
-    <script type="text/template" id="employee-row">
-        <td class="name"><%= employee.name %></td>
-        <td class="surname"><%= employee.surname %></td>
-        <td class="telephone"><%= employee.telephone %></td>
+    <script type="text/template" id="teacher-row">
+        <td class="name"><%= teacher.name %></td>
+        <td class="surname"><%= teacher.surname %></td>
+        <td class="telephone"><%= teacher.telephone %></td>
         <td class="email">
-            <a href="mailto:<%= employee.email %>"><%= employee.email %></a>
+            <a href="mailto:<%= teacher.email %>"><%= teacher.email %></a>
         </td>
-        <td class="branch"><%= employee.branch %></td>
-        <td class="positionLabel"><%= employee.positionLabel %></td>
+        <td class="branch"><%= teacher.branch %></td>
+        <td class="positionLabel"><%= teacher.position %></td>
     </script>
 
 </div>

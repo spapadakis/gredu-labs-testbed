@@ -16,4 +16,5 @@ interface StaffServiceInterface
     public function getTeachersBySchoolId($id);
     public function updateTeacher(array $data, $id);
     public function getBranches();
+    public function removeTeacher($id);
 }

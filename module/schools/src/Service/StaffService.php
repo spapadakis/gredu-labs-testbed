@@ -13,48 +13,38 @@ use RedBeanPHP\R;
 
 class StaffService implements StaffServiceInterface
 {
-    private $filter;
-
-    public function __construct(callable $filter)
-    {
-        $this->filter = $filter;
-    }
-
     public function createTeacher(array $data)
     {
-        $data = call_user_func($this->filter, $data, true);
-        var_dump($data);
-        die();
         unset($data['id']);
-        $teacher  = R::dispense('teacher');
-        $required = ['school_id', 'name','email', 'surname', 'telephone',
-                     'position', 'branch_id', ];
+        $teacher = R::dispense('teacher');
+        $this->persist($teacher, $data);
 
-        foreach ($required as $value) {
-            if (array_key_exists($value, $data)) {
-                $teacher[$value] = $data[$value];
-            } else {
-                return -1;
-            }
-        }
-        $id = R::store($teacher);
-
-        return $id;
+        return $this->export($teacher);
     }
 
     public function updateTeacher(array $data, $id)
     {
-        try {
-            $teacher = R::load('teacher', $id);
-            foreach ($data as $key => $value) {
-                $teacher[$key] = $value;
-            }
-            $id = R::store($teacher);
-
-            return $id;
-        } catch (\Exception $e) {
-
+        $teacher = R::load('teacher', $id);
+        if (!$teacher->id) {
+            throw new \InvalidArgumentException('No teacher found');
         }
+        $this->persist($teacher, $data);
+
+        return $this->export($teacher);
+    }
+
+    private function persist($teacher, array $data)
+    {
+        $teacher->school_id      = $data['school_id'];
+        $teacher->name           = $data['name'];
+        $teacher->surname        = $data['surname'];
+        $teacher->telephone      = $data['telephone'];
+        $teacher->email          = $data['email'];
+        $teacher->branch_id      = $data['branch_id'];
+        $teacher->is_principle   = isset($data['is_principle']);
+        $teacher->is_responsible = isset($data['is_responsible']);
+
+        R::store($teacher);
     }
 
     public function getTeacherById($id)
@@ -78,6 +68,11 @@ class StaffService implements StaffServiceInterface
         }, R::findAll('branch', 'ORDER BY name ASC'));
     }
 
+    public function removeTeacher($id)
+    {
+        R::trash('teacher', $id);
+    }
+
     private function export($teacherBean)
     {
         $position = [];
@@ -87,8 +82,9 @@ class StaffService implements StaffServiceInterface
         if ($teacherBean->is_responsible) {
             $position[] = 'Υπεύθυνος εργαστηρίου';
         }
+
         return array_merge($teacherBean->export(), [
-            'branch' => $teacherBean->branch->name,
+            'branch'   => $teacherBean->branch->name,
             'position' => implode(', ', $position),
         ]);
     }

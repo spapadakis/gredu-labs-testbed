@@ -178,6 +178,26 @@ INSERT INTO `schooltype` VALUES (1,'ΝΗΠΙΑΓΩΓΕΙΟ',1),(2,'ΔΗΜΟΤΙ�
 /*!40000 ALTER TABLE `schooltype` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS `teacher`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `teacher` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `school_id` int(11) unsigned NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `surname` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `telephone` int(11) unsigned NOT NULL,
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `branch_id` int(11) unsigned NOT NULL,
+  `is_principle` tinyint(1) unsigned DEFAULT '0',
+  `is_responsible` tinyint(1) unsigned DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `index_foreignkey_teacher_school` (`school_id`),
+  KEY `index_foreignkey_teacher_branch` (`branch_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
