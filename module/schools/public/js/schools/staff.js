@@ -69,6 +69,7 @@
             return this;
         },
         renderEmployee: function (teacher) {
+            this.$el.find('tbody tr.no-records').remove();
             this.$el.find('tbody').append(new StaffRow({
                 model: teacher
             }).render().el);

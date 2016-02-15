@@ -9,7 +9,7 @@
 
 return [
     'assets' => [
-        'web_dir'    => 'public',
+        'web_dir'    => __DIR__ . '/../../public',
         'paths'      => [
             'module/schools/public',
         ],
