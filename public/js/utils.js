@@ -7,6 +7,13 @@
     window.EDULABS.utils.parseInt = function (str) {
         return parseInt(str, 10);
     };
+    
+    window.EDULABS.utils.serializeObject = function (form) {
+        return _.reduce(form.serializeArray(), function (hash, pair) {
+            hash[pair.name] = pair.value;
+            return hash;
+        }, {});
+    };
 
     window.EDULABS.utils.formMessages = {
         render: function (form, messages) {

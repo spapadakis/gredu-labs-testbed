@@ -18,6 +18,9 @@ return function (Slim\App $app) {
     });
 
     $events('on', 'app.services', function ($stop, $container) {
+
+        // actions
+
         $container[GrEduLabs\Schools\Action\Index::class] = function ($c) {
             return new GrEduLabs\Schools\Action\Index(
                  $c->get('view'),
@@ -28,19 +31,19 @@ return function (Slim\App $app) {
         $container[GrEduLabs\Schools\Action\Staff\ListAll::class] = function ($c) {
             return new GrEduLabs\Schools\Action\Staff\ListAll(
                 $c->get('view'),
-                $c->get(GrEduLabs\Schools\Service\StaffService::class)
+                $c->get(GrEduLabs\Schools\Service\StaffServiceInterface::class)
             );
         };
 
         $container[GrEduLabs\Schools\Action\Staff\PersistTeacher::class] = function ($c) {
             return new GrEduLabs\Schools\Action\Staff\PersistTeacher(
-                $c->get(GrEduLabs\Schools\Service\StaffService::class)
+                $c->get(GrEduLabs\Schools\Service\StaffServiceInterface::class)
             );
         };
 
         $container[GrEduLabs\Schools\Action\Staff\DeleteTeacher::class] = function ($c) {
             return new GrEduLabs\Schools\Action\Staff\DeleteTeacher(
-                $c->get(GrEduLabs\Schools\Service\StaffService::class)
+                $c->get(GrEduLabs\Schools\Service\StaffServiceInterface::class)
             );
         };
 
@@ -56,21 +59,65 @@ return function (Slim\App $app) {
             );
         };
 
-        $container[GrEduLabs\Schools\Action\Assets::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Assets($c->get('view'));
+        $container[GrEduLabs\Schools\Action\Assets\ListAssets::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Assets\ListAssets(
+                $c->get('view'),
+                $c->get(GrEduLabs\Schools\Service\AssetServiceInterface::class),
+                $c->get(GrEduLabs\Schools\Service\SchoolAssetsInterface::class),
+                $c->get(GrEduLabs\Schools\Service\LabServiceInterface::class)
+            );
         };
 
+        $container[GrEduLabs\Schools\Action\Assets\PersistAsset::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Assets\PersistAsset(
+                $c->get(GrEduLabs\Schools\Service\SchoolAssetsInterface::class)
+            );
+        };
+
+        $container[GrEduLabs\Schools\Action\Assets\DeleteAsset::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Assets\DeleteAsset(
+                $c->get(GrEduLabs\Schools\Service\SchoolAssetsInterface::class)
+            );
+        };
+
+        // services
+
         $container['schoolservice'] = function ($c) {
+            return $c->get(GrEduLabs\Schools\Service\SchoolServiceInterface::class);
+        };
+
+        $container['staffservice'] = function ($c) {
+            return $c->get(GrEduLabs\Schools\Service\StaffServiceInterface::class);
+        };
+
+        $container['labservice'] = function ($c) {
+            return $c->get(GrEduLabs\Schools\Service\LabServiceInterface::class);
+        };
+
+        $container[GrEduLabs\Schools\Service\SchoolServiceInterface::class] = function ($c) {
             return new GrEduLabs\Schools\Service\SchoolService();
         };
 
-        $container[GrEduLabs\Schools\InputFilter\Teacher::class] = function ($c) {
-            return new GrEduLabs\Schools\InputFilter\Teacher();
-        };
-
-        $container[GrEduLabs\Schools\Service\StaffService::class] = function ($c) {
+        $container[GrEduLabs\Schools\Service\StaffServiceInterface::class] = function ($c) {
             return new GrEduLabs\Schools\Service\StaffService();
         };
+
+        $container[GrEduLabs\Schools\Service\LabServiceInterface::class] = function ($c) {
+            return new GrEduLabs\Schools\Service\LabService(
+                $c->get(GrEduLabs\Schools\Service\SchoolServiceInterface::class),
+                $c->get(GrEduLabs\Schools\Service\StaffServiceInterface::class)
+            );
+        };
+
+        $container[GrEduLabs\Schools\Service\AssetServiceInterface::class] = function ($c) {
+            return new GrEduLabs\Schools\Service\AssetService();
+        };
+
+        $container[GrEduLabs\Schools\Service\SchoolAssetsInterface::class] = function ($c) {
+            return $c->get(GrEduLabs\Schools\Service\AssetServiceInterface::class);
+        };
+
+        // middleware 
 
         $container[GrEduLabs\Schools\Middleware\InputFilterTeacher::class] = function ($c) {
             return new GrEduLabs\Schools\Middleware\InputFilterTeacher(
@@ -78,22 +125,27 @@ return function (Slim\App $app) {
             );
         };
 
-        $container['labservice'] = function ($c) {
-            return new GrEduLabs\Schools\Service\LabService(
-                $c->get('schoolservice'),
-                $c->get('staffservice')
-            );
-        };
-
-        $container['assetservice'] = function ($c) {
-            return new GrEduLabs\Schools\Service\AssetService(
-                $c->get('schoolservice'),
-                $c->get('labservice')
+        $container[GrEduLabs\Schools\Middleware\InputFilterSchoolAsset::class] = function ($c) {
+            return new GrEduLabs\Schools\Middleware\InputFilterSchoolAsset(
+                $c->get(GrEduLabs\Schools\InputFilter\SchoolAsset::class)
             );
         };
 
         $container[GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity::class] = function ($c) {
             return new GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity($c['authentication_service']);
+        };
+
+        // inputfilters
+
+        $container[GrEduLabs\Schools\InputFilter\Teacher::class] = function ($c) {
+            return new GrEduLabs\Schools\InputFilter\Teacher();
+        };
+
+        $container[GrEduLabs\Schools\InputFilter\SchoolAsset::class] = function ($c) {
+            return new GrEduLabs\Schools\InputFilter\SchoolAsset(
+                $c->get(GrEduLabs\Schools\Service\LabServiceInterface::class),
+                $c->get(GrEduLabs\Schools\Service\AssetServiceInterface::class)
+            );
         };
 
     });
@@ -102,7 +154,9 @@ return function (Slim\App $app) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
 
         $app->group('/school', function () {
+
             $this->get('', GrEduLabs\Schools\Action\Index::class)->setName('school');
+
             $this->get('/staff', GrEduLabs\Schools\Action\Staff\ListAll::class)->setName('school.staff');
             $this->post('/staff', GrEduLabs\Schools\Action\Staff\PersistTeacher::class)
                 ->add(GrEduLabs\Schools\Middleware\InputFilterTeacher::class)
@@ -112,7 +166,12 @@ return function (Slim\App $app) {
 
             $this->get('/labs', GrEduLabs\Schools\Action\Labs::class)->setName('school.labs');
             $this->post('/labs', GrEduLabs\Schools\Action\LabCreate::class)->setName('school.labcreate');
-            $this->get('/assets', GrEduLabs\Schools\Action\Assets::class)->setName('school.assets');
+
+            $this->get('/assets', GrEduLabs\Schools\Action\Assets\ListAssets::class)->setName('school.assets');
+            $this->post('/assets', GrEduLabs\Schools\Action\Assets\PersistAsset::class)
+                ->add(GrEduLabs\Schools\Middleware\InputFilterSchoolAsset::class);
+            $this->delete('/assets', GrEduLabs\Schools\Action\Assets\DeleteAsset::class);
+
         })->add(GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity::class);
     });
 };

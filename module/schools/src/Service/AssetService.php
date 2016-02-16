@@ -9,93 +9,157 @@
 
 namespace GrEduLabs\Schools\Service;
 
+use InvalidArgumentException;
 use RedBeanPHP\R;
 
-class AssetService implements AssetServiceInterface
+class AssetService implements AssetServiceInterface, SchoolAssetsInterface
 {
-    protected $schoolService;
-    protected $labService;
+    public function changeItemCategoryName($id, $name)
+    {
+        $category = R::load('itemcategory', $id);
+        if (!$category->id) {
+            throw new InvalidArgumentException('No itemcategory found');
+        }
+        $category->name = $name;
+        R::store($category);
 
-    public function __construct(
-        SchoolServiceInterface $schoolservice,
-        LabService $labservice
-    ) {
-        $this->schoolservice = $schoolservice;
-        $this->labservice    = $labservice;
+        return $category;
+    }
+
+    public function createExistingItem(array $data)
+    {
+        /// ???
     }
 
     public function createItemCategory($name)
     {
-        $item_category       = R::dispense('itemcategory');
-        $item_category->name = $name;
-        $id                  = R::store($item_category);
+        $category       = R::dispense('itemcategory');
+        $category->name = $name;
+        $id             = R::store($category);
 
-        return $id;
+        return $this->exportItemCategory($category);
     }
-    public function getAllItemCategories()
-    {
-        $categories = R::findAll('itemcategory');
 
-        return $categories;
-    }
-    public function getItemCategoryByName($name)
-    {
-        $cat = R::findOne('itemcategory', 'name = ?', [$name]);
-
-        return $cat;
-    }
-    public function getItemCategoryById($id)
-    {
-        $cat = R::load('itemcategory', $id);
-
-        return $cat;
-    }
-    //Software Category Actions
     public function createSoftwareCategory(array $data)
     {
-        $soft_category               = R::dispense('softwarecategory');
-        $soft_category->name         = $data['name'];
-        $soft_category->manufacturer = $data['manufacturer'];
-        $soft_category->website      = $data['website'];
-        $id                          = R::store($soft_category);
-
-        return $id;
     }
+
+    public function findItemCategoryByName($name)
+    {
+        $category = R::findOne('itemcategory', 'name = ?', [$name]);
+        if ($category) {
+            return $this->exportItemCategory($category);
+        }
+
+        return;
+    }
+
+    public function findSoftwareCategoryByName($name)
+    {
+    }
+
+    public function getAllItemCategories()
+    {
+        return array_values(array_map(
+            [$this, 'exportItemCategory'],
+            R::findAll('itemcategory', ' ORDER BY name ASC ')
+        ));
+    }
+
     public function getAllSoftwareCategories()
     {
-        $categories = R::findAll('softwarecategory');
-
-        return $categories;
     }
-    public function getSoftwareCategoryByName($name)
+
+    public function getItemCategoryById($id)
     {
-        $cat = R::findOne('softwarecategory', 'name = ?', [$name]);
+        $category = R::load('itemcategory', $id);
+        if (!$category->id) {
+            throw new InvalidArgumentException('Invalid itemcategory id');
+        }
 
-        return $cat;
+        return $this->exportItemCategory($category);
     }
+
     public function getSoftwareCategoryById($id)
     {
-        $cat = R::load('softwarecategory', $id);
-
-        return $cat;
     }
-    //Existing Item Actions
-    public function createExistingItem(array $data)
+
+    public function updateSoftwareCategory($id, array $data)
     {
-        $required = ['location', 'category', 'description', 'qty', 'lab', 'purchasedate' ];
-        $item     = R::dispense('existingitem');
-        foreach ($required as $value) {
-            if (array_key_exists($value, $data)) {
-                $item[$value] = data[$value];
-            } else {
-                return -1;
-            }
-            if (array_key_exists('comments', $data)) {
-                $item['comments'] = $data['comments'];
-            } else {
-                $item['comments'] = '';
-            }
-            R::store($item);
+    }
+
+    public function getAssetsForSchool($school_id, array $filters = [])
+    {
+        $sql      = [' school_id = ? '];
+        $bindings = [(int) $school_id];
+
+        if (isset($filters['itemcategory_id'])) {
+            $sql[]      = ' itemcategory_id = ? ';
+            $bindings[] = (int) $filters['itemcategory_id'];
         }
+
+        if (isset($filters['lab_id'])) {
+            $sql[]      = ' lab_id = ? ';
+            $bindings[] = (int) $filters['lab_id'];
+        }
+
+        $assets = R::findAll('schoolasset', implode(' AND ', $sql), $bindings);
+
+        return array_values(array_map([$this, 'exportSchoolAsset'], $assets));
+    }
+
+    public function addAssetForSchool($school_id, array $assetData)
+    {
+        $asset = $this->importSchoolAsset(R::dispense('schoolasset'), $assetData, $school_id);
+        R::store($asset);
+
+        return $this->exportSchoolAsset($asset);
+    }
+
+    public function updateAssetForSchool($school_id, array $assetData, $assetId)
+    {
+        $asset = R::findOne('schoolasset', ' id = ? AND school_id = ? ', [$assetId, $school_id]);
+        if (!$asset) {
+            throw new InvalidArgumentException('No school asset found');
+        }
+
+        $asset = $this->importSchoolAsset($asset, $assetData, $school_id);
+        R::store($asset);
+
+        return $this->exportSchoolAsset($asset);
+    }
+
+    public function removeAssetFromSchool($school_id, $assetId)
+    {
+        $asset = R::findOne('schoolasset', ' id = ? AND school_id = ? ', [$assetId, $school_id]);
+        if (!$asset) {
+            throw new InvalidArgumentException('No school asset found');
+        }
+        R::trash($asset);
+    }
+
+    private function exportItemCategory($bean)
+    {
+        return $bean->export();
+    }
+
+    private function exportSchoolAsset($bean)
+    {
+        return array_merge($bean->export(), [
+            'lab'          => $bean->lab->name,
+            'itemcategory' => $bean->itemcategory->name,
+        ]);
+    }
+
+    private function importSchoolAsset($bean, array $data, $school_id)
+    {
+        $bean->itemcategory_id  = (int) $data['itemcategory_id'];
+        $bean->school_id        = (int) $school_id;
+        $bean->qty              = (int) $data['qty'];
+        $bean->lab_id           = (int) $data['lab_id'];
+        $bean->acquisition_year = $data['acquisition_year'];
+        $bean->comments         = $data['comments'];
+
+        return $bean;
     }
 }

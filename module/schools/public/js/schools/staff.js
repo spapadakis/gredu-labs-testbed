@@ -84,7 +84,7 @@
         url: null,
         events: {
             'submit form': 'persistTeacher',
-            'click button.remove': 'removeTeacher',
+            'click button.remove': 'removeTeacher'
         },
         initialize: function () {
             var that = this;
@@ -99,9 +99,13 @@
         render: function (teacherId) {
             var teacherAttributes;
             if (!teacherId) {
-                this.$el.find('.modal-footer button.remove').addClass('hidden');
+                this.$el.find('.modal-footer button.remove')
+                    .prop('disabled', true)
+                    .addClass('hidden');
             } else {
-                this.$el.find('.modal-footer button.remove').removeClass('hidden');
+                this.$el.find('.modal-footer button.remove')
+                    .prop('disabled', false)
+                    .removeClass('hidden');
             }
             this.teacher = teacherId && this.model.get(teacherId) || null;
             teacherAttributes = this.teacher && this.teacher.attributes || {};
@@ -115,18 +119,19 @@
                 }
             });
             this.show();
+            
+            return this;
         },
         show: function () {
             this.$el.modal('show');
+            return this;
         },
         hide: function () {
             this.$el.modal('hide');
+            return this;
         },
         persistTeacher: function (evt) {
-            var data = _.reduce(this.form.serializeArray(), function (hash, pair) {
-                hash[pair.name] = pair.value;
-                return hash;
-            }, {});
+            var data = utils.serializeObject(this.form);
             var that = this;
             evt.preventDefault();
             $.ajax({

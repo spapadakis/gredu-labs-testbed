@@ -15,7 +15,7 @@ return [
                 ['/school/labs', ['school'], ['get']],
                 ['/school/staff', ['school'], ['get', 'post']],
                 ['/school/staff/{id:[1-9][0-9]*}', ['school'], ['delete']],
-                ['/school/assets', ['school'], ['get']],
+                ['/school/assets', ['school'], ['get', 'post', 'delete']],
             ],
         ],
     ],

@@ -16,7 +16,7 @@ use Zend\Validator;
 
 class Teacher
 {
-    private $inputFilter;
+    use InputFilterTrait;
 
     public function __construct()
     {
@@ -78,17 +78,5 @@ class Teacher
             ->add($branch_id)
             ->add($is_principle)
             ->add($is_responsible);
-    }
-
-    public function __invoke(array $data)
-    {
-        $this->inputFilter->setData($data);
-        $isValid = $this->inputFilter->isValid();
-
-        return [
-            'is_valid' => $isValid,
-            'values'   => $isValid ? $this->inputFilter->getValues() : [],
-            'messages' => $this->inputFilter->getMessages(),
-        ];
     }
 }
