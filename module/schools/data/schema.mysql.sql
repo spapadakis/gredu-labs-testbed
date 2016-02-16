@@ -146,8 +146,26 @@ DROP TABLE IF EXISTS `school`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `school` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `registry_no` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(191) CHARACTER SET utf8mb4 NOT NULL,
+  `street_address` varchar(191) CHARACTER SET utf8mb4 NOT NULL,
+  `postal_code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone_number` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fax_number` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `municipality` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `schooltype_id` int(11) unsigned NOT NULL,
+  `prefecture_id` int(11) unsigned NOT NULL,
+  `educationlevel_id` int(11) unsigned NOT NULL,
+  `eduadmin_id` int(11) unsigned NOT NULL,
+  `created` int(11) unsigned NOT NULL,
+  `creator` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_foreignkey_school_schooltype` (`schooltype_id`),
+  KEY `index_foreignkey_school_prefecture` (`prefecture_id`),
+  KEY `index_foreignkey_school_educationlevel` (`educationlevel_id`),
+  KEY `index_foreignkey_school_eduadmin` (`eduadmin_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -231,7 +249,7 @@ DROP TABLE IF EXISTS `lab`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lab` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
