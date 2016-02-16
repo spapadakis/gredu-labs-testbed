@@ -29,7 +29,7 @@ class InputFilterTeacher
 
         if (!$result['is_valid']) {
             $res = $res->withStatus(422, 'validation error');
-            $res->withJson($result['messages']);
+            $res->withJson($result);
 
             return $res;
         }
