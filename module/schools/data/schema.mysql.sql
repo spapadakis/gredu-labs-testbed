@@ -146,8 +146,26 @@ DROP TABLE IF EXISTS `school`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `school` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `registry_no` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(191) CHARACTER SET utf8mb4 NOT NULL,
+  `street_address` varchar(191) CHARACTER SET utf8mb4 NOT NULL,
+  `postal_code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone_number` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fax_number` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `municipality` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `schooltype_id` int(11) unsigned NOT NULL,
+  `prefecture_id` int(11) unsigned NOT NULL,
+  `educationlevel_id` int(11) unsigned NOT NULL,
+  `eduadmin_id` int(11) unsigned NOT NULL,
+  `created` int(11) unsigned NOT NULL,
+  `creator` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_foreignkey_school_schooltype` (`schooltype_id`),
+  KEY `index_foreignkey_school_prefecture` (`prefecture_id`),
+  KEY `index_foreignkey_school_educationlevel` (`educationlevel_id`),
+  KEY `index_foreignkey_school_eduadmin` (`eduadmin_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -196,6 +214,69 @@ CREATE TABLE `teacher` (
   KEY `index_foreignkey_teacher_branch` (`branch_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `itemcategory`
+--
+
+DROP TABLE IF EXISTS `itemcategory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `itemcategory` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `itemcategory`
+--
+
+LOCK TABLES `itemcategory` WRITE;
+/*!40000 ALTER TABLE `itemcategory` DISABLE KEYS */;
+INSERT INTO `itemcategory` VALUES (8,'ACCESS POINT'),(26,'LAPTOP'),(7,'MEDIA CONVERTER'),(6,'MODEM / ROUTER '),(25,'MOTHERBOARD'),(5,'PATCH PANEL'),(4,'POWERLINE PLC'),(14,'PRINTER'),(3,'RACK'),(13,'SCANNER'),(24,'SERVER'),(12,'SPLITTER'),(2,'SWITCH/ HUB'),(23,'TABLET'),(1,'VOIP ADAPTER'),(11,'WEBCAM'),(22,'WORKSTATION'),(41,'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ'),(40,'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ'),(39,'ΔΙΑΔΡΑΣΤΙΚΟΣ ΠΙΝΑΚΑΣ'),(21,'ΕΞΩΤΕΡΙΚΟ ΜΕΣΟ ΑΠΟΘΗΚΕΥΣΗΣ'),(38,'ΕΠΕΞΕΡΓΑΣΤΗΣ (CPU)'),(20,'ΗΧΕΙΑ'),(10,'ΚΑΡΤΑ WIRELESS'),(37,'ΚΑΡΤΑ ΓΡΑΦΙΚΩΝ'),(36,'ΚΑΡΤΑ ΔΙΚΤΥΟΥ'),(35,'ΚΑΡΤΑ ΗΧΟΥ'),(9,'ΚΕΡΑΙΑ WIFI'),(34,'ΚΙΝΗΤΟ ΕΡΓΑΣΤΗΡΙΟ'),(33,'ΚΟΥΤΙ ΥΠΟΛΟΓΙΣΤΗ'),(19,'ΜΙΚΡΟΦΩΝΟ MULTIMEDIA'),(32,'ΜΝΗΜΗ RAM'),(31,'ΟΔΗΓΟΙ ΟΠΤΙΚΩΝ ΜΕΣΩΝ'),(30,'ΟΘΟΝΗ'),(18,'ΠΛΗΚΤΡΟΛΟΓΙΟ'),(17,'ΠΟΝΤΙΚΙ'),(29,'ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ'),(16,'ΣΤΑΘΕΡΟΠΟΙΗΤΕΣ ΤΑΣΗΣ & U.P.S'),(28,'ΣΥΣΤΗΜΑ ΤΗΛΕΔΙΑΣΚΕΨΗΣ'),(27,'ΤΡΟΦΟΔΟΤΙΚΟ'),(15,'ΨΗΦ. ΦΩΤΟΓΡΑΦΙΚΗ/ΒΙΝΤΕΟΚΑΜΕΡΑ');
+/*!40000 ALTER TABLE `itemcategory` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
+-- Table structure for table `lab`
+--
+
+DROP TABLE IF EXISTS `lab`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lab` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Table structure for table `schoolasset`
+--
+
+DROP TABLE IF EXISTS `schoolasset`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `schoolasset` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `itemcategory_id` int(11) unsigned NOT NULL,
+  `school_id` int(11) unsigned NOT NULL,
+  `qty` int(11) unsigned NOT NULL,
+  `lab_id` int(11) unsigned NOT NULL,
+  `acquisition_year` char(4) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `comments` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  KEY `index_foreignkey_schoolasset_itemcategory` (`itemcategory_id`),
+  KEY `index_foreignkey_schoolasset_school` (`school_id`),
+  KEY `index_foreignkey_schoolasset_lab` (`lab_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

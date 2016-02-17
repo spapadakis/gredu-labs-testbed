@@ -30,13 +30,13 @@
                 <tbody>
                 {% for asset in assets %}
                     <tr data-asset="{{ asset|json_encode }}" data-id="{{ asset.id }}">
-                        <td>{{ asset.typeName }}</td>
-                        <td>{{ asset.labName }}</td>
-                        <td>{{ asset.quantity }}</td>
-                        <td>{{ asset.acquisitionYear }}</td>
+                        <td>{{ asset.itemcategory }}</td>
+                        <td>{{ asset.lab }}</td>
+                        <td>{{ asset.qty }}</td>
+                        <td>{{ asset.acquisition_year }}</td>
                     </tr>
                 {% else %} 
-                    <tr>
+                    <tr class="no-records">
                         <td colspan="4" class="text-center">Δεν έχει καταχωρηθεί εξοπλισμός</td>
                     </tr>
                 {% endfor %}
@@ -49,7 +49,7 @@
             </table>
         </div>
         <div class="modal fade" id="asset-form-modal" tabindex="-1" role="dialog" aria-labelledby="asset-from">
-            <form class="form-horizontal">
+            <form class="form-horizontal" data-url="{{ path_for('school.assets') }}">
                 <div class="modal-dialog" role="form">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -59,14 +59,15 @@
                             <h4 class="modal-title">Στοιχεία εξοπλισμού</h4>
                         </div>
                         <div class="modal-body">
-                            {{ macros.select('type', 'Τύπος', types, '') }}
-                            {{ macros.select('lab', 'Χώρος', labs, '') }}
-                            {{ macros.input('quantity', 'Πλήθος', '', 'number') }}
-                            {{ macros.select_year('acquisitionYear', 'Έτος κτήσης') }}
+                            {{ macros.select('itemcategory_id', 'Τύπος', item_categories, '') }}
+                            {{ macros.select('lab_id', 'Χώρος', labs, '') }}
+                            {{ macros.input('qty', 'Πλήθος', '0', 'number') }}
+                            {{ macros.select_year('acquisition_year', 'Έτος κτήσης') }}
                             {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις') }}
                             <input type="hidden" name="id" value="">
                         </div>
                         <div class="modal-footer">
+                            <button type="button" class="btn btn-danger pull-left remove">Διαγραφή</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Κλείσιμο</button>
                             <button name="submit" value="submit" type="submit" class="btn btn-primary">Αποθήκευση</button>
                         </div>
@@ -75,10 +76,10 @@
             </form>
         </div>
         <script type="text/template" id="asset-row-template">
-            <td><%= asset.typeName %></td>
-            <td><%= asset.labName %></td>
-            <td><%= asset.quantity %></td>
-            <td><%= asset.acquisitionYear %></td>
+            <td><%= asset.itemcategory %></td>
+            <td><%= asset.lab %></td>
+            <td><%= asset.qty %></td>
+            <td><%= asset.acquisition_year %></td>
         </script>
     </div>
 {% endblock %}

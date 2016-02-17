@@ -10,7 +10,7 @@
 
 namespace GrEduLabs\Schools\Middleware;
 
-class InputFilterTeacher
+class InputFilterSchoolAsset
 {
     use InputFilterTrait;
 

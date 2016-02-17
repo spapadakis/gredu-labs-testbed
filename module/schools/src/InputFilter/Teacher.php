@@ -16,19 +16,17 @@ use Zend\Validator;
 
 class Teacher
 {
-    private $inputFilter;
+    use InputFilterTrait;
 
     public function __construct()
     {
         $id = new Input('id');
         $id->setRequired(false)
-            ->setBreakOnFailure(true)
             ->getValidatorChain()
             ->attach(new Validator\Digits());
 
         $name = new Input('name');
         $name->setRequired(true)
-            ->setBreakOnFailure(true)
             ->getFilterChain()
             ->attach(new Filter\StringTrim());
         $name->getValidatorChain()
@@ -37,7 +35,6 @@ class Teacher
 
         $surname = new Input('surname');
         $surname->setRequired(true)
-            ->setBreakOnFailure(true)
             ->getFilterChain()
             ->attach(new Filter\StringTrim());
         $surname->getValidatorChain()
@@ -46,22 +43,20 @@ class Teacher
 
         $email = new Input('email');
         $email->setRequired(true)
-            ->setBreakOnFailure(true)
             ->getValidatorChain()
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\EmailAddress());
 
         $telephone = new Input('telephone');
         $telephone->setRequired(true)
-            ->setBreakOnFailure(true)
-            ->getValidatorChain()
+            ->getFilterChain()
+            ->attach(new Filter\Digits());
+        $telephone->getValidatorChain()
             ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\StringLength(['min' => 10]))
-            ->attach(new Validator\Digits());
+            ->attach(new Validator\StringLength(['min' => 10]));
 
         $branch_id = new Input('branch_id');
         $branch_id->setRequired(true)
-            ->setBreakOnFailure(true)
             ->getValidatorChain()
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\Digits());
@@ -83,17 +78,5 @@ class Teacher
             ->add($branch_id)
             ->add($is_principle)
             ->add($is_responsible);
-    }
-
-    public function __invoke(array $data)
-    {
-        $this->inputFilter->setData($data);
-        $isValid = $this->inputFilter->isValid();
-
-        return [
-            'is_valid' => $isValid,
-            'values'   => $isValid ? $this->inputFilter->getValues() : [],
-            'messages' => $this->inputFilter->getMessages(),
-        ];
     }
 }

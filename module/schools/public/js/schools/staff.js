@@ -1,4 +1,4 @@
-(function () {
+(function (utils) {
     'use strict';
 
     var Staff,
@@ -84,20 +84,28 @@
         url: null,
         events: {
             'submit form': 'persistTeacher',
-            'click button.remove': 'removeTeacher',
+            'click button.remove': 'removeTeacher'
         },
         initialize: function () {
+            var that = this;
             this.form = this.$el.find('form');
             this.url = this.form.data('url');
+            this.$el.on('hide.bs.modal', function () {
+                utils.formMessages.clear(that.form);
+                that.form[0].reset();
+                that.form.find('input[type="hidden"]').val('');
+            });
         },
         render: function (teacherId) {
             var teacherAttributes;
-            this.form[0].reset();
-            this.form.find('input[type="hidden"]').val('');
             if (!teacherId) {
-                this.$el.find('.modal-footer button.remove').addClass('hidden');
+                this.$el.find('.modal-footer button.remove')
+                    .prop('disabled', true)
+                    .addClass('hidden');
             } else {
-                this.$el.find('.modal-footer button.remove').removeClass('hidden');
+                this.$el.find('.modal-footer button.remove')
+                    .prop('disabled', false)
+                    .removeClass('hidden');
             }
             this.teacher = teacherId && this.model.get(teacherId) || null;
             teacherAttributes = this.teacher && this.teacher.attributes || {};
@@ -105,37 +113,48 @@
                 var element = $(element),
                     name = element.attr('name');
                 if ('checkbox' === element.attr('type')) {
-                    element.prop('checked', parseInt(teacherAttributes[name], 10));
+                    element.prop('checked', utils.parseInt(teacherAttributes[name]));
                 } else {
                     element.val(teacherAttributes[name] || '');
                 }
             });
             this.show();
+            
+            return this;
         },
         show: function () {
             this.$el.modal('show');
+            return this;
         },
         hide: function () {
             this.$el.modal('hide');
+            return this;
         },
         persistTeacher: function (evt) {
-            var data = _.reduce(this.form.serializeArray(), function (hash, pair) {
-                hash[pair.name] = pair.value;
-                return hash;
-            }, {});
+            var data = utils.serializeObject(this.form);
             var that = this;
             evt.preventDefault();
-            $.post(this.url, data).
-                done(function(response){
-                    if (that.teacher) {
-                        that.teacher.set(response);
-                    } else{
-                        that.model.add(response);
-                    }
-                    that.hide();
-                }).fail(function (xhr, err) {
-                    alert(xhr.statusText);
-                });
+            $.ajax({
+                url: this.url,
+                type: 'post',
+                data: data
+            }).done(function(response){
+                if (that.teacher) {
+                    that.teacher.set(response);
+                } else{
+                    that.model.add(response);
+                }
+                that.hide();
+            }).fail(function (xhr, err) {
+                var messages;
+                if (422 === xhr.status) {
+                    messages = JSON.parse(xhr.responseText).messages || {};
+                    utils.formMessages.render(that.form, messages);
+                } else {
+                    alert('Προέκυψε κάποιο σφάλμα');
+                }
+                
+            });
         },
         removeTeacher: function () {
             var that = this;
@@ -156,4 +175,4 @@
     });
 
     new StaffView({ model: new Staff() });
-}());
+}(window.EDULABS.utils));

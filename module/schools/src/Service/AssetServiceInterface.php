@@ -12,12 +12,16 @@ namespace GrEduLabs\Schools\Service;
 interface AssetServiceInterface
 {
     public function createItemCategory($name);
+    public function changeItemCategoryName($id, $name);
     public function getAllItemCategories();
-    public function getItemCategoryByName($name);
+    public function findItemCategoryByName($name);
     public function getItemCategoryById($id);
+
     public function createSoftwareCategory(array $data);
+    public function updateSoftwareCategory($id, array $data);
     public function getAllSoftwareCategories();
-    public function getSoftwareCategoryByName($name);
+    public function findSoftwareCategoryByName($name);
     public function getSoftwareCategoryById($id);
+
     public function createExistingItem(array $data);
 }
