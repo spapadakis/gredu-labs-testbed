@@ -250,7 +250,18 @@ DROP TABLE IF EXISTS `lab`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lab` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`id`)
+  `school_id` int(11) unsigned NOT NULL,
+  `teacher_id` int(11) unsigned,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `area` int(11) unsigned NOT NULL,
+  `attachment` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `in_school_use` tinyint(1) unsigned DEFAULT '0',
+  `out_school_use` tinyint(1) unsigned DEFAULT '0',
+  `has_network` tinyint(1) unsigned DEFAULT '0',
+  `has_server` tinyint(1) unsigned DEFAULT '0',
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (school_id) REFERENCES school(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
