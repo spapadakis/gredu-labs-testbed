@@ -47,14 +47,16 @@ return function (Slim\App $app) {
             );
         };
 
-        $container[GrEduLabs\Schools\Action\Labs::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Labs(
-                $c->get('view')
+        $container[GrEduLabs\Schools\Action\Lab\ListAll::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Lab\ListAll(
+                $c->get('view'),
+                $c->get('labservice'),
+                $c->get('staffservice')
             );
         };
 
-        $container[GrEduLabs\Schools\Action\LabCreate::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\LabCreate(
+        $container[GrEduLabs\Schools\Action\Lab\PersistLab::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Lab\PersistLab(
                  $c->get('labservice')
             );
         };
@@ -164,8 +166,8 @@ return function (Slim\App $app) {
             $this->delete('/staff/{id:[1-9][0-9]*}', GrEduLabs\Schools\Action\Staff\DeleteTeacher::class)
                 ->setName('school.staffdelete');
 
-            $this->get('/labs', GrEduLabs\Schools\Action\Labs::class)->setName('school.labs');
-            $this->post('/labs', GrEduLabs\Schools\Action\LabCreate::class)->setName('school.labcreate');
+            $this->get('/labs', GrEduLabs\Schools\Action\Lab\ListAll::class)->setName('school.labs');
+            $this->post('/labs', GrEduLabs\Schools\Action\Lab\PersistLab::class)->setName('school.labcreate');
 
             $this->get('/assets', GrEduLabs\Schools\Action\Assets\ListAssets::class)->setName('school.assets');
             $this->post('/assets', GrEduLabs\Schools\Action\Assets\PersistAsset::class)
