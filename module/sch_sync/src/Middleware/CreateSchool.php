@@ -10,7 +10,10 @@
 
 namespace SchSync\Middleware;
 
+use Exception;
 use GrEduLabs\Authentication\Identity;
+use GrEduLabs\Schools\InputFilter\School as SchoolInputFilter;
+use GrEduLabs\Schools\Service\SchoolServiceInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -39,6 +42,18 @@ class CreateSchool
     private $authService;
 
     /**
+     *
+     * @var SchoolServiceInterface
+     */
+    private $schoolService;
+
+    /**
+     *
+     * @var SchoolInputFilter
+     */
+    private $schoolInputFilter;
+
+    /**
      * @var string
      */
     private $unitNotFoundRedirectUrl;
@@ -62,6 +77,8 @@ class CreateSchool
         Ldap $ldap,
         callable $fetchUnitFromMM,
         AuthenticationServiceInterface $authService,
+        SchoolServiceInterface $schoolService,
+        SchoolInputFilter $schoolInputFilter,
         $unitNotFoundRedirectUrl,
         $ssoLogoutUrl,
         Messages $flash,
@@ -70,6 +87,8 @@ class CreateSchool
         $this->ldap                    = $ldap;
         $this->fetchUnit               = $fetchUnitFromMM;
         $this->authService             = $authService;
+        $this->schoolService           = $schoolService;
+        $this->schoolInputFilter       = $schoolInputFilter;
         $this->unitNotFoundRedirectUrl = (string) $unitNotFoundRedirectUrl;
         $this->ssoLogoutUrl            = (string) $ssoLogoutUrl;
         $this->flash                   = $flash;
@@ -113,33 +132,36 @@ class CreateSchool
         $school = R::findOne('school', 'registry_no = ?', [$registryNo]);
         try {
             if (!$school) {
-                R::begin();
-                $school                     = R::dispense('school');
-                $school->registry_no        = $unit['registry_no'];
-                $school->name               = $unit['name'];
-                $school->street_address     = $unit['street_address'];
-                $school->postal_code        = $unit['postal_code'];
-                $school->phone_number       = $unit['phone_number'];
-                $school->fax_number         = $unit['fax_number'];
-                $school->email              = $unit['email'];
-                $school->municipality       = $unit['municipality'];
-                $school->schooltype_id      = $unit['unit_type_id'];
-                $school->prefecture_id      = $unit['prefecture_id'];
-                $school->educationlevel_id  = $unit['education_level_id'];
-                $school->eduadmin_id        = $unit['edu_admin_id'];
-                $school->created            = time();
-                $school->creator            = $identity->mail;
-                $school_id                  = R::store($school);
-                $this->logger->info(sprintf('School %s imported from MM to database', $registryNo), ['creator' => $identity->mail]);
+                $data = [
+                    'id'                => '',
+                    'registry_no'       => $unit['registry_no'],
+                    'name'              => $unit['name'],
+                    'street_address'    => $unit['street_address'],
+                    'postal_code'       => $unit['postal_code'],
+                    'phone_number'      => $unit['phone_number'],
+                    'fax_number'        => $unit['fax_number'],
+                    'email'             => $unit['email'],
+                    'municipality'      => $unit['municipality'],
+                    'schooltype_id'     => $unit['unit_type_id'],
+                    'prefecture_id'     => $unit['prefecture_id'],
+                    'educationlevel_id' => $unit['education_level_id'],
+                    'eduadmin_id'       => $unit['edu_admin_id'],
+                    'creator'           => $identity->mail,
+                ];
+                $filtered = call_user_func($this->schoolInputFilter, $data);
+                if (!$filtered['is_valid']) {
+                    $this->logger->error('Invalid data', $filtered);
+                    throw new Exception('Invalid data');
+                }
+                $school = $this->schoolService->createSchool($filtered['values']);
+                $this->logger->info(sprintf('School %s imported from MM to database', $registryNo), $filtered['values']);
 
                 $user            = R::load('user', $identity->id);
-                $user->school_id = $school_id;
+                $user->school_id = $school['id'];
                 R::store($user);
                 $this->logger->info(sprintf('Set school %s to user %s', $registryNo, $identity->mail));
-                R::commit();
             }
-        } catch (\Exception $e) {
-            R::rollback();
+        } catch (Exception $e) {
             $this->logger->error(sprintf('Problem inserting school %s form MM in database', $registryNo));
             $this->logger->debug('Exception', [$e->getMessage(), $e->getTraceAsString()]);
 

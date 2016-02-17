@@ -162,9 +162,12 @@
                 return;
             }
             $.ajax({
-                url: this.url + '/' + this.teacher.get('id'),
+                url: that.url,
                 type: 'delete',
-                dataType: 'json'
+                dataType: 'json',
+                data: {
+                    'id': that.teacher.get('id')
+                }
             }).done(function () {
                 that.model.remove(that.teacher.get('id'));
                 that.hide();

@@ -13,8 +13,7 @@ return [
             'routes'    => [
                 ['/school', ['school'], ['get']],
                 ['/school/labs', ['school'], ['get']],
-                ['/school/staff', ['school'], ['get', 'post']],
-                ['/school/staff/{id:[1-9][0-9]*}', ['school'], ['delete']],
+                ['/school/staff', ['school'], ['get', 'post', 'delete']],
                 ['/school/assets', ['school'], ['get', 'post', 'delete']],
             ],
         ],

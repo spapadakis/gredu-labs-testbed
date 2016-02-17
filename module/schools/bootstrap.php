@@ -8,6 +8,11 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
+use GrEduLabs\Schools\Action;
+use GrEduLabs\Schools\InputFilter;
+use GrEduLabs\Schools\Middleware;
+use GrEduLabs\Schools\Service;
+
 return function (Slim\App $app) {
 
     $container = $app->getContainer();
@@ -21,130 +26,136 @@ return function (Slim\App $app) {
 
         // actions
 
-        $container[GrEduLabs\Schools\Action\Index::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Index(
+        $container[Action\Index::class] = function ($c) {
+            return new Action\Index(
                  $c->get('view'),
-                 $c->get('schoolservice')
+                 $c->get(Service\SchoolServiceInterface::class)
             );
         };
 
-        $container[GrEduLabs\Schools\Action\Staff\ListAll::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Staff\ListAll(
+        $container[Action\Staff\ListAll::class] = function ($c) {
+            return new Action\Staff\ListAll(
                 $c->get('view'),
-                $c->get(GrEduLabs\Schools\Service\StaffServiceInterface::class)
+                $c->get(Service\StaffServiceInterface::class)
             );
         };
 
-        $container[GrEduLabs\Schools\Action\Staff\PersistTeacher::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Staff\PersistTeacher(
-                $c->get(GrEduLabs\Schools\Service\StaffServiceInterface::class)
+        $container[Action\Staff\PersistTeacher::class] = function ($c) {
+            return new Action\Staff\PersistTeacher(
+                $c->get(Service\StaffServiceInterface::class)
             );
         };
 
-        $container[GrEduLabs\Schools\Action\Staff\DeleteTeacher::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Staff\DeleteTeacher(
-                $c->get(GrEduLabs\Schools\Service\StaffServiceInterface::class)
+        $container[Action\Staff\DeleteTeacher::class] = function ($c) {
+            return new Action\Staff\DeleteTeacher(
+                $c->get(Service\StaffServiceInterface::class)
             );
         };
 
-        $container[GrEduLabs\Schools\Action\Labs::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Labs(
+        $container[Action\Labs::class] = function ($c) {
+            return new Action\Labs(
                 $c->get('view')
             );
         };
 
-        $container[GrEduLabs\Schools\Action\LabCreate::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\LabCreate(
+        $container[Action\LabCreate::class] = function ($c) {
+            return new Action\LabCreate(
                  $c->get('labservice')
             );
         };
 
-        $container[GrEduLabs\Schools\Action\Assets\ListAssets::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Assets\ListAssets(
+        $container[Action\Assets\ListAssets::class] = function ($c) {
+            return new Action\Assets\ListAssets(
                 $c->get('view'),
-                $c->get(GrEduLabs\Schools\Service\AssetServiceInterface::class),
-                $c->get(GrEduLabs\Schools\Service\SchoolAssetsInterface::class),
-                $c->get(GrEduLabs\Schools\Service\LabServiceInterface::class)
+                $c->get(Service\AssetServiceInterface::class),
+                $c->get(Service\SchoolAssetsInterface::class),
+                $c->get(Service\LabServiceInterface::class)
             );
         };
 
-        $container[GrEduLabs\Schools\Action\Assets\PersistAsset::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Assets\PersistAsset(
-                $c->get(GrEduLabs\Schools\Service\SchoolAssetsInterface::class)
+        $container[Action\Assets\PersistAsset::class] = function ($c) {
+            return new Action\Assets\PersistAsset(
+                $c->get(Service\SchoolAssetsInterface::class)
             );
         };
 
-        $container[GrEduLabs\Schools\Action\Assets\DeleteAsset::class] = function ($c) {
-            return new GrEduLabs\Schools\Action\Assets\DeleteAsset(
-                $c->get(GrEduLabs\Schools\Service\SchoolAssetsInterface::class)
+        $container[Action\Assets\DeleteAsset::class] = function ($c) {
+            return new Action\Assets\DeleteAsset(
+                $c->get(Service\SchoolAssetsInterface::class)
             );
         };
 
         // services
 
         $container['schoolservice'] = function ($c) {
-            return $c->get(GrEduLabs\Schools\Service\SchoolServiceInterface::class);
+            return $c->get(Service\SchoolServiceInterface::class);
         };
 
         $container['staffservice'] = function ($c) {
-            return $c->get(GrEduLabs\Schools\Service\StaffServiceInterface::class);
+            return $c->get(Service\StaffServiceInterface::class);
         };
 
         $container['labservice'] = function ($c) {
-            return $c->get(GrEduLabs\Schools\Service\LabServiceInterface::class);
+            return $c->get(Service\LabServiceInterface::class);
         };
 
-        $container[GrEduLabs\Schools\Service\SchoolServiceInterface::class] = function ($c) {
-            return new GrEduLabs\Schools\Service\SchoolService();
+        $container[Service\SchoolServiceInterface::class] = function ($c) {
+            return new Service\SchoolService();
         };
 
-        $container[GrEduLabs\Schools\Service\StaffServiceInterface::class] = function ($c) {
-            return new GrEduLabs\Schools\Service\StaffService();
+        $container[Service\StaffServiceInterface::class] = function ($c) {
+            return new Service\StaffService();
         };
 
-        $container[GrEduLabs\Schools\Service\LabServiceInterface::class] = function ($c) {
-            return new GrEduLabs\Schools\Service\LabService(
-                $c->get(GrEduLabs\Schools\Service\SchoolServiceInterface::class),
-                $c->get(GrEduLabs\Schools\Service\StaffServiceInterface::class)
+        $container[Service\LabServiceInterface::class] = function ($c) {
+            return new Service\LabService(
+                $c->get(Service\SchoolServiceInterface::class),
+                $c->get(Service\StaffServiceInterface::class)
             );
         };
 
-        $container[GrEduLabs\Schools\Service\AssetServiceInterface::class] = function ($c) {
-            return new GrEduLabs\Schools\Service\AssetService();
+        $container[Service\AssetServiceInterface::class] = function ($c) {
+            return new Service\AssetService();
         };
 
-        $container[GrEduLabs\Schools\Service\SchoolAssetsInterface::class] = function ($c) {
-            return $c->get(GrEduLabs\Schools\Service\AssetServiceInterface::class);
+        $container[Service\SchoolAssetsInterface::class] = function ($c) {
+            return $c->get(Service\AssetServiceInterface::class);
         };
 
         // middleware 
 
-        $container[GrEduLabs\Schools\Middleware\InputFilterTeacher::class] = function ($c) {
-            return new GrEduLabs\Schools\Middleware\InputFilterTeacher(
-                $c->get(GrEduLabs\Schools\InputFilter\Teacher::class)
+        $container[Middleware\InputFilterTeacher::class] = function ($c) {
+            return new Middleware\InputFilterTeacher(
+                $c->get(InputFilter\Teacher::class)
             );
         };
 
-        $container[GrEduLabs\Schools\Middleware\InputFilterSchoolAsset::class] = function ($c) {
-            return new GrEduLabs\Schools\Middleware\InputFilterSchoolAsset(
-                $c->get(GrEduLabs\Schools\InputFilter\SchoolAsset::class)
+        $container[Middleware\InputFilterSchoolAsset::class] = function ($c) {
+            return new Middleware\InputFilterSchoolAsset(
+                $c->get(InputFilter\SchoolAsset::class)
             );
         };
 
-        $container[GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity::class] = function ($c) {
-            return new GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity($c['authentication_service']);
+        $container[Middleware\FetchSchoolFromIdentity::class] = function ($c) {
+            return new Middleware\FetchSchoolFromIdentity($c['authentication_service']);
         };
 
         // inputfilters
 
-        $container[GrEduLabs\Schools\InputFilter\Teacher::class] = function ($c) {
-            return new GrEduLabs\Schools\InputFilter\Teacher();
+        $container[InputFilter\Teacher::class] = function ($c) {
+            return new InputFilter\Teacher();
         };
 
-        $container[GrEduLabs\Schools\InputFilter\SchoolAsset::class] = function ($c) {
-            return new GrEduLabs\Schools\InputFilter\SchoolAsset(
-                $c->get(GrEduLabs\Schools\Service\LabServiceInterface::class),
-                $c->get(GrEduLabs\Schools\Service\AssetServiceInterface::class)
+        $container[InputFilter\SchoolAsset::class] = function ($c) {
+            return new InputFilter\SchoolAsset(
+                $c->get(Service\LabServiceInterface::class),
+                $c->get(Service\AssetServiceInterface::class)
+            );
+        };
+
+        $container[InputFilter\School::class] = function ($c) {
+            return new InputFilter\School(
+                $c->get(Service\SchoolServiceInterface::class)
             );
         };
 
@@ -155,23 +166,21 @@ return function (Slim\App $app) {
 
         $app->group('/school', function () {
 
-            $this->get('', GrEduLabs\Schools\Action\Index::class)->setName('school');
+            $this->get('', Action\Index::class)->setName('school');
 
-            $this->get('/staff', GrEduLabs\Schools\Action\Staff\ListAll::class)->setName('school.staff');
-            $this->post('/staff', GrEduLabs\Schools\Action\Staff\PersistTeacher::class)
-                ->add(GrEduLabs\Schools\Middleware\InputFilterTeacher::class)
-                ->setName('school.staffcreate');
-            $this->delete('/staff/{id:[1-9][0-9]*}', GrEduLabs\Schools\Action\Staff\DeleteTeacher::class)
-                ->setName('school.staffdelete');
+            $this->get('/staff', Action\Staff\ListAll::class)->setName('school.staff');
+            $this->post('/staff', Action\Staff\PersistTeacher::class)
+                ->add(Middleware\InputFilterTeacher::class);
+            $this->delete('/staff', Action\Staff\DeleteTeacher::class);
 
-            $this->get('/labs', GrEduLabs\Schools\Action\Labs::class)->setName('school.labs');
-            $this->post('/labs', GrEduLabs\Schools\Action\LabCreate::class)->setName('school.labcreate');
+            $this->get('/labs', Action\Labs::class)->setName('school.labs');
+            $this->post('/labs', Action\LabCreate::class)->setName('school.labcreate');
 
-            $this->get('/assets', GrEduLabs\Schools\Action\Assets\ListAssets::class)->setName('school.assets');
-            $this->post('/assets', GrEduLabs\Schools\Action\Assets\PersistAsset::class)
-                ->add(GrEduLabs\Schools\Middleware\InputFilterSchoolAsset::class);
-            $this->delete('/assets', GrEduLabs\Schools\Action\Assets\DeleteAsset::class);
+            $this->get('/assets', Action\Assets\ListAssets::class)->setName('school.assets');
+            $this->post('/assets', Action\Assets\PersistAsset::class)
+                ->add(Middleware\InputFilterSchoolAsset::class);
+            $this->delete('/assets', Action\Assets\DeleteAsset::class);
 
-        })->add(GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity::class);
+        })->add(Middleware\FetchSchoolFromIdentity::class);
     });
 };

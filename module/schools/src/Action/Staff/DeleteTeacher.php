@@ -28,13 +28,13 @@ class DeleteTeacher
         $this->staffService = $staffService;
     }
 
-    public function __invoke(Request $req, Response $res, array $args = [])
+    public function __invoke(Request $req, Response $res)
     {
         $school = $req->getAttribute('school', false);
         if (!$school->id) {
             return $res->withStatus(403, 'No school');
         }
-        $id = isset($args['id']) ? $args['id'] : false;
+        $id = $req->getParam('id', false);
 
         if (!$id) {
             $res = $res->withStatus(404);
