@@ -41,15 +41,14 @@ class ListAll
 
         $labs = $this->labservice->getLabsBySchoolId($school->id);
         $staff = $this->staffservice->getTeachersBySchoolId($school->id);
-
-        $staff = R::exportAll($staff);
         $clean_staff = [];
         foreach ($staff as $obj) {
-            $clean_staff[] = [
-                if ($obj['is_responsible'])
-                'value' => $obj['id'],
-                'label' => $obj['name']." ".$obj['surname']
-                ];
+            if ($obj['is_responsible']){
+                $clean_staff[] = [
+                    'value' => $obj['id'],
+                    'label' => $obj['name']." ".$obj['surname']
+                    ];
+            }
         }
 
         return $this->view->render($res, 'schools/labs.twig', [
