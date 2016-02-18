@@ -8,9 +8,9 @@
 
     ItemRowView = Backbone.View.extend({
         tagName: 'tr',
-        render: function () {
-            this.$el.html(this.constructor.template({ index: itemCount }));
-            itemCount += 1;
+        render: function (index) {
+            this.$el.html(this.constructor.template({ index: index | 0}));
+
             return this;
         }
     }, {
@@ -19,15 +19,21 @@
 
     ItemsView = Backbone.View.extend({
         el: '#items-list',
+        itemCount: 0,
         events: {
             'click .add-row': 'addRow',
             'click .remove-row': 'removeRow'
         },
         initialize: function () {
-            this.addRow();
+            this.itemCount = this.$el.find('tbody tr').length;
+            if (this.itemCount === 0) {
+                this.addRow();
+            }
         },
         addRow: function () {
-            this.$el.find('tbody').append(new ItemRowView().render().el);
+            var index = this.itemCount;
+            this.itemCount += 1;
+            this.$el.find('tbody').append(new ItemRowView().render(index).el);
             return this;
         },
         removeRow: function (evt) {

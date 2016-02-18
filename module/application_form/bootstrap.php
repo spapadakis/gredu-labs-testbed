@@ -48,7 +48,8 @@ return function (Slim\App $app) {
                 $c->get('view'),
                 $c->get(GrEduLabs\Schools\Service\AssetServiceInterface::class),
                 $c->get(GrEduLabs\ApplicationForm\Service\ApplicationFormServiceInterface::class),
-                $c->get(GrEduLabs\ApplicationForm\InputFilter\ApplicationForm::class)
+                $c->get(GrEduLabs\ApplicationForm\InputFilter\ApplicationForm::class),
+                $c->get('authentication_service')
             );
         };
     });

@@ -41,12 +41,10 @@ class ApplicationForm extends InputFilter
 
         $newLabPerspective = new Input('new_lab_perspective');
         $newLabPerspective->setRequired(true)
-             ->getFilterChain()
-             ->attach(new Filter\ToInt());
-        $newLabPerspective->getValidatorChain()
+            ->getValidatorChain()
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\InArray([
-                'haystack' => [0, 1],
+                'haystack' => ['ΝΑΙ', 'ΟΧΙ'],
             ]));
 
         $comments = new Input('comments');
@@ -55,11 +53,17 @@ class ApplicationForm extends InputFilter
             ->attach(new Filter\StripTags())
             ->attach(new Filter\StringTrim());
 
+        $submittedBy = new Input('submitted_by');
+        $submittedBy->setRequired(true)
+            ->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\EmailAddress());
+
         $this->add($schoolId)
             ->add($applyFor)
             ->add($newLabPerspective)
             ->add($comments)
-            ->add($itemsInputFilter, 'items')
-            ;
+            ->add($submittedBy)
+            ->add($itemsInputFilter, 'items');
     }
 }

@@ -1,7 +1,7 @@
 {% extends "layout.twig" %}
 
-{% macro itemSelect(name, label, options, selected) %}
-    <select class="form-control input-sm" name="items[<%= index %>][{{ name }}]">
+{% macro itemSelect(name, label, options, selected, index) %}
+    <select class="form-control input-sm" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]">
     <option value="" disabled selected>{{ label|striptags }}</option>
     {% for option in options %}
         <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
@@ -11,11 +11,11 @@
     </select>
 {% endmacro %}
 
-{% macro itemCount(name, label, value) %}
+{% macro itemCount(name, label, value, index) %}
     <div class="form-group">
         <div class="col-xs-12 col-sm-12 col-md-9">
             <input placeholder="{{ label|striptags }}" class="form-control input-sm"
-                type="number" name="items[<%= index %>][{{ name }}]" value="{{ value|default('')|raw }}">
+                type="number" name="items[{{ index | default('<%= index %>') }}][{{ name }}]" value="{{ value|default('')|raw }}">
         </div>
     </div>
 {% endmacro %}
@@ -34,13 +34,13 @@
     </div>
 {% endmacro %}
 
-{% macro yesno(name, label) %}
+{% macro yesno(name, label, selected) %}
     <div class="form-group">
         <label class="control-label hidden-xs hidden-sm" for="el-{{ name }}">{{ label|raw }}</label>
         <select class="form-control" name="{{ name }}" id="el-{{ name }}">
             <option value="" disabled selected>{{ label|striptags }}</option>
-            <option value="1">Ναι</option>
-            <option value="0">Όχι</option>
+            <option value="ΝΑΙ"{% if selected == 'ΝΑΙ' %} selected{% endif %}>Ναι</option>
+            <option value="ΟΧΙ"{% if selected == 'ΟΧΙ' %} selected{% endif %}>Όχι</option>
         </select>
     </div>
 {% endmacro %}
@@ -84,9 +84,9 @@
                         <tbody>
                         {% for asset in assets %}
                             <tr>
-                                <td>{{ asset.labName }}</td>
-                                <td>{{ asset.typeName }}</td>
-                                <td>{{ asset.quantity }}</td>
+                                <td>{{ asset.lab }}</td>
+                                <td>{{ asset.type }}</td>
+                                <td>{{ asset.qty }}</td>
                             </tr>
                         {% else %}
                             <tr>
@@ -117,7 +117,26 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                            {% for item in form.values.items %}
+                                <tr>
+                                    <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, item.lab_id, loop.index0 ) }}</td>
+                                    <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, item.itemcategory_id, loop.index0) }}</td>
+                                    <td>{{ macros.itemCount('qty', 'Πλήθος', item.qty, loop.index0) }}</td>
+                                    <td>
+                                        <textarea class="form-control input-sm" 
+                                                  rows="1" cols="20" 
+                                                  name="items[{{ loop.index0 }}][reasons]" 
+                                                  placeholder="Αιτιολογία χρήσης">
+                                            {{ item.reasons }}
+                                        </textarea>
+                                    </td>
+                                    <td><button type="button" class="btn btn-xs text-danger remove-row">
+                                        <i class="fa fa-remove"></i>
+                                    </button</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="5" class="text-right">
@@ -134,9 +153,11 @@
         </div>
         <fieldset>
             <legend>Επιπλέον</legend>
-            {{ macros.select('apply_for', 'Αίτημα του σχολείου για', apply_for_choices) }}
-            {{ macros.yesno('new_lab_perspective', 'Ύπαρξη - προοπτική αίθουσας για δημιουργία νέου εργαστηρίου')}}
-            {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', '') }}
+            {{ macros.select('apply_for', 'Αίτημα του σχολείου για', 
+                apply_for_choices, form.values.apply_for) }}
+            {{ macros.yesno('new_lab_perspective', 'Ύπαρξη - προοπτική αίθουσας για δημιουργία νέου εργαστηρίου',
+                form.values.new_lab_perspective)}}
+            {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.value.comments) }}
 
         </fieldset>
         <hr>
@@ -150,7 +171,9 @@
         <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices) }}</td>
         <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices) }}</td>
         <td>{{ macros.itemCount('qty', 'Πλήθος') }}</td>
-        <td><textarea class="form-control input-sm" rows="1" cols="20" name="items[<%= index %>][reasons]" placeholder="Αιτιολογία χρήσης"></textarea></td>
+        <td><textarea class="form-control input-sm" rows="1" cols="20" 
+                name="items[<%= index %>][reasons]" 
+                placeholder="Αιτιολογία χρήσης"></textarea></td>
         <td><button type="button" class="btn btn-xs text-danger remove-row">
             <i class="fa fa-remove"></i>
         </button</td>

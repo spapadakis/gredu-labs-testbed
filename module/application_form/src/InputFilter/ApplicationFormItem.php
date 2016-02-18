@@ -20,13 +20,13 @@ class ApplicationFormItem extends InputFilter
 {
     public function __construct(
         LabServiceInterface $labService,
-         AssetServiceInterface $assetsService
+        AssetServiceInterface $assetsService
     ) {
-        $lab_id = new Input('lab_id');
-        $lab_id->setRequired(true)
+        $labId = new Input('lab_id');
+        $labId->setRequired(true)
             ->getFilterChain()
             ->attach(new Filter\ToInt());
-        $lab_id->getValidatorChain()
+        $labId->getValidatorChain()
             ->attach(new Validator\NotEmpty());
 
         $itemCategoryId = new Input('itemcategory_id');
@@ -66,7 +66,8 @@ class ApplicationFormItem extends InputFilter
         $reasons->getValidatorChain()
             ->attach(new Validator\NotEmpty());
 
-        $this->add($itemCategoryId)
+        $this->add($labId)
+            ->add($itemCategoryId)
             ->add($qty)
             ->add($reasons);
     }

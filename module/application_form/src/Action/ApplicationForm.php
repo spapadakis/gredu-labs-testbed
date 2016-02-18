@@ -15,6 +15,7 @@ use GrEduLabs\Schools\Service\AssetServiceInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
+use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\InputFilter\InputFilterInterface;
 
 class ApplicationForm
@@ -42,33 +43,51 @@ class ApplicationForm
      */
     protected $appFormInputFilter;
 
+    /**
+     *
+     * @var AuthenticationServiceInterface
+     */
+    protected $authService;
+
 
     public function __construct(
         Twig $view,
         AssetServiceInterface $assetsService,
         ApplicationFormServiceInterface $appFormService,
-        InputFilterInterface $appFormInputFilter
+        InputFilterInterface $appFormInputFilter,
+        AuthenticationServiceInterface $authService
     ) {
         $this->view               = $view;
         $this->assetsService      = $assetsService;
         $this->appFormService     = $appFormService;
         $this->appFormInputFilter = $appFormInputFilter;
+        $this->authService        = $authService;
     }
 
     public function __invoke(Request $req, Response $res)
     {
         $school = $req->getAttribute('school');
+
         if ($req->isPost()) {
             $this->appFormInputFilter->setData(array_merge($req->getParams(), [
-                'school_id' => $school->id,
+                'school_id'   => $school->id,
+                'submitted_by'=> $this->authService->getIdentity()->mail,
             ]));
-            if ($this->appFormInputFilter->isValid()) {
-                $data = $this->appFormInputFilter->getValues();
-                $this->appFormService->submit($data);
+            $isValid = $this->appFormInputFilter->isValid();
+            if ($isValid) {
+                $data    = $this->appFormInputFilter->getValues();
+                $appForm = $this->appFormService->submit($data);
+                var_dump($appForm);
+                die();
             }
-            var_dump($this->appFormInputFilter->getMessages());
-            die('error');
-            $this->view['messages'] = $this->appFormInputFilter->getMessages();
+
+            $this->view['form'] = [
+                'is_valid'   => $isValid,
+                'values'     => $this->appFormInputFilter->getValues(),
+                'raw_values' => $this->appFormInputFilter->getRawValues(),
+                'messages'   => $this->appFormInputFilter->getMessages(),
+            ];
+            var_dump($this->view['form']);
         }
 
         $res = $this->view->render($res, 'application_form/form.twig', [
