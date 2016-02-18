@@ -52,14 +52,16 @@ return function (Slim\App $app) {
             );
         };
 
-        $container[Action\Labs::class] = function ($c) {
-            return new Action\Labs(
-                $c->get('view')
+        $container[GrEduLabs\Schools\Action\Lab\ListAll::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Lab\ListAll(
+                $c->get('view'),
+                $c->get('labservice'),
+                $c->get('staffservice')
             );
         };
 
-        $container[Action\LabCreate::class] = function ($c) {
-            return new Action\LabCreate(
+        $container[GrEduLabs\Schools\Action\Lab\PersistLab::class] = function ($c) {
+            return new GrEduLabs\Schools\Action\Lab\PersistLab(
                  $c->get('labservice')
             );
         };
@@ -173,8 +175,8 @@ return function (Slim\App $app) {
                 ->add(Middleware\InputFilterTeacher::class);
             $this->delete('/staff', Action\Staff\DeleteTeacher::class);
 
-            $this->get('/labs', Action\Labs::class)->setName('school.labs');
-            $this->post('/labs', Action\LabCreate::class)->setName('school.labcreate');
+            $this->get('/labs', GrEduLabs\Schools\Action\Lab\ListAll::class)->setName('school.labs');
+            $this->post('/labs', GrEduLabs\Schools\Action\Lab\PersistLab::class)->setName('school.labcreate');
 
             $this->get('/assets', Action\Assets\ListAssets::class)->setName('school.assets');
             $this->post('/assets', Action\Assets\PersistAsset::class)

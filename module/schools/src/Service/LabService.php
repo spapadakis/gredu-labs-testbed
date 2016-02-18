@@ -63,11 +63,31 @@ class LabService implements LabServiceInterface
 
         return $lab;
     }
+
     public function getLabsBySchoolId($id)
     {
-        $school = $this->schoolService->getSchool($id);
-        $labs   = $school->ownLab;
+        $labs = R::findAll('lab', 'school_id = ?', [$id]);
 
-        return $labs;
+        return array_map([$this, 'export'], $labs);
+    }
+
+    public function getCourses(){
+        $courses = R::findAll('course');
+        return  $courses;
+    }
+
+    public function getCoursesByLabId($id){
+        $lab = R::load('lab', $id);
+        $courses = $lab->sharedCourse;
+        return $courses;
+    }
+
+    private function getCoursesById(array $ids){
+        $courses = [];
+        foreach($ids as $id){
+            $course = R::load('course', $id);
+            $courses[] = $course;
+        }
+        return $courses;
     }
 }
