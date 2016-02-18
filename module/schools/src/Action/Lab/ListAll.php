@@ -12,21 +12,20 @@ namespace GrEduLabs\Schools\Action\Lab;
 
 use GrEduLabs\Schools\Service\LabServiceInterface;
 use GrEduLabs\Schools\Service\StaffServiceInterface;
+use RedBeanPHP\R;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
-use RedBeanPHP\R;
 
 class ListAll
 {
     protected $view;
 
     public function __construct(
-        Twig $view, 
+        Twig $view,
         LabServiceInterface $labservice,
         StaffServiceInterface $staffservice
-    )
-    {
+    ) {
         $this->view         = $view;
         $this->labservice   = $labservice;
         $this->staffservice = $staffservice;
@@ -53,27 +52,28 @@ class ListAll
 
        // R::store($lab);
 
-        $labs = $this->labservice->getLabsBySchoolId($school->id);
-        $staff = $this->staffservice->getTeachersBySchoolId($school->id);
+        $labs        = $this->labservice->getLabsBySchoolId($school->id);
+        $staff       = $this->staffservice->getTeachersBySchoolId($school->id);
         $clean_staff = [];
         foreach ($staff as $obj) {
-            if ($obj['is_responsible']){
+            if ($obj['is_responsible']) {
                 $clean_staff[] = [
                     'value' => $obj['id'],
-                    'label' => $obj['name']." ".$obj['surname']
+                    'label' => $obj['name'] . " " . $obj['surname'],
                     ];
             }
         }
         $courses = $this->labservice->getCourses();
         $lessons = [];
-        foreach ($courses as $lesson){
+        foreach ($courses as $lesson) {
             $lessons[] = ['value' => $lesson->id, 'label' => $lesson->name];
         }
-        error_log(print_r($courses,TRUE));
-        error_log(print_r('courses',TRUE));
+        error_log(print_r($courses, TRUE));
+        error_log(print_r('courses', TRUE));
+
         return $this->view->render($res, 'schools/labs.twig', [
-            'labs' => $labs ,
-            'staff' => $clean_staff,
+            'labs'      => $labs,
+            'staff'     => $clean_staff,
             'lab_types' => [
                 [
                     'value' => 1,

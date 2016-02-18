@@ -28,7 +28,7 @@ class Index
         $school = $req->getAttribute('school');
 
         return $this->view->render($res, 'schools/index.twig', [
-            'school' => $school->export(),
+            'school' => $school,
         ]);
     }
 }

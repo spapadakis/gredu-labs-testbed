@@ -1,4 +1,5 @@
 <?php
+
 /**
  * gredu_labs
  * 
@@ -15,32 +16,50 @@ class SchoolService implements SchoolServiceInterface
 {
     public function createSchool(array $data)
     {
-        $school   = R::dispense('school');
-        $required = ['registry_no', 'name', 'municipality','schooltype_id', 'prefecture_id',
-                     'educationlevel_id', 'eduadmin_id', 'created', 'creator', ];
-        $optional = ['street_address', 'postal_code', 'phone_number', 'fax_number', 'email'];
-        foreach ($required as $value) {
-            if (array_key_exists($value, $data)) {
-                $school[$value] = $data[$value];
-            } else {
-                return -1;
-            }
-        }
-        foreach ($optional as $value) {
-            if (array_key_exists($value, $data)) {
-                $school[$value] = $data[$value];
-            } else {
-                $school[$value] = '';
-            }
-        }
-        $id = R::store($school);
+        $school          = $this->importSchool(R::dispense('school'), $data);
+        $school->created = time();
+        R::store($school);
 
-        return $id;
+        return $this->exportSchool($school);
     }
     public function getSchool($id)
     {
         $school = R::load('school', $id);
 
-        return $school;
+        return $this->exportSchool($school);
+    }
+
+    public function findSchoolByRegistryNo($registryNo)
+    {
+        $school = R::findOne('school', ' registry_no = ? ', [$registryNo]);
+        if (null === $school) {
+            return;
+        }
+
+        return $this->exportSchool($school);
+    }
+
+    private function exportSchool($bean)
+    {
+        return $bean->export();
+    }
+
+    private function importSchool($bean, array $data)
+    {
+        $bean->registry_no        = $data['registry_no'];
+        $bean->name               = $data['name'];
+        $bean->street_address     = $data['street_address'];
+        $bean->postal_code        = $data['postal_code'];
+        $bean->phone_number       = $data['phone_number'];
+        $bean->fax_number         = $data['fax_number'];
+        $bean->email              = $data['email'];
+        $bean->municipality       = $data['municipality'];
+        $bean->schooltype_id      = $data['schooltype_id'];
+        $bean->prefecture_id      = $data['prefecture_id'];
+        $bean->educationlevel_id  = $data['educationlevel_id'];
+        $bean->eduadmin_id        = $data['eduadmin_id'];
+        $bean->creator            = $data['creator'];
+
+        return $bean;
     }
 }

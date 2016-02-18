@@ -33,6 +33,6 @@ class FetchSchoolFromIdentity
             return $res->withStatus(403, 'No school');
         }
 
-        return $next($req->withAttribute('school', $school), $res);
+        return $next($req->withAttribute('school', (object) $school->export()), $res);
     }
 }

@@ -13,4 +13,5 @@ interface SchoolServiceInterface
 {
     public function createSchool(array $data);
     public function getSchool($id);
+    public function findSchoolByRegistryNo($registryNo);
 }
