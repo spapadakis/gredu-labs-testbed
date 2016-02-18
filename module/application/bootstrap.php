@@ -79,6 +79,13 @@ return function (Slim\App $app) {
             return new \Slim\Csrf\Guard();
         };
 
+        $container[GrEduLabs\Application\Middleware\AddCsrfToView::class] = function ($c) {
+            return new GrEduLabs\Application\Middleware\AddCsrfToView(
+                $c->get('view'),
+                $c->get('csrf')
+            );
+        };
+
         $container['GrEduLabs\\Application\\Action\\Index'] = function ($c) {
             return new GrEduLabs\Application\Action\Index($c['view']);
         };

@@ -103,6 +103,8 @@ return function (Slim\App $app) {
     $events('on', 'app.bootstrap', function ($stop, $app, $container) {
         $app->group('/user', function () {
             $this->map(['GET', 'POST'], '/login', GrEduLabs\Authentication\Action\User\Login::class)
+                ->add(GrEduLabs\Application\Middleware\AddCsrfToView::class)
+                ->add('csrf')
                 ->setName('user.login');
 
             $this->get('/logout', GrEduLabs\Authentication\Action\User\Logout::class)

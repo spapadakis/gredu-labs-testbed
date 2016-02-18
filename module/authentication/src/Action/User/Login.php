@@ -10,7 +10,6 @@
 
 namespace GrEduLabs\Authentication\Action\User;
 
-use Slim\Csrf\Guard;
 use Slim\Flash\Messages;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -37,11 +36,6 @@ class Login
     protected $flash;
 
     /**
-     * @Var Guard
-     */
-    protected $csrf;
-
-    /**
      * @var string
      */
     protected $successUrl;
@@ -58,13 +52,11 @@ class Login
         Twig $view,
         AuthenticationService $authService,
         Messages $flash,
-        Guard $csrf,
         $successUrl
     ) {
         $this->view        = $view;
         $this->authService = $authService;
         $this->flash       = $flash;
-        $this->csrf        = $csrf;
         $this->successUrl  = $successUrl;
     }
 
@@ -88,21 +80,6 @@ class Login
             return $res->withRedirect($this->successUrl);
         }
 
-        return $this->view->render($res, 'user/login.twig', $this->getCsrfData($req));
-    }
-
-    private function getCsrfData(Request $req)
-    {
-        $nameKey  = $this->csrf->getTokenNameKey();
-        $valueKey = $this->csrf->getTokenValueKey();
-        $name     = $req->getAttribute($nameKey);
-        $value    = $req->getAttribute($valueKey);
-
-        return [
-            'csrf_name_key'  => $nameKey,
-            'csrf_value_key' => $valueKey,
-            'csrf_name'      => $name,
-            'csrf_value'     => $value,
-        ];
+        return $this->view->render($res, 'user/login.twig', []);
     }
 }

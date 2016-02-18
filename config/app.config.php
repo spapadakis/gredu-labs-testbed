@@ -20,6 +20,7 @@ return [
         'module/sch_inventory/bootstrap.php',
         'module/sch_sync/bootstrap.php',
         'module/schools/bootstrap.php',
+        'module/application_form/bootstrap.php',
     ],
     'cache_config' => 'data/cache/config/settings.php',
 ];

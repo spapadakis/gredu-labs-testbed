@@ -8,17 +8,11 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
-namespace GrEduLabs\Action\AppForm;
+namespace GrEduLabs\ApplicationForm\Service;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
-
-class SubmitAppForm
+interface ApplicationFormServiceInterface
 {
-    public function __invoke(Request $req, Response $res, array $args = [])
-    {
-        $params = $req->getParams();
-        var_dump($params);
-        die();
-    }
+    public function getApplyForChoices();
+
+    public function submit(array $data);
 }

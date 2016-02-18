@@ -12,6 +12,7 @@ return [
         'web_dir'    => __DIR__ . '/../../public',
         'paths'      => [
             'module/schools/public',
+            'module/application_form/public',
         ],
     ],
 ];
