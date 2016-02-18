@@ -39,6 +39,20 @@ class ListAll
             return $res->withStatus(403, 'No school');
         }
 
+       // $lab = R::dispense('lab');
+       // $lab->school_id = 1;
+       // $teacher = R::load('teacher', 2);
+       // $lab->sharedCourse = array($course1, $course2);
+       // $lab->area = 55;
+       // $lab->in_school_use = true;
+       // $lab->out_school_use = false;
+       // $lab->attachment = 'foo/bar/qux/arxeio.gph';
+       // $lab->has_network = true;
+       // $lab->has_server = true;
+
+
+       // R::store($lab);
+
         $labs = $this->labservice->getLabsBySchoolId($school->id);
         $staff = $this->staffservice->getTeachersBySchoolId($school->id);
         $clean_staff = [];
@@ -50,7 +64,13 @@ class ListAll
                     ];
             }
         }
-
+        $courses = $this->labservice->getCourses();
+        $lessons = [];
+        foreach ($courses as $lesson){
+            $lessons[] = ['value' => $lesson->id, 'label' => $lesson->name];
+        }
+        error_log(print_r($courses,TRUE));
+        error_log(print_r('courses',TRUE));
         return $this->view->render($res, 'schools/labs.twig', [
             'labs' => $labs ,
             'staff' => $clean_staff,
@@ -68,16 +88,7 @@ class ListAll
                     'label' => 'ΓΡΑΦΕΙΟ',
                 ],
             ],
-            'lessons' => [
-                [
-                    'value' => 1,
-                    'label' => 'ΦΥΣΙΚΗ',
-                ],
-                [
-                    'value' => 2,
-                    'label' => 'ΠΛΗΡΟΦΟΡΙΚΗ',
-                ],
-            ],
+            'lessons' => $lessons,
         ]);
     }
 }
