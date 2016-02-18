@@ -18,7 +18,7 @@ use Slim\Http\Response;
 class PersistLab
 {
     private $labservice;
-    
+
     public function __construct(LabServiceInterface $labservice)
     {
         $this->labservice = $labservice;
@@ -48,11 +48,10 @@ class PersistLab
             if (isset($lab)) {
                 return $res->withJson($lab->export())->withStatus(201);
             }
-        } catch (Exception $ex){
+        } catch (Exception $ex) {
             $res = $res->withStatus(500, $ex->getMessage());
         }
 
         return $res->withStatus(400);
-        
     }
 }

@@ -149,7 +149,7 @@ CREATE TABLE `school` (
   `registry_no` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `street_address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `postal_code` int(11) unsigned DEFAULT NULL,
+  `postal_code` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `phone_number` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fax_number` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -245,17 +245,22 @@ UNLOCK TABLES;
 -- Table structure for table `course`
 --
 
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `lab`
 --
 
 DROP TABLE IF EXISTS `lab`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lab` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `school_id` int(11) unsigned NOT NULL,
@@ -273,8 +278,7 @@ CREATE TABLE `lab` (
   KEY `index_foreignkey_lab_teacher` (`teacher_id`),
   CONSTRAINT `c_fk_lab_teacher_id` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`id`),
   CONSTRAINT `lab_ibfk_1` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -282,6 +286,8 @@ CREATE TABLE `lab` (
 -- Table structure for table `course_lab`
 --
 
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course_lab` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `course_id` int(11) unsigned DEFAULT NULL,
@@ -292,12 +298,9 @@ CREATE TABLE `course_lab` (
   KEY `index_foreignkey_course_lab_lab` (`lab_id`),
   CONSTRAINT `c_fk_course_lab_lab_id` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `c_fk_course_lab_course_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-
---
--- Table structure for table `course`
---
 
 --
 -- Table structure for table `schoolasset`
@@ -320,7 +323,6 @@ CREATE TABLE `schoolasset` (
   KEY `index_foreignkey_schoolasset_lab` (`lab_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
 
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
