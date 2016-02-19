@@ -26,10 +26,9 @@ return function (Slim\App $app) {
         RedBeanPHP\R::setup(
             $container['settings']['db']['dsn'],
             $container['settings']['db']['user'],
-            $container['settings']['db']['pass']
+            $container['settings']['db']['pass'],
+            isset($container['settings']['db']['freeze']) ? $container['settings']['db']['freeze'] : true
         );
-        RedBeanPHP\R::freeze();
-//        RedBeanPHP\R::debug( true );
 
         $container['view'] = function ($c) {
             $settings = $c['settings'];

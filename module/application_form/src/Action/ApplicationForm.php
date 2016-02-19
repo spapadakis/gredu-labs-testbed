@@ -12,6 +12,7 @@ namespace GrEduLabs\ApplicationForm\Action;
 
 use GrEduLabs\ApplicationForm\Service\ApplicationFormServiceInterface;
 use GrEduLabs\Schools\Service\AssetServiceInterface;
+use GrEduLabs\Schools\Service\LabServiceInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
@@ -33,6 +34,12 @@ class ApplicationForm
 
     /**
      *
+     * @var LabServiceInterface
+     */
+    protected $labService;
+
+    /**
+     *
      * @var ApplicationFormServiceInterface
      */
     protected $appFormService;
@@ -49,19 +56,28 @@ class ApplicationForm
      */
     protected $authService;
 
+    /**
+     *
+     * @var string
+     */
+    protected $successUrl;
 
     public function __construct(
         Twig $view,
         AssetServiceInterface $assetsService,
+        LabServiceInterface $labService,
         ApplicationFormServiceInterface $appFormService,
         InputFilterInterface $appFormInputFilter,
-        AuthenticationServiceInterface $authService
+        AuthenticationServiceInterface $authService,
+        $successUrl
     ) {
         $this->view               = $view;
         $this->assetsService      = $assetsService;
+        $this->labService         = $labService;
         $this->appFormService     = $appFormService;
         $this->appFormInputFilter = $appFormInputFilter;
         $this->authService        = $authService;
+        $this->successUrl         = $successUrl;
     }
 
     public function __invoke(Request $req, Response $res)
@@ -75,10 +91,12 @@ class ApplicationForm
             ]));
             $isValid = $this->appFormInputFilter->isValid();
             if ($isValid) {
-                $data    = $this->appFormInputFilter->getValues();
-                $appForm = $this->appFormService->submit($data);
-                var_dump($appForm);
-                die();
+                $data                                   = $this->appFormInputFilter->getValues();
+                $appForm                                = $this->appFormService->submit($data);
+                $_SESSION['applicationForm']['appForm'] = $appForm;
+                $res                                    = $res->withRedirect($this->successUrl);
+
+                return $res;
             }
 
             $this->view['form'] = [
@@ -87,10 +105,19 @@ class ApplicationForm
                 'raw_values' => $this->appFormInputFilter->getRawValues(),
                 'messages'   => $this->appFormInputFilter->getMessages(),
             ];
-            var_dump($this->view['form']);
         }
 
+        // todo replace with labs from service
+        $labs = array_map(function ($bean) {
+            return $bean->export();
+        }, \RedBeanPHP\R::findAll('lab', ' school_id = ? ', [$school->id]));
+
+//        $labs = $this->labService->getLabsBySchoolId($school->id);
+
         $res = $this->view->render($res, 'application_form/form.twig', [
+            'lab_choices' => array_map(function ($lab) {
+                return ['value' => $lab['id'], 'label' => $lab['name']];
+            }, $labs),
             'type_choices' => array_map(function ($category) {
                 return ['value' => $category['id'], 'label' => $category['name']];
             }, $this->assetsService->getAllItemCategories()),

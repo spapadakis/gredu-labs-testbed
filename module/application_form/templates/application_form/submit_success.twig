@@ -1,0 +1,86 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div id="app-form-success">
+        <h1 class="no-print">
+        {% block title %}
+           Επιτυχής Καταχώρηση <small>αίτησης για νέο εξοπλισμό</small>
+        {% endblock %}
+        </h1> 
+        <p class="no-print">Η αίτηση για το σχολείο {{ school.name }} με <strong>Α/Α {{ appForm.id }}</strong>, καταχωρήθηκε επιτυχώς.</p>
+
+        <h2>Στοιχεία αίτησης</h2>
+        <div class="row">
+            <dl class="col-sm-12 col-md-6">
+                <dt>A/A αίτησης</dt>
+                <dd>{{ appForm.id }}</dd>
+                <dt>Ημερ. καταχώρησης</dt>
+                <dd>{{ appForm.submitted|date('d/m/Y') }}<dd>
+                <dt>Σχολείο</dt>
+                <dd>{{ school.name }}</dd>
+                <dt>Κωδικός Υπουργείου</dt>
+                <dd>{{ school.registry_no }}<dd>
+            </dl>
+            <dl class="col-sm-12 col-md-6">
+                <dt>Αίτημα του σχολείου για</dt>
+                <dd>{{ appForm.apply_for }}</dd>
+                <dt>Ύπαρξη - προοπτική αίθουσας για δημιουργία νέου εργαστηρίου</dt>
+                <dd>{{ appForm.new_lab_perspective }}<dd>
+                <dt>Σχόλια/Παρατηρήσεις</dt>
+                <dd>{{ appForm.comments }}</dd>
+            </dl>
+            
+        </div>
+        <h3>Αιτούμενος εξοπλισμός</h3>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Πλήθος</th>
+                        <th>Τύπος</th>
+                        <th>Χώρος</th>
+                        <th>Αιτιολογία χρήσης</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in appForm.items %}
+                    <tr>
+                        <td>{{ item.qty }}</td>
+                        <td>{{ item.itemcategory }}</td>
+                        <td>{{ item.lab }}</td>
+                        <td>{{ item.reasons|e }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                    <td colspan="4"></td>
+                </tfoot>
+            </table>
+        </div>
+        <div class="row no-print">
+            <div class="col-xs-12 text-center">
+                <a href="#" class="btn btn-lg btn-primary btn-print">Εκτύπωση</a>
+            </div>
+        </div>
+        <br>
+    </div>
+{% endblock %}
+
+{% block htmlHead %}
+    {{ parent() }}
+    <style media="print" type="text/css">
+        #app-form-success .no-print {display: none;}
+    </style>
+{% endblock %}
+
+{% block inlinejs %}
+    {{ parent() }}
+    <script>
+        (function () {
+            $('#app-form-success').on('click', 'a.btn-print', function (evt) {
+                evt.preventDefault();
+                window.print();
+            });
+        }());
+    </script>
+{% endblock %}

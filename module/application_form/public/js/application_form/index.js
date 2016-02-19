@@ -1,19 +1,16 @@
-(function () {
+(function ($, _, utils) {
     'use strict';
 
     var ItemsView,
-        ItemRowView,
-        itemCount = 0;
-
+        ItemRowView;
 
     ItemRowView = Backbone.View.extend({
         tagName: 'tr',
         render: function (index) {
-            this.$el.html(this.constructor.template({ index: index | 0}));
+            this.$el.html(this.template({ index: index | 0}));
 
             return this;
-        }
-    }, {
+        },
         template: _.template($('#app-form-item-row-template').html())
     });
 
@@ -26,9 +23,6 @@
         },
         initialize: function () {
             this.itemCount = this.$el.find('tbody tr').length;
-            if (this.itemCount === 0) {
-                this.addRow();
-            }
         },
         addRow: function () {
             var index = this.itemCount;
@@ -45,4 +39,22 @@
     });
 
     new ItemsView();
-}());
+
+    (function () {
+        var form = $('#app-form form'),
+            messages = (function (messages) {
+                var itemMessages = {};
+                _.each(messages.items || [], function (message, idx){
+                    var name = 'items[' + idx + ']';
+                    _.each(_.keys(message), function (prop) {
+                        itemMessages[name + '[' + prop + ']'] = message[prop];
+                    });
+                });
+                delete messages.items;
+                _.extend(messages, itemMessages);
+                return messages;
+            }(form.data('messages')));
+            utils.formMessages.render(form, messages);           
+    }());
+    
+}(window.jQuery, _, window.EDULABS.utils));

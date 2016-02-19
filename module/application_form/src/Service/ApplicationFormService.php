@@ -36,8 +36,8 @@ class ApplicationFormService implements ApplicationFormServiceInterface
         $appForm->submitted_by        = $data['submitted_by'];
         $items                        = [];
         foreach ($data['items'] as $itemData) {
-            $item = R::dispense('applicationformitem');
-//            $item->lab_id = $itemData['lab_id'];
+            $item                  = R::dispense('applicationformitem');
+            $item->lab_id          = $itemData['lab_id'];
             $item->itemcategory_id = $itemData['itemcategory_id'];
             $item->qty             = $itemData['qty'];
             $item->reasons         = $itemData['reasons'];

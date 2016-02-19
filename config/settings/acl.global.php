@@ -28,6 +28,7 @@ return [
                 ['/school/assets', ['school'], ['get', 'post', 'delete']],
                 ['/school/labs/attachment', ['school'], ['get', 'delete']],
                 ['/application-form', ['school'], ['get', 'post']],
+                ['/application-form/submit-success', ['school'], ['get']],
             ],
         ],
     ],

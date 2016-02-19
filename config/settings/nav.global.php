@@ -42,10 +42,10 @@ return [
                     ],
                 ],
             ],
-            // 'app-form' => [
-            //     'label' => 'Αίτηση',
-            //     'route' => 'app-form',
-            // ],
+             'app-form' => [
+                 'label' => 'Αίτηση',
+                 'route' => 'application_form',
+             ],
 
         ],
     ],

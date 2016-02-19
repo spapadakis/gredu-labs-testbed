@@ -1,22 +1,32 @@
 {% extends "layout.twig" %}
 
 {% macro itemSelect(name, label, options, selected, index) %}
-    <select class="form-control input-sm" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]">
-    <option value="" disabled selected>{{ label|striptags }}</option>
-    {% for option in options %}
-        <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
-            {{ option.label }}
-        </option>
-    {% endfor %}
-    </select>
+    <div class="form-group">
+        <select class="form-control input-sm" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]">
+        <option value="" disabled selected>{{ label|striptags }}</option>
+        {% for option in options %}
+            <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
+                {{ option.label }}
+            </option>
+        {% endfor %}
+        </select>
+    </div>
 {% endmacro %}
 
 {% macro itemCount(name, label, value, index) %}
     <div class="form-group">
         <div class="col-xs-12 col-sm-12 col-md-9">
             <input placeholder="{{ label|striptags }}" class="form-control input-sm"
-                type="number" name="items[{{ index | default('<%= index %>') }}][{{ name }}]" value="{{ value|default('')|raw }}">
+                type="number" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]" value="{{ value|default('')|raw }}">
         </div>
+    </div>
+{% endmacro %}
+
+{% macro itemReasons(name, label, value, index) %}
+    <div class="form-group">
+        <textarea class="form-control input-sm" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]"
+                  placeholder="{{ label|striptags }}"
+                  rows="1" cols="20">{{ value|default('') }}</textarea>
     </div>
 {% endmacro %}
 
@@ -48,7 +58,9 @@
 {% macro text(name, label, value) %}
     <div class="form-group">
         <label class="control-label hidden-xs hidden-sm" for="el-{{ name }}">{{ label|raw }}</label>
-        <textarea class="form-control" name="{{ name }}" id="el-{{ name }}" placeholder="{{ label|striptags }}">{{ value|default('') }}</textarea>
+        <textarea class="form-control" name="{{ name }}" 
+                  id="el-{{ name }}" 
+                  placeholder="{{ label|striptags }}">{{ value|default('') }}</textarea>
     </div>
 {% endmacro %}
 
@@ -61,7 +73,8 @@
         Αίτηση <small>για νέο εξοπλισμό</small>
     {% endblock %}
     </h1>
-    <form method="post" action="">
+    <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}"
+          data-messages="{{ form.messages|default({})|json_encode }}">
         <div class="form-group">
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent pulvinar tincidunt
                     odio, vel pretium mauris imperdiet at. In tempor fermentum enim, euismod posuere
@@ -106,34 +119,38 @@
         <div class="table-responsive">
             <fieldset>
                 <legend>Νέος εξοπλισμός</legend>
-                <div class="form-group" id="items-list">
+                <div id="items-list">
                     <table class="table table-hover table-striped">
                         <thead>
                             <tr>
-                                <th>Χώρος</th>
-                                <th>Τύπος</th>
                                 <th>Πλήθος</th>
+                                <th>Τύπος</th>
+                                <th>Χώρος</th>
                                 <th>Αιτιολογία χρήσης</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for item in form.values.items %}
+                            {% for itemIndex,item in form.values.items %}
                                 <tr>
-                                    <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, item.lab_id, loop.index0 ) }}</td>
-                                    <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, item.itemcategory_id, loop.index0) }}</td>
                                     <td>{{ macros.itemCount('qty', 'Πλήθος', item.qty, loop.index0) }}</td>
+                                    <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, item.itemcategory_id, loop.index0) }}</td>
+                                    <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, item.lab_id, loop.index0 ) }}</td>
+                                    <td>{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης', item.reasons, loop.index0) }}</td>
                                     <td>
-                                        <textarea class="form-control input-sm" 
-                                                  rows="1" cols="20" 
-                                                  name="items[{{ loop.index0 }}][reasons]" 
-                                                  placeholder="Αιτιολογία χρήσης">
-                                            {{ item.reasons }}
-                                        </textarea>
-                                    </td>
-                                    <td><button type="button" class="btn btn-xs text-danger remove-row">
+                                        {% if loop.index0 > 0 %}
+                                        <button type="button" class="btn btn-xs text-danger remove-row">
                                         <i class="fa fa-remove"></i>
+                                        {% endif %}
                                     </button</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td>{{ macros.itemCount('qty', 'Πλήθος', '', 0) }}</td>
+                                    <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, '', 0) }}</td>
+                                    <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, '', 0 ) }}</td>
+                                    <td>{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης', '', 0) }}</td>
+                                    <td></td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -168,12 +185,10 @@
         <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
     </form>
     <script type="text/template" id="app-form-item-row-template">
-        <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices) }}</td>
-        <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices) }}</td>
         <td>{{ macros.itemCount('qty', 'Πλήθος') }}</td>
-        <td><textarea class="form-control input-sm" rows="1" cols="20" 
-                name="items[<%= index %>][reasons]" 
-                placeholder="Αιτιολογία χρήσης"></textarea></td>
+        <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices) }}</td>
+        <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices) }}</td>
+        <td>{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης') }}</td>
         <td><button type="button" class="btn btn-xs text-danger remove-row">
             <i class="fa fa-remove"></i>
         </button</td>
