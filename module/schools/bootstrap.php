@@ -61,7 +61,7 @@ return function (Slim\App $app) {
         };
 
         $container[Action\Lab\PersistLab::class] = function ($c) {
-            return new PersistLab(
+            return new Action\Lab\PersistLab(
                  $c->get(Service\LabServiceInterface::class)
             );
         };
@@ -132,6 +132,12 @@ return function (Slim\App $app) {
             );
         };
 
+        $container[Middleware\InputFilterLab::class] = function ($c) {
+            return new Middleware\InputFilterLab(
+                $c->get(InputFilter\Lab::class)
+            );
+        };
+
         $container[Middleware\InputFilterSchoolAsset::class] = function ($c) {
             return new Middleware\InputFilterSchoolAsset(
                 $c->get(InputFilter\SchoolAsset::class)
@@ -161,6 +167,10 @@ return function (Slim\App $app) {
             );
         };
 
+        $container[InputFilter\Lab::class] = function ($c) {
+            return new InputFilter\Lab();
+        };
+
     });
 
     $events('on', 'app.bootstrap', function ($stop, $app, $container) {
@@ -176,7 +186,8 @@ return function (Slim\App $app) {
             $this->delete('/staff', Action\Staff\DeleteTeacher::class);
 
             $this->get('/labs', Action\Lab\ListAll::class)->setName('school.labs');
-            $this->post('/labs', Action\Lab\PersistLab::class)->setName('school.labcreate');
+            $this->post('/labs', Action\Lab\PersistLab::class)->setName('school.labcreate')
+                ->add(Middleware\InputFilterLab::class);
 
             $this->get('/assets', Action\Assets\ListAssets::class)->setName('school.assets');
             $this->post('/assets', Action\Assets\PersistAsset::class)
