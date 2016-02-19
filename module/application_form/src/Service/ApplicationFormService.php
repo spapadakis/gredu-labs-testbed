@@ -10,6 +10,7 @@
 
 namespace GrEduLabs\ApplicationForm\Service;
 
+use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
 
 class ApplicationFormService implements ApplicationFormServiceInterface
@@ -52,7 +53,17 @@ class ApplicationFormService implements ApplicationFormServiceInterface
         return $this->exportApplicationForm($appForm);
     }
 
-    private function exportApplicationForm(\RedBeanPHP\OODBBean $bean)
+    public function findSchoolApplicationForm($schoolId)
+    {
+        $appForm = R::findOne('applicationform', ' school_id = ? ', [$schoolId]);
+        if (null === $appForm) {
+            return;
+        }
+
+        return $this->exportApplicationForm($appForm);
+    }
+
+    private function exportApplicationForm(OODBBean $bean)
     {
         $appForm          = $bean->export();
         $appForm['items'] = array_map(function ($itemBean) {

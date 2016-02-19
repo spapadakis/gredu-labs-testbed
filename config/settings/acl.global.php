@@ -27,7 +27,7 @@ return [
                 ['/school/staff', ['school'], ['get', 'post', 'delete']],
                 ['/school/assets', ['school'], ['get', 'post', 'delete']],
                 ['/school/labs/attachment', ['school'], ['get', 'delete']],
-                ['/application-form', ['school'], ['get', 'post']],
+                ['/application-form', ['school'], ['get', 'post'], 'GrEduLabs\ApplicationForm\Acl\Assertion\CanSubmit'],
                 ['/application-form/submit-success', ['school'], ['get']],
             ],
         ],

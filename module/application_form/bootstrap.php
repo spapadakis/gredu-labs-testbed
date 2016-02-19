@@ -61,6 +61,13 @@ return function (Slim\App $app) {
                 $c->get('router')->pathFor('application_form')
             );
         };
+
+        $container[GrEduLabs\ApplicationForm\Acl\Assertion\CanSubmit::class] = function ($c) {
+            return new GrEduLabs\ApplicationForm\Acl\Assertion\CanSubmit(
+                $c->get('authentication_service'),
+                $c->get(GrEduLabs\ApplicationForm\Service\ApplicationFormServiceInterface::class)
+            );
+        };
     });
 
     $events('on', 'app.bootstrap', function ($stop, $app, $container) {
