@@ -33,6 +33,7 @@ class PersistLab
         $params              = $req->getParams();
         $id                  = $params['id'];
         $params['school_id'] = $school->id;
+        $params['lessons'] = [1,2];
         unset($params['id']);
 
         try {
@@ -40,7 +41,10 @@ class PersistLab
                 $id  = $this->labservice->updateLab($params, $id);
                 $lab = $this->labservice->getLabById($id);
             } else {
+                
+                error_log(print_r('in else', TRUE));
                 $id  = $this->labservice->createLab($params);
+                error_log(print_r('created lab', TRUE));
                 if ($id > 0) {
                     $lab = $this->labservice->getLabById($id);
                 }

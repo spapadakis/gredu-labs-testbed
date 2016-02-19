@@ -26,35 +26,43 @@ class LabService implements LabServiceInterface
 
     public function createLab(array $data)
     {
-        $lab      = R::dispense('lab');
-        $required = ['school_id', 'name', 'type', 'area', 'in_school_use', 'out_school_use',
-                     'courses', 'attachment', 'has_network', 'has_server', ];
-        foreach ($required as $value) {
-            if (array_key_exists($value, $data)) {
-                $lab[$value] = $data[$value];
-            } else {
-                return -1;
-            }
-        }
+        error_log(print_r('creating', TRUE));
+        unset($data['id']);
+        $lab = R::dispense('lab');
+        $this->persist($lab, $data);
 
-        if (array_key_exists('teacher_id', $data)) {
-            $lab['teacher_id'] = $data['teacher_id'];
-        }
-
-        $id = R::store($lab);
-
-        return $id;
+        //return $this->export($lab);
+        return $lab;
     }
 
     public function updateLab(array $data, $id)
     {
-        $lab= R::load('lab', $id);
-        foreach ($data as $key => $value) {
-            $lab[$key] = $value;
+        $lab = R::load('lab', $id);
+        if (!$lab->id) {
+            throw new \InvalidArgumentException('No lab found');
         }
-        $id = R::store($lab);
+        $this->persist($lab, $data);
 
-        return $id;
+        return $this->export($lab);
+    }
+
+    private function persist($lab, $data)
+    {
+        R::debug(TRUE);
+        error_log(print_r($data, TRUE));
+        $lab->school_id       = $data['school_id'];
+        $lab->name            = $data['name'];
+        $lab->type            = $data['type'];
+        $lab->area            = $data['area'];
+        $lab->sharedCourse    = $this->getCoursesById($data['lessons']);
+        $lab->out_school_use  = $data['use_ext_program'];
+        $lab->in_school_use   = $data['use_in_program'];
+        $lab->attachment      = 'attachment';
+        $lab->has_network     = isset($data['has_network']);
+        $lab->has_server      = isset($data['has_server']);
+        $lab->responsible     = $data['responsible'];
+        
+        $id = R::store($lab);
     }
 
     public function getLabById($id)
