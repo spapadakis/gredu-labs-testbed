@@ -42,21 +42,24 @@ class ListAll
         $staff       = $this->staffservice->getTeachersBySchoolId($school->id);
         $clean_staff = [];
         foreach ($staff as $obj) {
-            if ($obj['is_responsible']) {
-                $clean_staff[] = [
-                    'value' => $obj['id'],
-                    'label' => $obj['name'] . " " . $obj['surname'],
-                    ];
-            }
+            $clean_staff[] = [
+                'value' => $obj['id'],
+                'label' => $obj['name'] . " " . $obj['surname'],
+                ];
         }
-        $courses = $this->labservice->getCourses();
-        $lessons = [];
-        foreach ($courses as $lesson) {
-            $lessons[] = ['value' => $lesson->id, 'label' => $lesson->name];
+        $lessons = $this->labservice->getLessons();
+        $lessons_formatted = [];
+        foreach ($lessons as $lesson) {
+            $lessons_formatted[] = ['value' => $lesson->id, 'label' => $lesson->name];
+        }
+        $labs_formatted = [];
+        foreach($labs as $lab) {
+            $lab['responsible'] = $lab['teacher_id'];
+            $labs_formatted[] = $lab;
         }
 
         return $this->view->render($res, 'schools/labs.twig', [
-            'labs'      => $labs,
+            'labs'      => $labs_formatted,
             'staff'     => $clean_staff,
             'lab_types' => [
                 [
@@ -72,7 +75,7 @@ class ListAll
                     'label' => 'ΓΡΑΦΕΙΟ',
                 ],
             ],
-            'lessons' => $lessons,
+            'lessons' => $lessons_formatted,
         ]);
     }
 }
