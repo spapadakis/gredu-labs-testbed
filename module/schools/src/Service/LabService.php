@@ -26,7 +26,6 @@ class LabService implements LabServiceInterface
 
     public function createLab(array $data)
     {
-        error_log(print_r('creating', TRUE));
         unset($data['id']);
         $lab = R::dispense('lab');
         $this->persist($lab, $data);
@@ -48,20 +47,18 @@ class LabService implements LabServiceInterface
 
     private function persist($lab, $data)
     {
-        R::debug(TRUE);
-        error_log(print_r($data, TRUE));
         $lab->school_id       = $data['school_id'];
         $lab->name            = $data['name'];
         $lab->type            = $data['type'];
         $lab->area            = $data['area'];
-        $lab->sharedCourse    = $this->getCoursesById($data['lessons']);
-        $lab->out_school_use  = $data['use_ext_program'];
-        $lab->in_school_use   = $data['use_in_program'];
-        $lab->attachment      = 'attachment';
-        $lab->has_network     = isset($data['has_network']);
+        $lab->sharedLesson[]    = $this->getLessonsById($data['lessons']);
+        $lab->use_ext_program  = $data['use_ext_program'];
+        $lab->use_in_program  = $data['use_in_program'];
+        $lab->attachment      = $data['attachment'];
+        $lab->has_network     = $data['has_network'];
         $lab->has_server      = isset($data['has_server']);
         $lab->responsible     = $data['responsible'];
-        
+         
         $id = R::store($lab);
     }
 
@@ -75,33 +72,36 @@ class LabService implements LabServiceInterface
     public function getLabsBySchoolId($id)
     {
         $labs = R::findAll('lab', 'school_id = ?', [$id]);
-
-        return array_map([$this, 'export'], $labs);
+        $elabs=[];
+        foreach($labs as $lab) {
+            $elabs[] = $lab->export();
+        }
+        return $elabs;
     }
 
-    public function getCourses()
+    public function getLessons()
     {
-        $courses = R::findAll('course');
+        $lessons = R::findAll('lesson');
 
-        return  $courses;
+        return  $lessons;
     }
 
-    public function getCoursesByLabId($id)
+    public function getLessonsByLabId($id)
     {
         $lab     = R::load('lab', $id);
-        $courses = $lab->sharedCourse;
+        $lessons = $lab->sharedLesson;
 
-        return $courses;
+        return $lessons;
     }
 
-    private function getCoursesById(array $ids)
+    private function getLessonsById(array $ids)
     {
-        $courses = [];
+        $lessons= [];
         foreach ($ids as $id) {
-            $course    = R::load('course', $id);
-            $courses[] = $course;
+            $lesson= R::load('lesson', $id);
+            $lessons[] = $lesson;
         }
 
-        return $courses;
+        return $lesson;
     }
 }

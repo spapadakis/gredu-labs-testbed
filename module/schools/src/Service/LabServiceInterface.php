@@ -16,6 +16,6 @@ interface LabServiceInterface
     public function getLabById($id);
     public function getLabsBySchoolId($id);
 
-    public function getCourses();
-    public function getCoursesByLabId($id);
+    public function getLessons();
+    public function getLessonsByLabId($id);
 }
