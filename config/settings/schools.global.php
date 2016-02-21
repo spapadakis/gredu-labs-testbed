@@ -12,7 +12,7 @@ return [
         'guards'   => [
             'routes'    => [
                 ['/school', ['school'], ['get']],
-                ['/school/labs', ['school'], ['get']],
+                ['/school/labs', ['school'], ['get', 'post']],
                 ['/school/staff', ['school'], ['get', 'post', 'delete']],
                 ['/school/assets', ['school'], ['get', 'post', 'delete']],
             ],
