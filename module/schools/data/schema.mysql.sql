@@ -418,6 +418,131 @@ LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `lesson`
+--
+
+DROP TABLE IF EXISTS `lesson`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lesson` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `lab`
+--
+
+DROP TABLE IF EXISTS `lab`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lab` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` int(11) unsigned DEFAULT NULL,
+  `area` int(11) unsigned DEFAULT NULL,
+  `use_ext_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `use_in_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `attachment` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `has_network` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `has_server` tinyint(1) unsigned DEFAULT NULL,
+  `school_id` int(11) unsigned DEFAULT NULL,
+  `teacher_id` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_foreignkey_lab_school` (`school_id`),
+  KEY `index_foreignkey_lab_teacher` (`teacher_id`),
+  CONSTRAINT `c_fk_lab_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Table structure for table `lesson_lab`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+
+CREATE TABLE `lab_lesson` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `lesson_id` int(11) unsigned DEFAULT NULL,
+  `lab_id` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UQ_82ac3a020f1d21984f224331fbd99880f89b2e71` (`lab_id`,`lesson_id`),
+  KEY `index_foreignkey_lab_lesson_lesson` (`lesson_id`),
+  KEY `index_foreignkey_lab_lesson_lab` (`lab_id`),
+  CONSTRAINT `c_fk_lab_lesson_lab_id` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_lab_lesson_lesson_id` FOREIGN KEY (`lesson_id`) REFERENCES `lesson` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Table structure for table `softwarecategory`
+--
+
+DROP TABLE IF EXISTS `softwarecategory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `softwarecategory` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+--
+-- Table structure for table `schoolasset`
+--
+
+DROP TABLE IF EXISTS `schoolasset`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `schoolasset` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `itemcategory_id` int(11) unsigned NOT NULL,
+  `school_id` int(11) unsigned NOT NULL,
+  `qty` int(11) unsigned NOT NULL,
+  `lab_id` int(11) unsigned NOT NULL,
+  `acquisition_year` char(4) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `comments` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  KEY `index_foreignkey_schoolasset_itemcategory` (`itemcategory_id`),
+  KEY `index_foreignkey_schoolasset_school` (`school_id`),
+  KEY `index_foreignkey_schoolasset_lab` (`lab_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Table structure for table `schoolasset`
+--
+
+DROP TABLE IF EXISTS `software`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+ CREATE TABLE `software` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `softwarecategory_id` int(11) unsigned DEFAULT NULL,
+  `school_id` int(11) unsigned DEFAULT NULL,
+  `lab_id` int(11) unsigned DEFAULT NULL,
+  `title` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `vendor` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `url` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_foreignkey_software_softwarecategory` (`softwarecategory_id`),
+  KEY `index_foreignkey_software_school` (`school_id`),
+  CONSTRAINT `c_fk_software_lab_id` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `c_fk_software_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `c_fk_software_softwarecategory_id` FOREIGN KEY (`softwarecategory_id`) REFERENCES `softwarecategory` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

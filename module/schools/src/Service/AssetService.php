@@ -40,10 +40,6 @@ class AssetService implements AssetServiceInterface, SchoolAssetsInterface
         return $this->exportItemCategory($category);
     }
 
-    public function createSoftwareCategory(array $data)
-    {
-    }
-
     public function findItemCategoryByName($name)
     {
         $category = R::findOne('itemcategory', 'name = ?', [$name]);
@@ -54,20 +50,12 @@ class AssetService implements AssetServiceInterface, SchoolAssetsInterface
         return;
     }
 
-    public function findSoftwareCategoryByName($name)
-    {
-    }
-
     public function getAllItemCategories()
     {
         return array_values(array_map(
             [$this, 'exportItemCategory'],
             R::findAll('itemcategory', ' ORDER BY name ASC ')
         ));
-    }
-
-    public function getAllSoftwareCategories()
-    {
     }
 
     public function getItemCategoryById($id)
@@ -78,14 +66,6 @@ class AssetService implements AssetServiceInterface, SchoolAssetsInterface
         }
 
         return $this->exportItemCategory($category);
-    }
-
-    public function getSoftwareCategoryById($id)
-    {
-    }
-
-    public function updateSoftwareCategory($id, array $data)
-    {
     }
 
     public function getAssetsForSchool($school_id, array $filters = [])

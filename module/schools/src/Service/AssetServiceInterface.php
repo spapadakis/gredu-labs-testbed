@@ -17,11 +17,5 @@ interface AssetServiceInterface
     public function findItemCategoryByName($name);
     public function getItemCategoryById($id);
 
-    public function createSoftwareCategory(array $data);
-    public function updateSoftwareCategory($id, array $data);
-    public function getAllSoftwareCategories();
-    public function findSoftwareCategoryByName($name);
-    public function getSoftwareCategoryById($id);
-
     public function createExistingItem(array $data);
 }
