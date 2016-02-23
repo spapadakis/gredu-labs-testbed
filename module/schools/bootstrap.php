@@ -111,6 +111,13 @@ return function (Slim\App $app) {
             );
         };
 
+        $container[Action\Software\ListAll::class] = function ($c) {
+            return new Action\Software\ListAll(
+                $c->get('view'),
+                $c->get(Service\SoftwareServiceInterface::class)
+            );
+        };
+
         // services
 
         $container['schoolservice'] = function ($c) {
@@ -138,6 +145,10 @@ return function (Slim\App $app) {
             $uploadTargetPath = $settings['schools']['file_upload']['target_path'];
 
             return new Service\LabService($uploadTargetPath);
+        };
+
+        $container[Service\SoftwareServiceInterface::class] = function ($c) {
+            return new Service\SoftwareService();
         };
 
         $container[Service\AssetServiceInterface::class] = function ($c) {
@@ -227,6 +238,8 @@ return function (Slim\App $app) {
             $this->post('/assets', Action\Assets\PersistAsset::class)
                 ->add(Middleware\InputFilterSchoolAsset::class);
             $this->delete('/assets', Action\Assets\DeleteAsset::class);
+
+            $this->get('/software', Action\Software\ListAll::class)->setName('school.software');
 
         })->add(Middleware\FetchSchoolFromIdentity::class);
     });
