@@ -118,6 +118,18 @@ return function (Slim\App $app) {
             );
         };
 
+        $container[Action\Software\PersistSoftware::class] = function ($c) {
+            return new Action\Software\PersistSoftware(
+                $c->get(Service\SoftwareServiceInterface::class)
+            );
+        };
+
+        $container[Action\Assets\DeleteSoftware::class] = function ($c) {
+            return new Action\Software\DeleteSoftware(
+                $c->get(Service\SoftwareServiceInterface::class)
+            );
+        };
+
         // services
 
         $container['schoolservice'] = function ($c) {
@@ -240,6 +252,8 @@ return function (Slim\App $app) {
             $this->delete('/assets', Action\Assets\DeleteAsset::class);
 
             $this->get('/software', Action\Software\ListAll::class)->setName('school.software');
+            $this->post('/software', Action\Software\PersistSoftware::class);
+            $this->delete('/software', Action\Software\DeleteSoftware:class);
 
         })->add(Middleware\FetchSchoolFromIdentity::class);
     });
