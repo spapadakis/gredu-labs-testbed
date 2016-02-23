@@ -89,6 +89,11 @@ class SoftwareService implements SoftwareServiceInterface
         return $software->exportAll();
     }
 
+    public function removeSoftware($id)
+    {
+        R::trash('software', $id);
+    }
+
     private function exportAll($beans)
     {
         $exported = [];
