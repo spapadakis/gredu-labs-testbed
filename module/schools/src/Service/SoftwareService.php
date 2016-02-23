@@ -31,7 +31,7 @@ class SoftwareService implements SoftwareServiceInterface
     public function getSoftwareCategories()
     {
         $software_categories = R::findAll('softwarecategory');
-        return $software_categories;
+        return $this->exportAll($software_categories);
     }
 
     public function updateSoftwareCategory($id, $data)
@@ -80,12 +80,22 @@ class SoftwareService implements SoftwareServiceInterface
     public function getSoftwareBySchoolId($id)
     {
         $software = R::findAll('software', 'school_id = ?', [$id]);
-        return $software->exportAll();
+        return $this->exportAll($software);
     }
 
     public function getSoftwareByLabId($id)
     {
         $software = R::findAll('software', 'lab_id = ?', [$id]);
         return $software->exportAll();
+    }
+
+    private function exportAll($beans)
+    {
+        $exported = [];
+        foreach($beans as $bean)
+        {
+            $exported[] = $bean->export();
+        }
+        return $exported;
     }
 }

@@ -13,7 +13,7 @@ interface SoftwareServiceInterface
 {
     public function createSoftwareCategory($name);
     public function getSoftwareCategoryById($id);
-    public function getSoftwareCagegories();
+    public function getSoftwareCategories();
     public function updateSoftwareCategory($id, $data);
     public function createSoftware(array $data);
     public function updateSoftware(array $data, $id);
