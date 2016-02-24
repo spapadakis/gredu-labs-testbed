@@ -49,7 +49,9 @@ class SchoolAsset
 
         $labId = new Input('lab_id');
         $labId->setRequired(true)
-            ->getValidatorChain()
+            ->getFilterChain()
+            ->attach(new Filter\ToInt());
+        $labId->getValidatorChain()
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\Callback([
                 'callback' => function ($value) use ($labService) {
@@ -95,7 +97,7 @@ class SchoolAsset
         $this->inputFilter = new InputFilter();
         $this->inputFilter
             ->add($id)
-//            ->add($labId)
+            ->add($labId)
             ->add($itemCategoryId)
             ->add($qty)
             ->add($acquisitionYear)

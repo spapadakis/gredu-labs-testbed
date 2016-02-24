@@ -66,7 +66,7 @@ class LabService implements LabServiceInterface
             throw new InvalidArgumentException('No lab found');
         }
 
-        return $this->export($lab);
+        return $this->exportLab($lab);
     }
 
     public function getLabsBySchoolId($id)
