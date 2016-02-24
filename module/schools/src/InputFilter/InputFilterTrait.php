@@ -17,7 +17,7 @@ trait InputFilterTrait
     {
         $this->inputFilter->setData($data);
         $isValid = $this->inputFilter->isValid();
-
+        
         return [
             'is_valid' => $isValid,
             'values'   => $isValid ? $this->inputFilter->getValues() : [],

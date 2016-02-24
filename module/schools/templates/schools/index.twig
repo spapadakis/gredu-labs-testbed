@@ -35,7 +35,7 @@
 <div class="form-group">
     <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>
     <div class="col-xs-12 col-sm-12 col-md-9">
-        <div class="input-group">
+        {#<div class="input-group">
             <span class="input-group-btn">
                 <span class="btn btn-default btn-file">
                     Επιλέξτε&hellip; <input type="file" multiple name="{{ name }}" id="el-{{ name }}">
@@ -50,7 +50,8 @@
                     <i class="fa fa-remove"></i>
                 </span>
             </span>
-        </div>
+        </div>#}
+        <input type="file" multiple name="{{ name }}" id="el-{{ name }}">
     </div>
 </div>
 {% endmacro %}

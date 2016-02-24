@@ -9,20 +9,11 @@
 
 namespace GrEduLabs\Schools\Service;
 
+use InvalidArgumentException;
 use RedBeanPHP\R;
 
 class LabService implements LabServiceInterface
 {
-    protected $schoolService;
-    protected $staffService;
-
-    public function __construct(
-        SchoolServiceInterface $schoolService,
-        StaffServiceInterface $staffService
-    ) {
-        $this->schoolService = $schoolService;
-        $this->staffService  = $staffService;
-    }
 
     public function createLab(array $data)
     {
@@ -30,60 +21,61 @@ class LabService implements LabServiceInterface
         $lab = R::dispense('lab');
         $this->persist($lab, $data);
 
-        //return $this->export($lab);
-        return $lab;
+        return $this->exportLab($lab);
     }
 
     public function updateLab(array $data, $id)
     {
         $lab = R::load('lab', $id);
         if (!$lab->id) {
-            throw new \InvalidArgumentException('No lab found');
+            throw new InvalidArgumentException('No lab found');
         }
         $this->persist($lab, $data);
 
-        return $this->export($lab);
+        return $this->exportLab($lab);
     }
 
     private function persist($lab, $data)
     {
-        $lab->school_id       = $data['school_id'];
-        $lab->name            = $data['name'];
-        $lab->type            = $data['type'];
-        $lab->area            = $data['area'];
-        $lab->sharedLesson[]    = $this->getLessonsById($data['lessons']);
-        $lab->use_ext_program  = $data['use_ext_program'];
-        $lab->use_in_program  = $data['use_in_program'];
-        $lab->attachment      = $data['attachment'];
-        $lab->has_network     = $data['has_network'];
-        $lab->has_server      = isset($data['has_server']);
-        $lab->responsible     = $data['responsible'];
-         
-        $id = R::store($lab);
+        $lab->school_id           = $data['school_id'];
+        $lab->name                = $data['name'];
+        $lab->labtype_id          = $data['labtype_id'];
+        $lab->area                = $data['area'];
+        $lab->sharedLesson        = $this->getLessonsById($data['lessons']);
+        $lab->use_ext_program     = $data['use_ext_program'];
+        $lab->use_in_program      = $data['use_in_program'];
+        $lab->attachment          = $data['attachment'];
+        $lab->has_network         = $data['has_network'];
+        $lab->has_server          = $data['has_server'];
+        $lab->responsible         = R::load('teacher', $data['responsible_id']);
+
+        R::store($lab);
     }
 
     public function getLabById($id)
     {
         $lab = R::load('lab', $id);
+        if (!$lab->id) {
+            throw new InvalidArgumentException('No lab found');
+        }
 
-        return $lab;
+        return $this->export($lab);
     }
 
     public function getLabsBySchoolId($id)
     {
         $labs = R::findAll('lab', 'school_id = ?', [$id]);
-        $elabs=[];
-        foreach($labs as $lab) {
-            $elabs[] = $lab->export();
-        }
-        return $elabs;
+
+        return array_map([$this, 'exportLab'], $labs);
     }
 
     public function getLessons()
     {
         $lessons = R::findAll('lesson');
 
-        return  $lessons;
+        return array_map(function ($lesson) {
+            return $lesson->export();
+        }, $lessons);
     }
 
     public function getLessonsByLabId($id)
@@ -91,17 +83,57 @@ class LabService implements LabServiceInterface
         $lab     = R::load('lab', $id);
         $lessons = $lab->sharedLesson;
 
-        return $lessons;
+        return array_map(function ($lesson) {
+            return $lesson->export();
+        }, $lessons);
     }
 
-    private function getLessonsById(array $ids)
+    public function getLabTypes()
     {
-        $lessons= [];
-        foreach ($ids as $id) {
-            $lesson= R::load('lesson', $id);
-            $lessons[] = $lesson;
+        return array_map(function ($lab) {
+            return $lab->export();
+        }, R::find('labtype'));
+    }
+
+    private function getLessonsById($ids)
+    {
+        if (!is_array($ids)) {
+            $ids = [$ids];
         }
 
-        return $lesson;
+        return array_values(R::loadAll('lesson', $ids));
+    }
+
+    private function exportLab($bean)
+    {
+        $responsible = $bean->fetchAs('teacher')->responsible;
+        if ($responsible) {
+            $responsible = sprintf("%s %s", $responsible->name, $responsible->surname);
+        }
+
+        return array_merge($bean->export(), [
+            'labtype'     => $bean->labtype->name,
+            'responsible' => $responsible,
+            'lessons'     => array_reduce($bean->sharedLesson, function ($ids, $lesson) {
+                $ids[] = $lesson->id;
+
+                return $ids;
+            }, []),
+
+        ]);
+    }
+
+    public function getHasNetworkValues()
+    {
+        return [
+           'ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ',
+           'ΑΣΥΡΜΑΤΗ ΔΙΚΤΥΟ ΜΕΣΩ WIFI',
+           'ΔΕΝ ΥΠΑΡΧΕΙ ΔΙΚΤΥΟ',
+        ];
+    }
+
+    public function getHasServerValues()
+    {
+        return ['ΝΑΙ', 'ΟΧΙ'];
     }
 }

@@ -1,13 +1,12 @@
-(function () {
+(function (utils) {
     'use strict';
 
     var Lab,
         Labs,
-        LabView,
+        LabRow,
         LabsView,
-        LabModalView,
-        labTemplate,
-        utils = window.EDULABS.utils;
+        LabView,
+        labTemplate;
 
     Lab = Backbone.Model.extend({ idAttribute: 'id' });
 
@@ -16,7 +15,7 @@
         comparator: 'name'
     });
 
-    LabView = Backbone.View.extend({
+    LabRow = Backbone.View.extend({
         tagName: 'tr',
         template: (function () {
             if (typeof labTemplate === 'undefined') {
@@ -26,67 +25,134 @@
         }()),
         initialize: function () {
             this.model.on('change', this.render, this);
+            this.model.on('remove', this.remove, this);
         },
         render: function () {
-            var html = this.template({ lab: this.model.attributes });
-            this.$el.html(html);
+            this.$el.html(this.template({ lab: this.model.attributes }));
             this.$el.attr('data-id', this.model.get('id'));
             return this;
+        },
+        remove: function () {
+            this.$el.remove();
         }
     });
 
     LabsView = Backbone.View.extend({
         el: '#school',
-        modal: null,
+        labView: null,
         events: {
             'click .btn-add-lab': 'addLab',
             'click tbody tr': 'editLab'
         },
         initialize: function () {
             var that = this;
-            this.modal = new LabModalView();
-            _.each(this.$el.find('tbody tr[data-lab]'), function (tr) {
-                var data,
-                    lab;
-                tr = $(tr);
-                data = tr.data('lab');
-                lab = new Lab(data);
+            this.labView = new LabView({model: this.model});
+            _.each(this.$el.find('tbody tr'), function (tr) {
+                var data = $(tr).data('lab'),
+                    lab = new Lab(data);
                 that.model.add(lab);
-                new LabView({ model: lab });
-                tr.attr('data-lab', null);
+                new LabRow({ model: lab, el: tr });
+                $(tr).attr('data-lab', null);
             });
             this.model.on('add', this.renderLab, this);
+            this.model.on('remove', function () {
+                if (this.model.length === 0) {
+                    this.$el.find('tbody tr.no-records').show();
+                }
+            }, this);
+        },
+        addLab: function (evt) {
+            evt.preventDefault();
+            this.labView.render();
+            return this;
+        },
+        editLab: function (evt) {
+            var labId;
+            labId = $(evt.target).closest('tr').data('id');
+            this.labView.render(labId);
+            return this;
         },
         renderLab: function (lab) {
-            this.$el.find('tbody').append(new LabView({
+            this.$el.find('tbody tr.no-records').hide();
+            this.$el.find('tbody').append(new LabRow({
                 model: lab
             }).render().el);
             return this;
-        },
-        addLab: function (evt) {
-            var that = this;
-            evt.preventDefault();
-            this.modal.render(function (data) {
-                that.model.add(data);
-            });
-        },
-        editLab: function (evt) {
-            var lab = this.model.get(utils.parseInt($(evt.target).closest('tr').data('id')));
-            if (!lab) return;
-            this.modal.render(function (data) {
-                lab.set(data);
-            }, lab.attributes);
         }
     });
 
-    LabModalView = Backbone.View.extend({
+    LabView = Backbone.View.extend({
         el: '#lab-form-modal',
         form: null,
+        lab: null,
+        url: null,
         events: {
-            'submit': 'submit',
+//            'submit': 'persistLab',
+            'click button.remove': 'removeLab'
         },
         initialize: function () {
+            var that = this;
             this.form = this.$el.find('form');
+            this.url = this.form.data('url');
+            this.$el.on('hide.bs.modal', function () {
+                utils.formMessages.clear(that.form);
+                that.form[0].reset();
+                that.form.find('input[type="hidden"]').val('');
+            });
+            this.form.find('input[type="file"]').fileupload({
+                url: that.form.data('url'),
+                multipart: true,
+                submit: function (e, data) {
+                    data.formData = utils.serializeObject(that.form);
+                    data.jqXHR = $(this).fileupload('send', data);
+                    return false;
+                },
+                done: function (response) {
+                    if (that.lab) {
+                        that.lab.set(response);
+                    } else {
+                        that.model.add(response);
+                    }
+                    that.hide();
+                },
+                fail: function (xhr, err) {
+                    var messages;
+                    if (422 === xhr.status) {
+                        messages = JSON.parse(xhr.responseText).messages || {};
+                        utils.formMessages.render(that.form, messages);
+                    } else {
+                        alert('Προέκυψε κάποιο σφάλμα');
+                    }
+                }
+            });
+        },
+        render: function (labId) {
+            var labAttributes;
+            
+            if (!labId) {
+                this.$el.find('.modal-footer button.remove')
+                    .prop('disabled', true)
+                    .hide();
+            } else {
+                this.$el.find('.modal-fotter button.remove')
+                    .prop('disabled', false)
+                    .show();
+            }
+            this.lab = labId && this.model.get(labId) || null;
+            labAttributes = this.lab && this.lab.attributes || {};
+            
+            _.each(this.form[0].elements, function (element) {
+                var name;
+                element = $(element);
+                name = element.attr('name');
+                if ('checkbox' === element.attr('type')) {
+                    element.prop('checked', utils.parseInt(labAttributes[name]));
+                } else {
+                    element.val(labAttributes[name] || '');
+                }
+            });
+            this.show();
+            return this;
         },
         show: function () {
             this.$el.modal('show');
@@ -96,40 +162,73 @@
             this.$el.modal('hide');
             return this;
         },
-        render: function (done, lab) {
-            var template,
-                that = this;
-
-            lab = lab || {};
-            this.form[0].reset();
-            this.form.find('input[type="hidden"]').val('');
-            this.form.data('done', done);
-            
-            _.each(this.form[0].elements, function (element) {
-                var element = $(element),
-                    name = element.attr('name');
-                element.val(lab[name] || '');
-            });
-            this.show();
-
-            return this;
-        },
-        submit: function (evt) {
-            var data;
-            evt.preventDefault();
-            data = _.reduce(this.form.serializeArray(), function (hash, pair) {
-                    hash[pair.name] = pair.value;
-                    return hash;
-                }, {});
-                evt.preventDefault();
-                if (!data.id) {
-                    data.id = (100 * Math.random()).toFixed(0);
+//        persistLab: function (evt) {
+//            var formData = utils.serializeObject(this.form),
+//                that = this,
+//                upload = this.form.find('input[type="file"]');
+//            evt.preventDefault();
+//            upload
+//            $('#fileupload').fileupload('send', {
+//                files: upload[0].files 
+//            });
+////            
+////            ({
+////                url: that.url,
+////                submit: function (e, data) {
+////                    var $this = $(this);
+////                    data.formData = formData;
+////                    data.jqXHR = $this.fileupload('send', data);
+////                    return false;
+////                },
+////                done: function (response) {
+////                    if (that.lab) {
+////                        that.lab.set(response);
+////                    } else {
+////                        that.model.add(response);
+////                    }
+////                    that.hide();
+////                },
+////                error: function (xhr, err) {
+////                    var messages;
+////                    if (422 === xhr.status) {
+////                        messages = JSON.parse(xhr.responseText).messages || {};
+////                        utils.formMessages.render(that.form, messages);
+////                    } else {
+////                        alert('Προέκυψε κάποιο σφάλμα');
+////                    }
+////                }
+////            });
+////            upload.fileupload('send');
+//            upload.fileupload('destroy');
+////            
+////            $.ajax({
+////                url: that.url,
+////                type: 'post',
+////                contentType: 'multipart/form-data',
+////                data: data,
+////            }).).fail(function );
+//        },
+        removeLab: function(evt) {
+            var that = this;
+            if (!confirm('Να διαγραφεί ο χώρος;')) {
+                return;
+            }
+            $.ajax({
+                url: that.url,
+                type: 'delete',
+                dataType: 'json',
+                data: {
+                    id: that.lab.get('id')
                 }
-                this.form.data('done')(data);
-                this.form.data('done', undefined);
-            this.hide();
-        } 
+            }).done(function () {
+                that.model.remove(that.asset.get('id'));
+                that.hide();
+            }).fail(function (xhr, err){
+                alert('Δεν ήταν δυνατή η διαγραφή του χώρου');
+            });
+            
+        }
     });
 
     new LabsView({ model: new Labs() });
-}());
+}(window.EDULABS.utils));

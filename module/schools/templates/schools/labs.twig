@@ -24,6 +24,8 @@
                         <th>Ονομασία</th>
                         <th>Τύπος</th>
                         <th>Υπεύθυνος</th>
+                        <th>Δίκτυο</th>
+                        <th>Server</th>
                         <th>Επιφάνεια (m<sup>2</sup>)</th>
                     </tr>
                 </thead>
@@ -31,13 +33,15 @@
                     {% for lab in labs %}
                     <tr data-lab="{{ lab|json_encode }}" data-id="{{ lab.id }}">
                         <td>{{ lab.name }}</td>
-                        <td>{{ lab.typeName }}</td>
-                        <td>{{ lab.responsibleName }}</td>
+                        <td>{{ lab.labtype }}</td>
+                        <td>{{ lab.responsible }}</td>
+                        <td>{{ lab.has_network }}</td>
+                        <td>{{ lab.has_server }}</td>
                         <td>{{ lab.area }}</td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4" class="text-center text-muted">
+                        <td colspan="6" class="no-records text-center text-muted">
                             Δεν έχουν καταχωρηθεί χώροι.
                         </td>
                     </tr>
@@ -45,13 +49,13 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="4"></td>
+                        <td colspan="6"></td>
                     </tr>
                 </tfoot>
             </table>
         </div>
         <div class="modal fade" id="lab-form-modal" tabindex="-1" role="dialog" aria-labelledby="lab-from">
-            <form class="form-horizontal">
+            <form class="form-horizontal" enctype="multipart/form-data">
                 <div class="modal-dialog" role="form">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -62,11 +66,13 @@
                         </div>
                         <div class="modal-body">
                             {{ macros.input('name', 'Όνομα', '', 'text', {'required': ''}) }}
-                            {{ macros.select('responsible', 'Υπεύθυνος', staff, '', {'required': ''}) }}
-                            {{ macros.select('type', 'Τύπος', lab_types, '', {'required': ''}) }}
+                            {{ macros.select('responsible_id', 'Υπεύθυνος', staff, '', {'required': ''}) }}
+                            {{ macros.select('labtype_id', 'Τύπος', lab_types, '', {'required': ''}) }}
+                            {{ macros.select('has_network', 'Δίκτυο', network_options, '', {'required': ''}) }}
+                            {{ macros.select('has_server', 'Ύπαρξη server', server_options, '', {'required': ''}) }}
                             {{ macros.input('area', 'Επιφάνεια (m<sup>2</sup>)', '', 'number', {'required': '', 'min': 0, 'max': 500}) }}
-                            {{ macros.file('blueprint', 'Αρχείο κάτοψης') }}
-                            {{ macros.select('lessons', 'Μαθήματα', lessons, '', {'multiple': ''}) }}
+                            {{ macros.file('attachment', 'Αρχείο κάτοψης') }}
+                            {{ macros.select('lessons', 'Μαθήματα', lessons_options, '', {'multiple': ''}) }}
                             {{ macros.text('use_in_program', 'Χρήση στα πλαίσια μαθημάτων') }}
                             {{ macros.text('use_ext_program', 'Χρήση για δραστηριότητες εκτός εκπαιδευτικού προγράμματος') }}
                             <input type="hidden" name="id" value="">
@@ -82,14 +88,24 @@
 
         <script type="text/template" id="lab-row-template">
             <td><%= lab.name %></td>
-            <td><%= lab.typeName %></td>
-            <td><%= lab.responsibleName %></td>
+            <td><%= lab.labtype %></td>
+            <td><%= lab.responsible %></td>
+            <td><%= lab.has_network %></td>
+            <td><%= lab.has_server %></td>
             <td><%= lab.area %></td>
         </script>
     </div>
 {% endblock %}
 
+{% block htmlHead %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ base_url }}/css/jquery.fileupload.css">
+{% endblock %}
+
 {% block inlinejs %}
     {{ parent() }}
+    <script src="{{ base_url }}/js/jquery.ui.widget.js"></script>
+    <script src="{{ base_url }}/js/jquery.iframe-transport.js"></script>
+    <script src="{{ base_url }}/js/jquery.fileupload.js"></script>
     <script src="{{ base_url }}/js/schools/labs.js"></script>
 {% endblock %}

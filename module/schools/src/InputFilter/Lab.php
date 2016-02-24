@@ -9,7 +9,9 @@
 
 namespace GrEduLabs\Schools\InputFilter;
 
+use GrEduLabs\Schools\Service\LabServiceInterface;
 use Zend\Filter;
+use Zend\InputFilter\FileInput;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
 use Zend\Validator;
@@ -17,9 +19,11 @@ use Zend\Validator;
 class Lab
 {
     use InputFilterTrait;
-
-    public function __construct()
-    {
+    
+    public function __construct(
+        array $fileUploadSettings, 
+        LabServiceInterface $labService
+    ) {
         $id = new Input('id');
         $id->setRequired(false)
             ->getValidatorChain()
@@ -33,13 +37,13 @@ class Lab
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 3]));
 
-        $type = new Input('type');
-        $type->setRequired(true);
-        $type->getValidatorChain()
+        $labTypeId = new Input('labtype_id');
+        $labTypeId->setRequired(true);
+        $labTypeId->getValidatorChain()
             ->attach(new Validator\NotEmpty());
 
-        $responsible = new Input('responsible');
-        $responsible->setRequired(false)
+        $responsibleId = new Input('responsible_id');
+        $responsibleId->setRequired(false)
             ->getValidatorChain()
             ->attach(new Validator\Digits());
 
@@ -50,32 +54,48 @@ class Lab
             ->attach(new Validator\Digits());
 
         $lessons = new Input('lessons');
-        $lessons->setRequired(true)
-            ->getValidatorChain()
+        $lessons->setRequired(false);
+        $lessons->getValidatorChain()
             ->attach(new Validator\NotEmpty());
-
-        $attachment = new Input('attachment');
-        $attachment->setRequired(false);
-
+        
+        $attachment = new FileInput('attachment');
+        $attachment->setRequired(false)
+            ->getFilterChain()
+            ->attach(new Filter\File\RenameUpload([
+                'target' => $fileUploadSettings['target_path'],
+                'randomize' => true,
+            ]));
+        $attachment->getValidatorChain()
+            ->attach(new Validator\File\UploadFile());
+        
         $use_ext_program= new Input('use_ext_program');
         $use_ext_program->setRequired(false);
 
         $use_in_program = new Input('use_in_program');
         $use_in_program->setRequired(false);
 
-        $has_server = new Input('has_server');
-        $has_server->setRequired(false);
-
         $has_network = new Input('has_network');
         $has_network->setRequired(false);
+        $has_network->getValidatorChain()
+            ->attach(new Validator\NotEmpty())->attach(new Validator\InArray([
+                'haystack' => $labService->getHasNetworkValues(),
+            ]));
+        
+        $has_server = new Input('has_server');
+        $has_server->setRequired(false);
+        $has_server->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\InArray([
+                'haystack' => $labService->getHasServerValues(),
+            ]));
 
 
         $this->inputFilter = new InputFilter();
         $this->inputFilter
             ->add($id)
             ->add($name)
-            ->add($type)
-            ->add($responsible)
+            ->add($labTypeId)
+            ->add($responsibleId)
             ->add($area)
             ->add($lessons)
             ->add($attachment)

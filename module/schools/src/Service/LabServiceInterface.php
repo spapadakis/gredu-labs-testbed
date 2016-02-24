@@ -18,4 +18,9 @@ interface LabServiceInterface
 
     public function getLessons();
     public function getLessonsByLabId($id);
+
+    public function getLabTypes();
+
+    public function getHasNetworkValues();
+    public function getHasServerValues();
 }

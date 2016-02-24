@@ -270,7 +270,7 @@ CREATE TABLE `lab` (
   `use_in_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `attachment` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `has_network` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `has_server` tinyint(1) unsigned DEFAULT NULL,
+  `has_server` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `school_id` int(11) unsigned DEFAULT NULL,
   `teacher_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),

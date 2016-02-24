@@ -12,14 +12,29 @@ namespace GrEduLabs\Schools\Action\Lab;
 
 use GrEduLabs\Schools\Service\LabServiceInterface;
 use GrEduLabs\Schools\Service\StaffServiceInterface;
-use RedBeanPHP\R;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
 
 class ListAll
 {
+    /**
+     *
+     * @var Twig
+     */
     protected $view;
+
+    /**
+     *
+     * @var LabServiceInterface
+     */
+    protected $labService;
+
+    /**
+     *
+     * @var StaffServiceInterface
+     */
+    protected $staffService;
 
     public function __construct(
         Twig $view,
@@ -27,8 +42,8 @@ class ListAll
         StaffServiceInterface $staffservice
     ) {
         $this->view         = $view;
-        $this->labservice   = $labservice;
-        $this->staffservice = $staffservice;
+        $this->labService   = $labservice;
+        $this->staffService = $staffservice;
     }
 
     public function __invoke(Request $req, Response $res, array $args = [])
@@ -38,44 +53,25 @@ class ListAll
             return $res->withStatus(403, 'No school');
         }
 
-        $labs        = $this->labservice->getLabsBySchoolId($school->id);
-        $staff       = $this->staffservice->getTeachersBySchoolId($school->id);
-        $clean_staff = [];
-        foreach ($staff as $obj) {
-            $clean_staff[] = [
-                'value' => $obj['id'],
-                'label' => $obj['name'] . " " . $obj['surname'],
-                ];
-        }
-        $lessons = $this->labservice->getLessons();
-        $lessons_formatted = [];
-        foreach ($lessons as $lesson) {
-            $lessons_formatted[] = ['value' => $lesson->id, 'label' => $lesson->name];
-        }
-        $labs_formatted = [];
-        foreach($labs as $lab) {
-            $lab['responsible'] = $lab['teacher_id'];
-            $labs_formatted[] = $lab;
-        }
+        $labs = $this->labService->getLabsBySchoolId($school->id);
 
         return $this->view->render($res, 'schools/labs.twig', [
-            'labs'      => $labs_formatted,
-            'staff'     => $clean_staff,
-            'lab_types' => [
-                [
-                    'value' => 1,
-                    'label' => 'ΕΡΓΑΣΤΗΡΙΟ',
-                ],
-                [
-                    'value' => 2,
-                    'label' => 'ΑΙΘΟΥΣΑ',
-                ],
-                [
-                    'value' => 3,
-                    'label' => 'ΓΡΑΦΕΙΟ',
-                ],
-            ],
-            'lessons' => $lessons_formatted,
+            'labs'      => $labs,
+            'staff'     => array_map(function ($teacher) {
+                return ['value' => $teacher['id'], 'label' => $teacher['fullname']];
+            }, $this->staffService->getTeachersBySchoolId($school->id)),
+            'network_options' => array_map(function ($option) {
+                return ['value' => $option, 'label' => $option];
+            }, $this->labService->getHasNetworkValues()),
+            'server_options' => array_map(function ($option) {
+                return ['value' => $option, 'label' => $option];
+            }, $this->labService->getHasServerValues()),
+            'lab_types' => array_map(function ($type) {
+                return ['value' => $type['id'], 'label' => $type['name']];
+            }, $this->labService->getLabTypes()),
+            'lessons_options' => array_map(function ($lesson) {
+                return ['value' => $lesson['id'], 'label' => $lesson['name']];
+            }, $this->labService->getLessons()),
         ]);
     }
 }

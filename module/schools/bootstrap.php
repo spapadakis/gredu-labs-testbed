@@ -110,10 +110,7 @@ return function (Slim\App $app) {
         };
 
         $container[Service\LabServiceInterface::class] = function ($c) {
-            return new Service\LabService(
-                $c->get(Service\SchoolServiceInterface::class),
-                $c->get(Service\StaffServiceInterface::class)
-            );
+            return new Service\LabService();
         };
 
         $container[Service\AssetServiceInterface::class] = function ($c) {
@@ -168,7 +165,12 @@ return function (Slim\App $app) {
         };
 
         $container[InputFilter\Lab::class] = function ($c) {
-            return new InputFilter\Lab();
+            $settings = $c->get('settings');
+            $fileUploadSettings = $settings['schools']['file_upload'];
+            return new InputFilter\Lab(
+                $fileUploadSettings,
+                $c->get(Service\LabServiceInterface::class)
+            );
         };
 
     });

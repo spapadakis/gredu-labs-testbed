@@ -18,4 +18,9 @@ return [
             ],
         ],
     ],
+    'schools' => [
+        'file_upload' => [
+            'target_path' => 'data/uploads',
+        ],
+    ],
 ];

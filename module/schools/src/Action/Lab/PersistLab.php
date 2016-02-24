@@ -33,26 +33,21 @@ class PersistLab
         $params              = $req->getParams();
         $id                  = $params['id'];
         $params['school_id'] = $school->id;
-        $params['lessons'] = [1,2];
+
         unset($params['id']);
         try {
-            if ($id > 0) {
-                $id  = $this->labservice->updateLab($params, $id);
-                $lab = $this->labservice->getLabById($id);
+            if ($id) {
+                $lab = $this->labservice->updateLab($params, $id);
+                $res = $res->withStatus(200);
             } else {
-                
-                $id  = $this->labservice->createLab($params);
-                if ($id > 0) {
-                    $lab = $this->labservice->getLabById($id);
-                }
+                $lab  = $this->labservice->createLab($params);
+                $res  = $res->withStatus(201);
             }
-            if (isset($lab)) {
-                return $res->withJson($lab->export())->withStatus(201);
-            }
+            $res = $res->withJson($lab);
         } catch (Exception $ex) {
             $res = $res->withStatus(500, $ex->getMessage());
         }
 
-        return $res->withStatus(400);
+        return $res;
     }
 }

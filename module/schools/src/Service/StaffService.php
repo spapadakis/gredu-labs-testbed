@@ -86,6 +86,7 @@ class StaffService implements StaffServiceInterface
         return array_merge($teacherBean->export(), [
             'branch'   => $teacherBean->branch->name,
             'position' => implode(', ', $position),
+            'fullname' => sprintf("%s %s", $teacherBean->name, $teacherBean->surname),
         ]);
     }
 }
