@@ -35,7 +35,7 @@ class ListAll
         $software   = $this->softwareService->getSoftwareBySchoolId($school->id);
         $categories = $this->softwareService->getSoftwareCategories();
         return $this->view->render($res, 'schools/software.twig', [
-            'software'     => $software,
+            'softwareArray'     => $software,
             'categories'   => $categories
         ]);
     }
