@@ -59,7 +59,6 @@ return function (Slim\App $app) {
                 $c['view'],
                 $c['authentication_service'],
                 $c['flash'],
-                $c['csrf'],
                 $c['router']->pathFor('index')
             );
         };

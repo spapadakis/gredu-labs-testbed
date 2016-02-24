@@ -14,7 +14,6 @@ use Slim\Flash\Messages;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
-use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Adapter\ValidatableAdapterInterface;
 use Zend\Authentication\AuthenticationService;
 
@@ -40,13 +39,13 @@ class Login
      */
     protected $successUrl;
 
+
     /**
-     * Constructor.
-     *
-     * @param Twig                  $view
+     * 
+     * @param Twig $view
      * @param AuthenticationService $authService
-     * @param AdapterInterface      $authAdapter
-     * @param Messages              $flash
+     * @param Messages $flash
+     * @param type $successUrl
      */
     public function __construct(
         Twig $view,
