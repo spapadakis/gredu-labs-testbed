@@ -184,11 +184,11 @@ class LabService implements LabServiceInterface
         if (!$lab->id) {
             throw new InvalidArgumentException('No lab');
         }
-        
+
         if (!$lab->attachment) {
             return ;
         }
-        
+
         if (is_writable($this->filesPath . '/' . $lab->attachment)) {
             unlink($this->filesPath . '/' . $lab->attachment);
         }

@@ -76,46 +76,13 @@
     <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}"
           data-messages="{{ form.messages|default({})|json_encode }}">
         <div class="form-group">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent pulvinar tincidunt
-                    odio, vel pretium mauris imperdiet at. In tempor fermentum enim, euismod posuere
-                    purus venenatis sit amet. Sed tincidunt, sapien et varius congue, orci urna rutrum
-                    magna, in porttitor tellus ante nec quam. Praesent non ante commodo, ornare tellus
-                    ut, commodo dolor.</p>
+            <p>
+                Σε αυτή την καρτέλα θα καταχωρήσετε πληροφορίες που αφορούν στον 
+                εξοπλισμό που θέλετε να αναβαθμίσετε ή/και στον νέο εξοπλισμό 
+                που θέλετε να αποκτήσετε, υποβάλλοντας και τη σχετική αίτηση.
+            </p>
         </div>
-        <div class="table-responsive">
-            <fieldset>
-                <legend>Υπάρχον εξοπλισμός</legend>
-
-                    <table class="table table-hover table-striped table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Χώρος</th>
-                                <th>Τύπος</th>
-                                <th>Πλήθος</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for asset in assets %}
-                            <tr>
-                                <td>{{ asset.lab }}</td>
-                                <td>{{ asset.type }}</td>
-                                <td>{{ asset.qty }}</td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="6" class="text-center">Δεν έχει καταχωρηθεί εξοπλισμός</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="6"></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-
-            </fieldset>
-        </div>
+        
         <div class="table-responsive">
             <fieldset>
                 <legend>Νέος εξοπλισμός</legend>

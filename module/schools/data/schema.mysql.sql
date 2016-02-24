@@ -250,23 +250,25 @@ DROP TABLE IF EXISTS `lab`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lab` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `type` int(11) unsigned DEFAULT NULL,
-  `area` int(11) unsigned DEFAULT NULL,
-  `use_ext_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `use_in_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `school_id` int(11) unsigned NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `labtype_id` int(11) unsigned DEFAULT NULL,
+  `responsible_id` int(11) unsigned DEFAULT NULL,
+  `area` int(11) unsigned NOT NULL,
   `attachment` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `attachment_mime` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `has_network` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `has_server` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `school_id` int(11) unsigned DEFAULT NULL,
-  `teacher_id` int(11) unsigned DEFAULT NULL,
+  `has_network` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `has_server` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `use_ext_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `use_in_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `index_foreignkey_lab_school` (`school_id`),
-  KEY `index_foreignkey_lab_teacher` (`teacher_id`),
-  CONSTRAINT `c_fk_lab_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+  KEY `school_id` (`school_id`),
+  KEY `index_foreignkey_lab_labtype` (`labtype_id`),
+  KEY `index_foreignkey_lab_responsible` (`responsible_id`),
+  CONSTRAINT `c_fk_lab_labtype_id` FOREIGN KEY (`labtype_id`) REFERENCES `labtype` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `c_fk_lab_responsible_id` FOREIGN KEY (`responsible_id`) REFERENCES `teacher` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `lab_ibfk_1` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -308,7 +310,17 @@ CREATE TABLE `lesson` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `lesson_lab`
+-- Dumping data for table `lesson`
+--
+
+LOCK TABLES `lesson` WRITE;
+/*!40000 ALTER TABLE `lesson` DISABLE KEYS */;
+INSERT INTO `lesson` VALUES (1,'ΠΛΗΡΟΦΟΡΙΚΗ'),(2,'ΦΥΣΙΚΗ'),(3,'ΧΗΜΕΙΑ');
+/*!40000 ALTER TABLE `lesson` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `lab_lesson`
 --
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
