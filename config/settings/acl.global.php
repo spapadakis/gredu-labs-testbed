@@ -22,6 +22,7 @@ return [
             'callables' => [],
             'routes'    => [
                 ['/', ['guest', 'user'], ['get']],
+                ['/about', ['guest', 'user'], ['get']],
                 ['/school', ['school'], ['get']],
                 ['/school/labs', ['school'], ['get', 'post']],
                 ['/school/staff', ['school'], ['get', 'post', 'delete']],

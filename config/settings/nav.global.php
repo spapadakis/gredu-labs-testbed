@@ -42,10 +42,14 @@ return [
                     ],
                 ],
             ],
-             'app-form' => [
-                 'label' => 'Αίτηση',
-                 'route' => 'application_form',
-             ],
+            'app-form' => [
+                'label' => 'Αίτηση',
+                'route' => 'application_form',
+            ],
+            'about' => [
+                'label' => 'Σχετικά με τη δράση',
+                'route' => 'about',
+            ],
 
         ],
     ],

@@ -85,8 +85,11 @@ return function (Slim\App $app) {
             );
         };
 
-        $container['GrEduLabs\\Application\\Action\\Index'] = function ($c) {
+        $container[GrEduLabs\Application\Action\Index::class] = function ($c) {
             return new GrEduLabs\Application\Action\Index($c['view']);
+        };
+        $container[GrEduLabs\Application\Action\About::class] = function ($c) {
+            return new GrEduLabs\Application\Action\About($c['view']);
         };
     });
 
@@ -98,6 +101,7 @@ return function (Slim\App $app) {
             }
         }
 
-        $app->get('/', 'GrEduLabs\\Application\\Action\\Index')->setName('index');
+        $app->get('/', GrEduLabs\Application\Action\Index::class)->setName('index');
+        $app->get('/about', GrEduLabs\Application\Action\About::class)->setName('about');
     });
 };
