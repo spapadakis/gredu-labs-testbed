@@ -35,7 +35,7 @@
 <div class="form-group">
     <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>
     <div class="col-xs-12 col-sm-12 col-md-9">
-        {#<div class="input-group">
+        <div class="input-group">
             <span class="input-group-btn">
                 <span class="btn btn-default btn-file">
                     Επιλέξτε&hellip; <input type="file" multiple name="{{ name }}" id="el-{{ name }}">
@@ -45,13 +45,23 @@
             {% for attr_name, attr_value in attributes|default({}) %}
                 {{ attr_name }}="{{ attr_value }}"
             {% endfor %}>
+            
             <span class="input-group-btn">
                 <span class="btn btn-default btn-file-remove">
                     <i class="fa fa-remove"></i>
                 </span>
             </span>
-        </div>#}
-        <input type="file" multiple name="{{ name }}" id="el-{{ name }}">
+        </div>
+        {% if value %}
+        <div class="pull-right uploaded btn-group btn-group-sm" data-href="{{ value }}">
+            <a href="#" target="_blank" class="btn-download btn bnt-link btn-sm">
+                <i class="fa fa-download"></i> Λήψη</a>
+            <a href="#" class="btn-remove btn bnt-link btn-sm text-danger">
+                <i class="fa fa-remove"></i> Διαγραφή</a>
+        </div>
+        {% endif %}
+            
+        
     </div>
 </div>
 {% endmacro %}

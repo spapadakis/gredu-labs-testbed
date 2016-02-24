@@ -55,7 +55,8 @@
             </table>
         </div>
         <div class="modal fade" id="lab-form-modal" tabindex="-1" role="dialog" aria-labelledby="lab-from">
-            <form class="form-horizontal" enctype="multipart/form-data">
+            <form class="form-horizontal" method="post" action="{{ path_for('school.labs') }}" 
+                  data-url="{{ path_for('school.labs') }}" enctype="multipart/form-data">
                 <div class="modal-dialog" role="form">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -71,7 +72,7 @@
                             {{ macros.select('has_network', 'Δίκτυο', network_options, '', {'required': ''}) }}
                             {{ macros.select('has_server', 'Ύπαρξη server', server_options, '', {'required': ''}) }}
                             {{ macros.input('area', 'Επιφάνεια (m<sup>2</sup>)', '', 'number', {'required': '', 'min': 0, 'max': 500}) }}
-                            {{ macros.file('attachment', 'Αρχείο κάτοψης') }}
+                            {{ macros.file('attachment', 'Αρχείο κάτοψης ή φωτογραφία', path_for('school.labs.attachment', {}, {'lab_id': '__lab_id__'})) }}
                             {{ macros.select('lessons', 'Μαθήματα', lessons_options, '', {'multiple': ''}) }}
                             {{ macros.text('use_in_program', 'Χρήση στα πλαίσια μαθημάτων') }}
                             {{ macros.text('use_ext_program', 'Χρήση για δραστηριότητες εκτός εκπαιδευτικού προγράμματος') }}

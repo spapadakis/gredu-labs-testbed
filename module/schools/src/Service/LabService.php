@@ -10,10 +10,17 @@
 namespace GrEduLabs\Schools\Service;
 
 use InvalidArgumentException;
+use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
 
 class LabService implements LabServiceInterface
 {
+    private $filesPath;
+
+    public function __construct($filesPath)
+    {
+        $this->filesPath = $filesPath;
+    }
 
     public function createLab(array $data)
     {
@@ -44,11 +51,11 @@ class LabService implements LabServiceInterface
         $lab->sharedLesson        = $this->getLessonsById($data['lessons']);
         $lab->use_ext_program     = $data['use_ext_program'];
         $lab->use_in_program      = $data['use_in_program'];
-        $lab->attachment          = $data['attachment'];
         $lab->has_network         = $data['has_network'];
         $lab->has_server          = $data['has_server'];
         $lab->responsible         = R::load('teacher', $data['responsible_id']);
-
+        R::store($lab);
+        $this->storeAttachement($lab, $data['attachment']);
         R::store($lab);
     }
 
@@ -123,6 +130,27 @@ class LabService implements LabServiceInterface
         ]);
     }
 
+    private function storeAttachement(OODBBean $lab, array $attachment = null)
+    {
+        if (null === $attachment) {
+            return;
+        }
+
+        $schoolPath = $lab->school->registry_no . '/lab_' . $lab->id;
+        $fullPath   = $this->filesPath . '/' . $schoolPath;
+        if (!is_dir($fullPath)) {
+            mkdir($fullPath, 0700, true);
+        }
+        // remove previous
+        unlink($this->filesPath . '/' . $lab->attachment);
+        // move new file 
+        rename($attachment['tmp_name'], $fullPath . '/' . $attachment['name']);
+        $lab->attachment      = $schoolPath . '/' . $attachment['name'];
+        $lab->attachment_mime = $attachment['type'];
+
+        return $lab;
+    }
+
     public function getHasNetworkValues()
     {
         return [
@@ -135,5 +163,38 @@ class LabService implements LabServiceInterface
     public function getHasServerValues()
     {
         return ['ΝΑΙ', 'ΟΧΙ'];
+    }
+
+    public function getLabForSchool($school_id, $id)
+    {
+        $lab = R::findOne('lab', ' school_id = ? AND id = ? ', [
+            $school_id,
+            $id,
+        ]);
+        if (!$lab) {
+            return;
+        }
+
+        return $this->exportLab($lab);
+    }
+
+    public function removeLabAttachment($lab_id)
+    {
+        $lab = R::load('lab', $lab_id);
+        if (!$lab->id) {
+            throw new InvalidArgumentException('No lab');
+        }
+        
+        if (!$lab->attachment) {
+            return ;
+        }
+        
+        if (is_writable($this->filesPath . '/' . $lab->attachment)) {
+            unlink($this->filesPath . '/' . $lab->attachment);
+        }
+
+        $lab->attachment      = null;
+        $lab->attachment_mime = null;
+        R::store($lab);
     }
 }

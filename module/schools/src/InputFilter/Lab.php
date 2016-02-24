@@ -19,9 +19,9 @@ use Zend\Validator;
 class Lab
 {
     use InputFilterTrait;
-    
+
     public function __construct(
-        array $fileUploadSettings, 
+        $uploadTmpPath,
         LabServiceInterface $labService
     ) {
         $id = new Input('id');
@@ -57,17 +57,17 @@ class Lab
         $lessons->setRequired(false);
         $lessons->getValidatorChain()
             ->attach(new Validator\NotEmpty());
-        
+
         $attachment = new FileInput('attachment');
         $attachment->setRequired(false)
             ->getFilterChain()
             ->attach(new Filter\File\RenameUpload([
-                'target' => $fileUploadSettings['target_path'],
+                'target'    => $uploadTmpPath,
                 'randomize' => true,
             ]));
         $attachment->getValidatorChain()
             ->attach(new Validator\File\UploadFile());
-        
+
         $use_ext_program= new Input('use_ext_program');
         $use_ext_program->setRequired(false);
 
@@ -80,7 +80,7 @@ class Lab
             ->attach(new Validator\NotEmpty())->attach(new Validator\InArray([
                 'haystack' => $labService->getHasNetworkValues(),
             ]));
-        
+
         $has_server = new Input('has_server');
         $has_server->setRequired(false);
         $has_server->getValidatorChain()

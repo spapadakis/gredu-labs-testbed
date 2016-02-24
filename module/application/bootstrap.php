@@ -28,7 +28,7 @@ return function (Slim\App $app) {
             $container['settings']['db']['user'],
             $container['settings']['db']['pass']
         );
-//        RedBeanPHP\R::freeze();
+        RedBeanPHP\R::freeze();
 //        RedBeanPHP\R::debug( true );
 
         $container['view'] = function ($c) {

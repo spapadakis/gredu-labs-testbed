@@ -242,19 +242,6 @@ INSERT INTO `itemcategory` VALUES (8,'ACCESS POINT'),(26,'LAPTOP'),(7,'MEDIA CON
 UNLOCK TABLES;
 
 --
--- Table structure for table `lesson`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `lesson` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `lab`
 --
 
@@ -269,6 +256,7 @@ CREATE TABLE `lab` (
   `use_ext_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `use_in_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `attachment` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `attachment_mime` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `has_network` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `has_server` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `school_id` int(11) unsigned DEFAULT NULL,
@@ -281,6 +269,43 @@ CREATE TABLE `lab` (
 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `labtype`
+--
+
+DROP TABLE IF EXISTS `labtype`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `labtype` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `labtype`
+--
+
+LOCK TABLES `labtype` WRITE;
+/*!40000 ALTER TABLE `labtype` DISABLE KEYS */;
+INSERT INTO `labtype` VALUES (1,' ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡ/ΚΗΣ'),(2,'ΕΡΓΑΣΤΗΡΙΟ ΦΥΣΙΚΩΝ ΕΠΙΣΤΗΜΩΝ'),(3,'ΕΡΓΑΣΤΗΡΙΟ ΤΕΧΝΟΛΟΓΙΑΣ'),(4,'ΑΛΛΟ ΕΡΓΑΣΤΗΡΙΟ '),(5,'ΓΩΝΙΑ ΥΠΟΛΟΓΙΣΤΗ'),(6,'ΒΙΒΛΙΟΘΗΚΗ'),(7,'ΑΙΘΟΥΣΑ ΔΙΔΑΣΚΑΛΙΑΣ'),(8,'ΑΛΛΗ ΑΙΘΟΥΣΑ');
+/*!40000 ALTER TABLE `labtype` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
+-- Table structure for table `lesson`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lesson` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `lesson_lab`

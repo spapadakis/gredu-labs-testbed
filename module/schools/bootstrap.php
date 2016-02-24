@@ -66,6 +66,22 @@ return function (Slim\App $app) {
             );
         };
 
+        $container[Action\Lab\DownloadAttachment::class] = function ($c) {
+            $settings = $c->get('settings');
+            $uploadTargetPath = $settings['schools']['file_upload']['target_path'];
+
+            return new Action\Lab\DownloadAttachment(
+                $c->get(Service\LabServiceInterface::class),
+                $uploadTargetPath
+            );
+        };
+
+        $container[Action\Lab\RemoveAttachment::class] = function ($c) {
+            return new Action\Lab\RemoveAttachment(
+                $c->get(Service\LabServiceInterface::class)
+            );
+        };
+
         $container[Action\Assets\ListAssets::class] = function ($c) {
             return new Action\Assets\ListAssets(
                 $c->get('view'),
@@ -110,7 +126,10 @@ return function (Slim\App $app) {
         };
 
         $container[Service\LabServiceInterface::class] = function ($c) {
-            return new Service\LabService();
+            $settings = $c->get('settings');
+            $uploadTargetPath = $settings['schools']['file_upload']['target_path'];
+
+            return new Service\LabService($uploadTargetPath);
         };
 
         $container[Service\AssetServiceInterface::class] = function ($c) {
@@ -166,9 +185,10 @@ return function (Slim\App $app) {
 
         $container[InputFilter\Lab::class] = function ($c) {
             $settings = $c->get('settings');
-            $fileUploadSettings = $settings['schools']['file_upload'];
+            $uploadTmpPath = $settings['schools']['file_upload']['tmp_path'];
+
             return new InputFilter\Lab(
-                $fileUploadSettings,
+                $uploadTmpPath,
                 $c->get(Service\LabServiceInterface::class)
             );
         };
@@ -188,8 +208,11 @@ return function (Slim\App $app) {
             $this->delete('/staff', Action\Staff\DeleteTeacher::class);
 
             $this->get('/labs', Action\Lab\ListAll::class)->setName('school.labs');
-            $this->post('/labs', Action\Lab\PersistLab::class)->setName('school.labcreate')
+            $this->post('/labs', Action\Lab\PersistLab::class)
                 ->add(Middleware\InputFilterLab::class);
+            $this->get('/labs/attachment', Action\Lab\DownloadAttachment::class)
+                ->setName('school.labs.attachment');
+            $this->delete('/labs/attachment', Action\Lab\RemoveAttachment::class);
 
             $this->get('/assets', Action\Assets\ListAssets::class)->setName('school.assets');
             $this->post('/assets', Action\Assets\PersistAsset::class)

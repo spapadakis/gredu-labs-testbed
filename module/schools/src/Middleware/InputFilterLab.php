@@ -16,21 +16,18 @@ use Slim\Http\Response;
 class InputFilterLab
 {
     private $inputFilter;
-    
+
     public function __construct(callable $inputFilter)
     {
         $this->inputFilter = $inputFilter;
     }
-    
+
     public function __invoke(Request $req, Response $res, callable $next)
     {
-        $data        = array_merge_recursive($req->getParams(), $req->getUploadedFiles());
+        $data        = array_merge_recursive($req->getParams(), $_FILES);
         $inputFilter = $this->inputFilter;
         $result      = $inputFilter($data);
 
-        var_dump($req->getParams(), $req->getUploadedFiles(), $data);
-        die();
-        
         if (!$result['is_valid']) {
             $res = $res->withStatus(422, 'validation error');
             $res->withJson($result);

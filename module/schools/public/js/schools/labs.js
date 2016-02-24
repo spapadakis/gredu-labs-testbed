@@ -85,9 +85,10 @@
         el: '#lab-form-modal',
         form: null,
         lab: null,
+        attachment: null,
         url: null,
         events: {
-//            'submit': 'persistLab',
+            'submit': 'persistLab',
             'click button.remove': 'removeLab'
         },
         initialize: function () {
@@ -99,31 +100,12 @@
                 that.form[0].reset();
                 that.form.find('input[type="hidden"]').val('');
             });
-            this.form.find('input[type="file"]').fileupload({
-                url: that.form.data('url'),
-                multipart: true,
-                submit: function (e, data) {
-                    data.formData = utils.serializeObject(that.form);
-                    data.jqXHR = $(this).fileupload('send', data);
-                    return false;
-                },
-                done: function (response) {
-                    if (that.lab) {
-                        that.lab.set(response);
-                    } else {
-                        that.model.add(response);
-                    }
-                    that.hide();
-                },
-                fail: function (xhr, err) {
-                    var messages;
-                    if (422 === xhr.status) {
-                        messages = JSON.parse(xhr.responseText).messages || {};
-                        utils.formMessages.render(that.form, messages);
-                    } else {
-                        alert('Προέκυψε κάποιο σφάλμα');
-                    }
-                }
+            this.attachment = this.form.find('.uploaded');
+            this.attachment.on('click', 'a.btn-remove', function (evt) {
+                var url;
+                evt.preventDefault();
+                url = $(evt.target).closest('a').attr('href');
+                that.removeAttachment(url);
             });
         },
         render: function (labId) {
@@ -145,12 +127,20 @@
                 var name;
                 element = $(element);
                 name = element.attr('name');
+                if ('file' === element.attr('type')) return;
                 if ('checkbox' === element.attr('type')) {
                     element.prop('checked', utils.parseInt(labAttributes[name]));
                 } else {
                     element.val(labAttributes[name] || '');
                 }
             });
+            if (!this.lab || !this.lab.get('attachment')) {
+                this.attachment.find('a').attr('href', '#');
+                this.attachment.hide();
+            } else {
+                this.attachment.find('a').attr('href', this.attachment.data('href').replace('__lab_id__', this.lab.get('id')));
+                this.attachment.show();
+            }
             this.show();
             return this;
         },
@@ -162,52 +152,43 @@
             this.$el.modal('hide');
             return this;
         },
-//        persistLab: function (evt) {
-//            var formData = utils.serializeObject(this.form),
-//                that = this,
-//                upload = this.form.find('input[type="file"]');
-//            evt.preventDefault();
-//            upload
-//            $('#fileupload').fileupload('send', {
-//                files: upload[0].files 
-//            });
-////            
-////            ({
-////                url: that.url,
-////                submit: function (e, data) {
-////                    var $this = $(this);
-////                    data.formData = formData;
-////                    data.jqXHR = $this.fileupload('send', data);
-////                    return false;
-////                },
-////                done: function (response) {
-////                    if (that.lab) {
-////                        that.lab.set(response);
-////                    } else {
-////                        that.model.add(response);
-////                    }
-////                    that.hide();
-////                },
-////                error: function (xhr, err) {
-////                    var messages;
-////                    if (422 === xhr.status) {
-////                        messages = JSON.parse(xhr.responseText).messages || {};
-////                        utils.formMessages.render(that.form, messages);
-////                    } else {
-////                        alert('Προέκυψε κάποιο σφάλμα');
-////                    }
-////                }
-////            });
-////            upload.fileupload('send');
-//            upload.fileupload('destroy');
-////            
-////            $.ajax({
-////                url: that.url,
-////                type: 'post',
-////                contentType: 'multipart/form-data',
-////                data: data,
-////            }).).fail(function );
-//        },
+        persistLab: function (evt) {
+            var formData = utils.serializeObject(this.form),
+                that = this,
+                upload = this.form.find('input[type="file"]').fileupload({
+                    autoUpload: false
+                }),
+                postPromise;
+            evt.preventDefault();
+            
+            if (upload[0].files.length === 0) {
+                postPromise = $.ajax({
+                    url: that.url,
+                    type: 'post',
+                    data: formData
+                });
+            } else {
+                postPromise = upload.fileupload('send', {files: upload[0].files});
+            }
+            
+            postPromise.done(function (response) {
+                if (that.lab) {
+                    that.lab.set(response);
+                } else {
+                    that.model.add(response);
+                }
+                that.hide();
+            }).fail(function (xhr, err) {
+                var messages;
+                if (xhr && 422 === xhr.status) {
+                    messages = JSON.parse(xhr.responseText).messages || {};
+                    utils.formMessages.render(that.form, messages);
+                } else {
+                    alert('Προέκυψε κάποιο σφάλμα');
+                }
+            });
+            upload.fileupload('destroy');
+        },
         removeLab: function(evt) {
             var that = this;
             if (!confirm('Να διαγραφεί ο χώρος;')) {
@@ -227,6 +208,22 @@
                 alert('Δεν ήταν δυνατή η διαγραφή του χώρου');
             });
             
+        },
+        removeAttachment: function (url) {
+            var that = this;
+            if (!confirm('Να διαγραφή το αρχείο;')) {
+                return;
+            }
+            $.ajax({
+                url: url,
+                type: 'delete',
+            }).done(function (response) {
+                that.lab.set('attachment', null);
+                that.lab.set('attachment_mime', null);
+                that.attachment.hide();
+            }).fail(function () {
+                alert('Δεν ήταν δυνατή η διαγραφή του αρχείου');
+            });
         }
     });
 
