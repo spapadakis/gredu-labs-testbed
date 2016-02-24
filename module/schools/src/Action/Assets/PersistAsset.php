@@ -31,7 +31,6 @@ class PersistAsset
             return $res->withStatus(403, 'No school');
         }
         $params           = $req->getParams();
-        $params['lab_id'] = 1;
         $id               = $params['id'];
         unset($params['id']);
 
