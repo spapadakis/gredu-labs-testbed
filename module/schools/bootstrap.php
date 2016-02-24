@@ -253,7 +253,7 @@ return function (Slim\App $app) {
 
             $this->get('/software', Action\Software\ListAll::class)->setName('school.software');
             $this->post('/software', Action\Software\PersistSoftware::class);
-            $this->delete('/software', Action\Software\DeleteSoftware:class);
+            $this->delete('/software', Action\Software\DeleteSoftware::class);
 
         })->add(Middleware\FetchSchoolFromIdentity::class);
     });
