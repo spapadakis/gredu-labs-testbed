@@ -40,6 +40,11 @@ return [
                         'route' => 'school.assets',
                         'icon'  => 'tv',
                     ],
+                    'software' => [
+                        'label' => 'Λογισμικό',
+                        'route' => 'school.software',
+                        'icon'  => 'th',
+                    ],
                 ],
             ],
             'app-form' => [
