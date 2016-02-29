@@ -1,7 +1,23 @@
 {% extends "layout.twig" %}
 {% block content %}
     <div class="jumbotron">
-        <h1>Σχολικά εργαστήρια</h1>
-        <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vel volutpat diam, vitae consectetur libero. Sed et sem et nisi aliquet condimentum. Morbi id magna iaculis, dictum lectus vitae, suscipit nisl. Proin molestie dolor vitae pulvinar tristique. Integer egestas varius lorem id scelerisque. Praesent velit metus, egestas facilisis iaculis id, auctor nec mi. Suspendisse ultrices laoreet justo eget viverra.</p>
+        <h1>Καταγραφή και αναβάθμιση υποδομών πληροφορικής και επικοινωνιών των σχολείων </h1>
+        <p class="lead text-justify"> Η αναβάθμιση αφορά συγκεκριμένες παρεμβάσεις στις υποδομές 
+            Τεχνολογιών Πληροφορικής και Επικοινωνιών των Σχολείων, στις περιπτώσεις 
+            που κρίνεται απαραίτητη θα υλοποιείται με ανοιχτές τεχνολογίες και με 
+            νέο εξοπλισμό (υλικό και λογισμικό) όπου απαιτείται. </p>
+        <p class="text-justify"> Η επιλογή των σχολείων 
+            θα γίνεται σταδιακά και θα ξεκινήσει από τα σχολεία που θα καταθέσουν 
+            την πιο πλήρη εκπαιδευτική πρόταση για τον τρόπο αξιοποίησης των 
+            προτεινόμενων αναβαθμίσεων στη καθημερινή διδακτική διαδικασία.</p>
+        <p class="text-justify"> Η αναβάθμιση των υποδομών θα γίνει και με την αξιοποίηση παλαιού 
+            εξοπλισμού ή/και την ανάπτυξη σύγχρονων εργαστηρίων χαμηλού κόστους 
+            και μεμονομένων θέσεων εργασίας, με την χρήση του LTSP, του ΕΠΟΠΤΗ 
+            και του λειτουργικού συστήματος Ubuntu Linux.</p>
+        {% if not identity() %}
+        <div class="text-center">
+            <a href="{{ path_for('user.login') }}" class="btn btn-lg btn-success">Σύνδεση</a>
+        </div>            
+        {% endif %}
     </div>
 {% endblock %}
