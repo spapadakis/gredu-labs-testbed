@@ -252,22 +252,22 @@ CREATE TABLE `lab` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `school_id` int(11) unsigned NOT NULL,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `labtype_id` int(11) unsigned DEFAULT NULL,
+  `labtype_id` int(11) unsigned NOT NULL,
   `responsible_id` int(11) unsigned DEFAULT NULL,
-  `area` int(11) unsigned NOT NULL,
+  `area` int(11) unsigned DEFAULT NULL,
   `attachment` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `attachment_mime` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `has_network` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `has_server` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `has_network` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `has_server` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `use_ext_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `use_in_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `school_id` (`school_id`),
+  KEY `index_foreignkey_lab_school` (`school_id`),
   KEY `index_foreignkey_lab_labtype` (`labtype_id`),
   KEY `index_foreignkey_lab_responsible` (`responsible_id`),
-  CONSTRAINT `c_fk_lab_labtype_id` FOREIGN KEY (`labtype_id`) REFERENCES `labtype` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `c_fk_lab_responsible_id` FOREIGN KEY (`responsible_id`) REFERENCES `teacher` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `lab_ibfk_1` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`)
+  CONSTRAINT `c_fk_lab_labtype_id` FOREIGN KEY (`labtype_id`) REFERENCES `labtype` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_lab_responsible_id` FOREIGN KEY (`responsible_id`) REFERENCES `teacher` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_lab_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -323,9 +323,9 @@ UNLOCK TABLES;
 -- Table structure for table `lab_lesson`
 --
 
+DROP TABLE IF EXISTS `lab_lesson`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-
 CREATE TABLE `lab_lesson` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `lesson_id` int(11) unsigned DEFAULT NULL,
@@ -336,7 +336,7 @@ CREATE TABLE `lab_lesson` (
   KEY `index_foreignkey_lab_lesson_lab` (`lab_id`),
   CONSTRAINT `c_fk_lab_lesson_lab_id` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `c_fk_lab_lesson_lesson_id` FOREIGN KEY (`lesson_id`) REFERENCES `lesson` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 

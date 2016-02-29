@@ -1,8 +1,12 @@
 <?php
 
+use GrEduLabs\Schools\InputFilter\Lab;
 use GrEduLabs\Schools\InputFilter\School as SchoolInputFilter;
+use GrEduLabs\Schools\Service\AssetServiceInterface;
+use GrEduLabs\Schools\Service\LabServiceInterface;
 use GrEduLabs\Schools\Service\SchoolServiceInterface;
 use SchMM\FetchUnit;
+use SchSync\Middleware\CreateLabs;
 use SchSync\Middleware\CreateSchool;
 use SchSync\Middleware\CreateUser;
 use Slim\App;
@@ -47,13 +51,25 @@ return function (App $app) {
                 $c->get('logger')
             );
         };
+        $container[CreateLabs::class] = function ($c) {
+            return new CreateLabs(
+                $c->get(LabServiceInterface::class),
+                $c->get(AssetServiceInterface::class),
+                $c->get('SchInventory\\Service'),
+                $c->get(SchoolServiceInterface::class),
+                $c->get('authentication_service'),
+                $c->get(Lab::class),
+                $c->get('logger')
+            );
+        };
     });
 
     $events('on', 'app.bootstrap', function ($stop, $app, $container) {
         foreach ($container->get('router')->getRoutes() as $route) {
             if ('user.login.sso' === $route->getName()) {
                 $route->add(CreateUser::class)
-                    ->add(CreateSchool::class);
+                    ->add(CreateSchool::class)
+                    ->add(CreateLabs::class);
                 break;
             }
         }

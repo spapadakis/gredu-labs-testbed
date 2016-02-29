@@ -10,6 +10,7 @@
 namespace  SchInventory;
 
 use GuzzleHttp\ClientInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Inventory service implementation using GuzzleHttp library
@@ -43,16 +44,14 @@ class GuzzleHttpService implements ServiceInterface
 
         $responseData = json_decode($response->getBody()->getContents(), true);
 
-        return new EquipmentCollection(
-            array_map([$this, 'hydrateEquipment'], $responseData['flat_results'])
-        );
+        return isset($responseData['flat_results']) ? $responseData['flat_results'] : [];
     }
 
     /**
      * Creates the uri with the unit query parameter
      *
      * @param mixed $unit
-     * @return Psr\Http\Message\UriInterface
+     * @return UriInterface
      */
     private function createBaseUri($unit)
     {
@@ -60,17 +59,5 @@ class GuzzleHttpService implements ServiceInterface
         $baseUri = $config['base_uri'];
 
         return $baseUri->withQueryValue($baseUri, 'unit', $unit);
-    }
-
-    private function hydrateEquipment(array $data)
-    {
-        return new Equipment(
-            (isset($data['id']) ? $data['id'] : null),
-            (isset($data['item_template.category.name']) ? $data['item_template.category.name'] : null),
-            (isset($data['item_template.description']) ? $data['item_template.description'] : null),
-            (isset($data['location.name']) ? $data['location.name'] : null),
-            (isset($data['item_template.manufacturer.name']) ? $data['item_template.manufacturer.name'] : null),
-            (isset($data['property_number']) ? $data['property_number'] : null)
-        );
     }
 }
