@@ -10,6 +10,7 @@
 
 namespace SchSync\Middleware;
 
+use Exception;
 use GrEduLabs\Schools\Service\AssetServiceInterface;
 use GrEduLabs\Schools\Service\LabServiceInterface;
 use GrEduLabs\Schools\Service\SchoolServiceInterface;
@@ -53,12 +54,6 @@ class CreateLabs
     protected $authService;
 
     /**
-     *
-     * @var callable
-     */
-    protected $inputFilter;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -69,7 +64,6 @@ class CreateLabs
         InventoryService $inventoryService,
         SchoolServiceInterface $schoolService,
         AuthenticationServiceInterface $authService,
-        callable $inputFilter,
         LoggerInterface $logger
     ) {
         $this->labService       = $labService;
@@ -77,7 +71,6 @@ class CreateLabs
         $this->inventoryService = $inventoryService;
         $this->schoolService    = $schoolService;
         $this->authService      = $authService;
-        $this->inputFilter      = $inputFilter;
         $this->logger           = $logger;
     }
 
@@ -100,8 +93,14 @@ class CreateLabs
         if (0 < count($this->labService->getLabsBySchoolId($school_id))) {
             return $res;
         }
+        try {
+            $equipment = $this->inventoryService->getUnitEquipment($school['registry_no']);
+        } catch (Exception $e) {
+            $this->logger->error(sprintf('Problem retrieving assets from inventory for school %s', $school_id));
+            $this->logger->debug('Exception', [$e->getMessage(), $e->getTraceAsString()]);
 
-        $equipment = $this->inventoryService->getUnitEquipment($school['registry_no']);
+            return $res;
+        }
         $labTypes  = array_reduce($this->labService->getLabTypes(), function ($map, $type) {
             $map[trim($type['name'])] = $type['id'];
 
@@ -113,46 +112,51 @@ class CreateLabs
             return $map;
         }, []);
 
+        try {
+            $locations = array_reduce($equipment, function ($uniq, $item) use ($school_id, $labTypes, $assetTypes) {
+                if (!isset($uniq[$item['location.id']])) {
+                    $locationName = $item['location.name'];
+                    $detected = reset(array_filter(array_keys($labTypes), function ($type) use ($locationName) {
 
-        $locations = array_reduce($equipment, function ($uniq, $item) use ($school_id, $labTypes, $assetTypes) {
-            if (!isset($uniq[$item['location.id']])) {
-                $locationName = $item['location.name'];
-                $detected = reset(array_filter(array_keys($labTypes), function ($type) use ($locationName) {
-
-                    return false !== stripos($locationName, $type) ||
-                            false !== stripos($type, $locationName);
-                }));
-                $labType = $detected ? $labTypes[$detected] : end($labTypes);
-                $data = [
-                    'school_id'  => (int) $school_id,
-                    'name'       => $locationName,
-                    'labtype_id' => (int) $labType,
-                ];
-                $lab = R::dispense('lab');
-                $lab->import($data);
-                $uniq[$item['location.id']] = $lab;
-            }
-
-            $categoryName = $item['item_template.category.name'];
-
-            $type = reset(array_filter(array_keys($assetTypes), function ($type) use ($categoryName) {
-                return $type == $categoryName;
-            }));
-            $type = ($type) ? $assetTypes[$type] : false;
-
-            if ($type !== false) {
-                if (!$uniq[$item['location.id']]->ownSchoolAsset[$type]) {
-                    $asset = R::dispense('schoolasset');
-                    $asset->school_id = (int) $school_id;
-                    $asset->itemcategory_id = (int) $type;
-                    $uniq[$item['location.id']]->ownSchoolAsset[$type] = $asset;
+                        return false !== stripos($locationName, $type) ||
+                                false !== stripos($type, $locationName);
+                    }));
+                    $labType = $detected ? $labTypes[$detected] : end($labTypes);
+                    $data = [
+                        'school_id'  => (int) $school_id,
+                        'name'       => $locationName,
+                        'labtype_id' => (int) $labType,
+                    ];
+                    $lab = R::dispense('lab');
+                    $lab->import($data);
+                    $uniq[$item['location.id']] = $lab;
                 }
-                $uniq[$item['location.id']]->ownSchoolAsset[$type]->qty += 1;
-            }
 
-            return $uniq;
-        }, []);
-        R::storeAll($locations);
+                $categoryName = $item['item_template.category.name'];
+
+                $type = reset(array_filter(array_keys($assetTypes), function ($type) use ($categoryName) {
+                    return $type == $categoryName;
+                }));
+                $type = ($type) ? $assetTypes[$type] : false;
+
+                if ($type !== false) {
+                    if (!isset($uniq[$item['location.id']]->ownSchoolAsset[$type])) {
+                        $asset = R::dispense('schoolasset');
+                        $asset->school_id = (int) $school_id;
+                        $asset->itemcategory_id = (int) $type;
+                        $uniq[$item['location.id']]->ownSchoolAsset[$type] = $asset;
+                    }
+                    $uniq[$item['location.id']]->ownSchoolAsset[$type]->qty += 1;
+                }
+
+                return $uniq;
+            }, []);
+            R::storeAll($locations);
+            $this->logger->info(sprintf('Add assets from inventory for school %s', $school_id));
+        } catch (Exception $e) {
+            $this->logger->error(sprintf('Problem inserting assets for school %s in database', $school_id));
+            $this->logger->debug('Exception', [$e->getMessage(), $e->getTraceAsString()]);
+        }
 
         return $res;
     }

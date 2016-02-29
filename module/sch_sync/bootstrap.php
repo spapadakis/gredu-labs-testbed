@@ -1,6 +1,5 @@
 <?php
 
-use GrEduLabs\Schools\InputFilter\Lab;
 use GrEduLabs\Schools\InputFilter\School as SchoolInputFilter;
 use GrEduLabs\Schools\Service\AssetServiceInterface;
 use GrEduLabs\Schools\Service\LabServiceInterface;
@@ -58,7 +57,6 @@ return function (App $app) {
                 $c->get('SchInventory\\Service'),
                 $c->get(SchoolServiceInterface::class),
                 $c->get('authentication_service'),
-                $c->get(Lab::class),
                 $c->get('logger')
             );
         };

@@ -266,7 +266,7 @@ CREATE TABLE `lab` (
   KEY `index_foreignkey_lab_labtype` (`labtype_id`),
   KEY `index_foreignkey_lab_responsible` (`responsible_id`),
   CONSTRAINT `c_fk_lab_labtype_id` FOREIGN KEY (`labtype_id`) REFERENCES `labtype` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `c_fk_lab_responsible_id` FOREIGN KEY (`responsible_id`) REFERENCES `teacher` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_lab_responsible_id` FOREIGN KEY (`responsible_id`) REFERENCES `teacher` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `c_fk_lab_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -358,7 +358,10 @@ CREATE TABLE `schoolasset` (
   PRIMARY KEY (`id`),
   KEY `index_foreignkey_schoolasset_itemcategory` (`itemcategory_id`),
   KEY `index_foreignkey_schoolasset_school` (`school_id`),
-  KEY `index_foreignkey_schoolasset_lab` (`lab_id`)
+  KEY `index_foreignkey_schoolasset_lab` (`lab_id`),
+  CONSTRAINT `c_fk_schoolasset_itemcategory_id` FOREIGN KEY (`itemcategory_id`) REFERENCES `itemcategory` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_schoolasset_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_schoolasset_lab_id` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
