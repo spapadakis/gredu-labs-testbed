@@ -43,9 +43,16 @@ return function (Slim\App $app) {
         });
 
         $container[GrEduLabs\Authorization\RouteGuard::class] = function ($c) {
+            $settings = $c['settings'];
             $role = call_user_func($c['current_role']);
+            $defaultRole = $settings['acl']['default_role'];
 
-            return new GrEduLabs\Authorization\RouteGuard($c[GrEduLabs\Authorization\Acl::class], $role);
+            return new GrEduLabs\Authorization\RouteGuard(
+                $c[GrEduLabs\Authorization\Acl::class],
+                $role,
+                $defaultRole,
+                $c['router']->pathFor('user.login')
+            );
         };
 
         $container[GrEduLabs\Authorization\Middleware\RoleProvider::class] = function ($c) {
@@ -78,12 +85,8 @@ return function (Slim\App $app) {
     }, -10);
 
     $events('on', 'app.bootstrap', function ($stop, $app, $container) {
-        foreach ($container['router']->getRoutes() as $route) {
-            if ('user.login' === $route->getName()) {
-                $route->add(GrEduLabs\Authorization\Middleware\RoleProvider::class);
-                break;
-            }
-        }
+        $container['router']->getNamedRoute('user.login')
+            ->add(GrEduLabs\Authorization\Middleware\RoleProvider::class);
 
         $app->add(GrEduLabs\Authorization\RouteGuard::class);
     });

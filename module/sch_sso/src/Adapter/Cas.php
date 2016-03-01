@@ -71,7 +71,8 @@ class Cas implements AdapterInterface
         $isAllowed = call_user_func($this->isAllowed, $attributes);
         if (!$isAllowed) {
             return new Result(Result::FAILURE, null, [sprintf(
-                'Your account type is not accepted. <a href="%s" title="SSO logout">SSO Logout</a>',
+                'Η πρόσβαση επιτρέπεται μόνο για τους επίσημους λογαριασμούς σχολείων. ' .
+                '<a href="%s" title="SSO logout">SSO Logout</a>',
                 $this->ssoLogoutUrl
             )]);
         }

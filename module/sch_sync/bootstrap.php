@@ -63,13 +63,9 @@ return function (App $app) {
     });
 
     $events('on', 'app.bootstrap', function ($stop, $app, $container) {
-        foreach ($container->get('router')->getRoutes() as $route) {
-            if ('user.login.sso' === $route->getName()) {
-                $route->add(CreateUser::class)
-                    ->add(CreateSchool::class)
-                    ->add(CreateLabs::class);
-                break;
-            }
-        }
+        $container['router']->getNamedRoute('user.login.sso')
+            ->add(CreateUser::class)
+            ->add(CreateSchool::class)
+            ->add(CreateLabs::class);
     }, -10);
 };

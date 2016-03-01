@@ -12,48 +12,83 @@ namespace GrEduLabs\Authorization;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Slim\Http\Request;
+use Slim\Http\Response;
 use Zend\Permissions\Acl\AclInterface;
 
 class RouteGuard
 {
     /**
+     *
+     * @var AclInterface
+     */
+    private $acl;
+
+    /**
+     *
+     * @var string
+     */
+    private $currentUserRole;
+
+    /**
+     *
+     * @var string
+     */
+    private $defaultRole;
+
+    /**
+     *
+     * @var string
+     */
+    private $loginUrl;
+
+    /**
      * @param AclInterface $acl             The preconfigured ACL service
      * @param string       $currentUserRole
      */
-    public function __construct(AclInterface $acl, $currentUserRole)
+    public function __construct(AclInterface $acl, $currentUserRole, $defaultRole, $loginUrl)
     {
         $this->acl             = $acl;
         $this->currentUserRole = $currentUserRole;
+        $this->defaultRole     = $defaultRole;
+        $this->loginUrl        = $loginUrl;
     }
 
     /**
      * Invoke middleware.
      *
-     * @param RequestInterface  $request  PSR7 request object
-     * @param ResponseInterface $response PSR7 response object
+     * @param RequestInterface  $req  PSR7 request object
+     * @param ResponseInterface $res PSR7 response object
      * @param callable          $next     Next middleware callable
      *
      * @return ResponseInterface PSR7 response object
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(Request $req, Response $res, callable $next)
     {
-        if (!$request->getAttribute('route')) {
-            return $response->withStatus(404);
+        if (!$req->getAttribute('route')) {
+            return $res->withStatus(404);
         }
         $isAllowed = false;
-        if ($this->acl->hasResource('route' . $request->getAttribute('route')->getPattern())) {
-            $isAllowed = $isAllowed || $this->acl->isAllowed($this->currentUserRole, 'route' . $request->getAttribute('route')->getPattern(), strtolower($request->getMethod()));
+        if ($this->acl->hasResource('route' . $req->getAttribute('route')->getPattern())) {
+            $isAllowed = $isAllowed || $this->acl->isAllowed($this->currentUserRole, 'route' . $req->getAttribute('route')->getPattern(), strtolower($req->getMethod()));
         }
 
-        if (is_string($request->getAttribute('route')->getCallable()) &&
-            $this->acl->hasResource('callable/' . $request->getAttribute('route')->getCallable())) {
-            $isAllowed = $isAllowed || $this->acl->isAllowed($this->currentUserRole, 'callable/' . $request->getAttribute('route')->getCallable());
+        if (is_string($req->getAttribute('route')->getCallable()) &&
+            $this->acl->hasResource('callable/' . $req->getAttribute('route')->getCallable())) {
+            $isAllowed = $isAllowed || $this->acl->isAllowed($this->currentUserRole, 'callable/' . $req->getAttribute('route')->getCallable());
+        }
+
+        if (!$isAllowed && $this->currentUserRole === $this->defaultRole) {
+            return $res->withRedirect($this->loginUrl);
         }
 
         if (!$isAllowed) {
-            return $response->withStatus(403, $this->currentUserRole . ' is not allowed access to this location.');
+            $res = $res->withStatus(403, $this->currentUserRole . ' is not allowed access to this location.');
+            $res->getBody()->write('Forbidden');
+
+            return $res;
         }
 
-        return $next($request, $response);
+        return $next($req, $res);
     }
 }

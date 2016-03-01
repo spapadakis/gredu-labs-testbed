@@ -17,7 +17,7 @@ return function (Slim\App $app) {
         $autoloader->addPsr4('GrEduLabs\\Application\\', __DIR__ . '/src');
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($stop, Slim\Container $container) {
         session_name('GrEduLabs');
         session_start();
 
@@ -29,6 +29,11 @@ return function (Slim\App $app) {
             $container['settings']['db']['pass'],
             isset($container['settings']['db']['freeze']) ? $container['settings']['db']['freeze'] : true
         );
+
+        // override default router
+        $container['router'] = $container->extend('router', function () {
+            return new GrEduLabs\Application\Router();
+        });
 
         $container['view'] = function ($c) {
             $settings = $c['settings'];
@@ -94,14 +99,11 @@ return function (Slim\App $app) {
     });
 
     $events('on', 'app.bootstrap', function ($stop, $app, $container) {
-        foreach ($container['router']->getRoutes() as $route) {
-            if ('user.login' === $route->getName()) {
-                $route->add('csrf');
-                break;
-            }
-        }
-
         $app->get('/', GrEduLabs\Application\Action\Index::class)->setName('index');
         $app->get('/about', GrEduLabs\Application\Action\About::class)->setName('about');
     });
+
+    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
+        $container['router']->getNamedRoute('user.login')->add('csrf');
+    }, -10);
 };

@@ -98,19 +98,15 @@ return function (Slim\App $app) {
     $events('on', 'app.bootstrap', function ($stop, $app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
         $app->get('/user/login/sso', SchSSO\Action\Login::class)
-
             ->setName('user.login.sso');
+
         $app->get('/user/logout/sso', SchSSO\Action\Logout::class)
             ->setName('user.logout.sso');
     });
 
     $events('on', 'app.bootstrap', function ($stop, $app, $container) {
-        foreach ($container['router']->getRoutes() as $route) {
-            if ('user.login.sso' === $route->getName()) {
-                $route->add(GrEduLabs\Authorization\Middleware\RoleProvider::class);
-                break;
-            }
-        }
+        $container['router']->getNamedRoute('user.login.sso')
+            ->add(GrEduLabs\Authorization\Middleware\RoleProvider::class);
     }, -100);
 
     $events('on', 'logout', function (
