@@ -66,6 +66,7 @@ class ListAssets
         $labs           = $this->labService->getLabsBySchoolId($school->id);
 
         return $this->view->render($res, 'schools/assets.twig', [
+            'school'          => $school,
             'assets'          => $assets,
             'item_categories' => array_map(function ($category) {
                 return ['value' => $category['id'], 'label' => $category['name'] ];

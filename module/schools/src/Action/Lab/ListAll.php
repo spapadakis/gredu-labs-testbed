@@ -56,6 +56,7 @@ class ListAll
         $labs = $this->labService->getLabsBySchoolId($school->id);
 
         return $this->view->render($res, 'schools/labs.twig', [
+            'school'    => $school,
             'labs'      => $labs,
             'staff'     => array_map(function ($teacher) {
                 return ['value' => $teacher['id'], 'label' => $teacher['fullname']];

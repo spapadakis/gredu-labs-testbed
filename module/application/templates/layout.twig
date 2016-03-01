@@ -7,8 +7,8 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>GrEduLabs</title>
-        <link href="{{ base_url }}/css/bootstrap.min.css" rel="stylesheet" rel="stylesheet" type="text/css">
-        <link href="{{ base_url }}/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href="{{ base_url() }}/css/bootstrap.min.css" rel="stylesheet" rel="stylesheet" type="text/css">
+        <link href="{{ base_url() }}/css/font-awesome.min.css" rel="stylesheet" type="text/css">
         <link href="{{ base_url() }}/css/style.css" rel="stylesheet" type="text/css">
         <link rel="icon" href="{{ base_url }}/img/favicon.ico">
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug  -->
@@ -35,8 +35,8 @@
                 </p>
             </footer>
         </div>
-        <script src="{{ base_url }}/js/jquery-2.2.0.min.js"></script>
-        <script src="{{ base_url }}/js/bootstrap.min.js"></script>
+        <script src="{{ base_url() }}/js/jquery-2.2.0.min.js"></script>
+        <script src="{{ base_url() }}/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="{{ base_url }}/js/utils.js"></script>
         {% block inlinejs %}{% endblock %}
     </body>

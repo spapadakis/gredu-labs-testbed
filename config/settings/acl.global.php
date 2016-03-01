@@ -30,6 +30,7 @@ return [
                 ['/school/labs/attachment', ['school'], ['get', 'delete']],
                 ['/application-form', ['school'], ['get', 'post'], 'GrEduLabs\ApplicationForm\Acl\Assertion\CanSubmit'],
                 ['/application-form/submit-success', ['school'], ['get']],
+                ['/#forum', ['guest', 'user'], ['get']],
             ],
         ],
     ],

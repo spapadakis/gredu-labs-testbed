@@ -68,10 +68,19 @@ return function (Slim\App $app) {
                 $c->get(GrEduLabs\ApplicationForm\Service\ApplicationFormServiceInterface::class)
             );
         };
+
+        $container[GrEduLabs\ApplicationForm\Middleware\SchoolApplicationForm::class] = function ($c) {
+            return new GrEduLabs\ApplicationForm\Middleware\SchoolApplicationForm(
+                $c->get('view'),
+                $c->get(GrEduLabs\ApplicationForm\Service\ApplicationFormServiceInterface::class)
+            );
+        };
     });
 
     $events('on', 'app.bootstrap', function ($stop, $app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
+        $container['router']->getNamedRoute('school')
+                ->add(GrEduLabs\ApplicationForm\Middleware\SchoolApplicationForm::class);
 
         $app->group('/application-form', function () {
             $this->map(['get', 'post'], '', GrEduLabs\ApplicationForm\Action\ApplicationForm::class)

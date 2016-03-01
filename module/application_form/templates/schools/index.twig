@@ -150,7 +150,7 @@
             <div class="col-xs-12 school-container">
                 {% block schoolContent %}
                 <div id="school-info">
-                    <p class="col-xs-12">
+                    <p class="col-md-12">
                         Σε αυτή την καρτέλα θα καταχωρήσετε πληροφορίες που 
                         αφορούν στο σχολείο σας, όπως τους εκπαιδευτικούς 
                         που θα ασχοληθούν με την υλοποίηση του έργου, 
@@ -160,7 +160,6 @@
                         ΤΠΕ που διαθέτει το σχολείο και τον τρόπο που τον 
                         χρησιμοποιείτε κλπ.
                     </p>
-
                     <div class="col-md-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -213,6 +212,52 @@
                             </div>
                             <div class="panel-footer text-center">
                                 <a class="btn btn-sm btn-primary" href="{{ path_for('school.assets') }}#add">Καταχώρηση εξοπλισμού</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                         <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Στοιχεία αίτησης</h4>
+                            </div>
+                            <div class="panel-body">
+                                {% if appForm %}
+                                    <div class="row">
+                                        <dl class="col-sm-12 col-md-6 dl-horizontal">
+                                            <dt>A/A αίτησης</dt>
+                                            <dd>{{ appForm.id }}</dd>
+                                            <dt>Ημερ. υποβολής</dt>
+                                            <dd>{{ appForm.submitted|date('d/m/Y') }}<dd>
+                                            <dt>Σχολείο</dt>
+                                            <dd>{{ school.name }}</dd>
+                                            <dt>Κωδικός Υπουργείου</dt>
+                                            <dd>{{ school.registry_no }}<dd>
+                                        </dl>
+                                        <dl class="col-sm-12 col-md-6 dl-horizontal">
+                                            <dt>Αίτημα του σχολείου για</dt>
+                                            <dd>{{ appForm.apply_for }}</dd>
+                                            <dt>Ύπαρξη - προοπτική αίθουσας για δημιουργία νέου εργαστηρίου</dt>
+                                            <dd>{{ appForm.new_lab_perspective }}<dd>
+                                            <dt>Σχόλια/Παρατηρήσεις</dt>
+                                            <dd>{{ appForm.comments }}</dd>
+                                        </dl>
+
+                                    </div>
+                                    <h5>Αιτούμενος εξοπλισμός</h5>
+                                    <dl class="dl-horizontal">
+                                    {% for item in appForm.items %}
+                                        <dt>{{ item.category }}</dt>
+                                        <dd>{{ item.count }}<dd>
+                                    {% endfor %}
+                                    </dl>
+                                {% else %}        
+                                    <p>Δεν έχετε υποβάλει αίτηση ακόμα.</p>
+                                {% endif %}
+                            </div>
+                            <div class="panel-footer text-center">
+                                {% if not appForm %}
+                                    <a class="btn btn-sm btn-primary" href="{{ path_for('application_form') }}">Υποβολή αίτησης</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

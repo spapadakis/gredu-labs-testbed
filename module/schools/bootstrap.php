@@ -28,8 +28,10 @@ return function (Slim\App $app) {
 
         $container[Action\Index::class] = function ($c) {
             return new Action\Index(
-                 $c->get('view'),
-                 $c->get(Service\SchoolServiceInterface::class)
+                $c->get('view'),
+                $c->get(Service\StaffServiceInterface::class),
+                $c->get(Service\LabServiceInterface::class),
+                $c->get(Service\SchoolAssetsInterface::class)
             );
         };
 

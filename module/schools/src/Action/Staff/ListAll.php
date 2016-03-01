@@ -35,6 +35,7 @@ class ListAll
         $staff = $this->staffService->getTeachersBySchoolId($school->id);
 
         return $this->view->render($res, 'schools/staff.twig', [
+            'school'    => $school,
             'staff'     => $staff,
             'branches'  => array_map(function ($branch) {
                 return ['value' => $branch['id'], 'label' => $branch['name']];
