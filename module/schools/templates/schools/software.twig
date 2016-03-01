@@ -63,13 +63,11 @@
                         <h4 class="modal-title">Στοιχεία λογισμικού</h4>
                     </div>
                     <div class="modal-body">
-                        {{ macros.input('name', 'Όνομα', '', 'text', {'required': ''}) }}
-                        {{ macros.input('surname', 'Επώνυμο', '', 'text', {'required': ''}) }}
-                        {{ macros.input('telephone', 'Τηλέφωνο','', 'tel', {'required': ''}) }}
-                        {{ macros.input('email', 'Email','', 'email', {'required': ''}) }}
-                        {{ macros.select('branch_id', 'Ειδικότητα', branches, '', {'required': ''}) }}
-                        {{ macros.checkbox('is_principle', 'Διευθυντής') }}
-                        {{ macros.checkbox('is_responsible', 'Υπεύθυνος εργαστηρίου') }}
+                        {{ macros.input('title', 'Τίτλος', '', 'text', {'required': ''}) }}
+                        {{ macros.input('softwarecategory_id', 'Κατηγορία', '', 'text', {'required': ''}) }}
+                        {{ macros.input('vendor', 'Προμηθευτής','', 'tel', {'required': ''}) }}
+                        {{ macros.input('url', 'URL','', 'text', {'required': ''}) }}
+                        {{ macros.input('lab_id', 'Χώρος','', 'text', {}) }}
                         <input type="hidden" name="id" value="">
                     </div>
                     <div class="modal-footer">
