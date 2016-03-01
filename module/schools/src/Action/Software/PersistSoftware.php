@@ -25,7 +25,7 @@ class PersistSoftware
 
     public function __construct(SoftwareServiceInterface $softwareService)
     {
-        $this->softwareService = $softwrareService;
+        $this->softwareService = $softwareService;
     }
 
     public function __invoke(Request $req, Response $res, array $args = [])
@@ -38,7 +38,7 @@ class PersistSoftware
         $params['school_id'] = $school->id;
         $id                  = $params['id'];
         unset($params['id']);
-
+        error_log(print_r($this->softwareService, TRUE));
         try {
             if ($id) {
                 $software= $this->softwareService->updateSoftware($params, $id);
