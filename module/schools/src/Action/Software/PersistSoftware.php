@@ -38,7 +38,6 @@ class PersistSoftware
         $params['school_id'] = $school->id;
         $id                  = $params['id'];
         unset($params['id']);
-        error_log(print_r($this->softwareService, TRUE));
         try {
             if ($id) {
                 $software= $this->softwareService->updateSoftware($params, $id);
