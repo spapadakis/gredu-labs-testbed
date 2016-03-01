@@ -55,12 +55,16 @@ class SoftwareService implements SoftwareServiceInterface
         if (!$software->id) {
             throw new \InvalidArgumentException('No software found');
         }
-        $this->persistSoftware($software, $id);
+        $this->persistSoftware($software, $data);
         return $software->export();
     }
 
     private function persistSoftware($software, array $data)
     {
+        if (!$data['lab_id']){
+            $data['lab_id'] = NULL;
+        }
+        
         $software->softwarecategory_id = $data['softwarecategory'];
         $software->school_id            = $data['school_id'];
         $software->lab_id               = $data['lab_id'];
