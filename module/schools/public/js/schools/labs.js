@@ -202,7 +202,7 @@
                     id: that.lab.get('id')
                 }
             }).done(function () {
-                that.model.remove(that.asset.get('id'));
+                that.model.remove(that.lab.get('id'));
                 that.hide();
             }).fail(function (xhr, err){
                 alert('Δεν ήταν δυνατή η διαγραφή του χώρου');

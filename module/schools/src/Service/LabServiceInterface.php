@@ -16,6 +16,7 @@ interface LabServiceInterface
     public function getLabById($id);
     public function getLabsBySchoolId($id);
     public function getLabForSchool($school_id, $id);
+    public function removeLab($id, $school_id = null);
 
     public function removeLabAttachment($lab_id);
 

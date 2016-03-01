@@ -197,4 +197,21 @@ class LabService implements LabServiceInterface
         $lab->attachment_mime = null;
         R::store($lab);
     }
+
+    public function removeLab($id, $school_id = null)
+    {
+        $sql      = ' id = ? ';
+        $bindings = [(int) $id];
+        if (null !== $school_id) {
+            $sql .= ' AND school_id = ? ';
+            $bindings[] = (int) $school_id;
+        }
+        $lab = R::findOne('lab', $sql, $bindings);
+        if (null !== $lab) {
+            if ($lab->attachment && is_writable($this->filesPath . '/' . $lab->attachment)) {
+                unlink($this->filesPath . '/' . $lab->attachment);
+            }
+            R::trash($lab);
+        }
+    }
 }

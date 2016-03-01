@@ -66,6 +66,12 @@ return function (Slim\App $app) {
             );
         };
 
+        $container[Action\Lab\DeleteLab::class] = function ($c) {
+            return new Action\Lab\DeleteLab(
+                $c->get(Service\LabServiceInterface::class)
+            );
+        };
+
         $container[Action\Lab\DownloadAttachment::class] = function ($c) {
             $settings = $c->get('settings');
             $uploadTargetPath = $settings['schools']['file_upload']['target_path'];
@@ -210,6 +216,7 @@ return function (Slim\App $app) {
             $this->get('/labs', Action\Lab\ListAll::class)->setName('school.labs');
             $this->post('/labs', Action\Lab\PersistLab::class)
                 ->add(Middleware\InputFilterLab::class);
+            $this->delete('/labs', Action\Lab\DeleteLab::class);
             $this->get('/labs/attachment', Action\Lab\DownloadAttachment::class)
                 ->setName('school.labs.attachment');
             $this->delete('/labs/attachment', Action\Lab\RemoveAttachment::class);

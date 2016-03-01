@@ -24,7 +24,7 @@ return [
                 ['/', ['guest', 'user'], ['get']],
                 ['/about', ['guest', 'user'], ['get']],
                 ['/school', ['school'], ['get']],
-                ['/school/labs', ['school'], ['get', 'post']],
+                ['/school/labs', ['school'], ['get', 'post', 'delete']],
                 ['/school/staff', ['school'], ['get', 'post', 'delete']],
                 ['/school/assets', ['school'], ['get', 'post', 'delete']],
                 ['/school/labs/attachment', ['school'], ['get', 'delete']],
