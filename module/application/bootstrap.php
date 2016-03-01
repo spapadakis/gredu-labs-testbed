@@ -102,8 +102,4 @@ return function (Slim\App $app) {
         $app->get('/', GrEduLabs\Application\Action\Index::class)->setName('index');
         $app->get('/about', GrEduLabs\Application\Action\About::class)->setName('about');
     });
-
-    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
-        $container['router']->getNamedRoute('user.login')->add('csrf');
-    }, -10);
 };
