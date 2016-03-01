@@ -10,6 +10,69 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `applicationform`
+--
+
+DROP TABLE IF EXISTS `applicationform`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `applicationform` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `school_id` int(11) unsigned NOT NULL,
+  `apply_for` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `new_lab_perspective` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `comments` text COLLATE utf8mb4_unicode_ci,
+  `submitted` int(11) unsigned NOT NULL,
+  `submitted_by` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_foreignkey_applicationform_school` (`school_id`),
+  CONSTRAINT `c_fk_applicationform_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `applicationform`
+--
+
+LOCK TABLES `applicationform` WRITE;
+/*!40000 ALTER TABLE `applicationform` DISABLE KEYS */;
+/*!40000 ALTER TABLE `applicationform` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `applicationformitem`
+--
+
+DROP TABLE IF EXISTS `applicationformitem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `applicationformitem` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `itemcategory_id` int(11) unsigned NOT NULL,
+  `qty` int(11) unsigned NOT NULL,
+  `reasons` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `applicationform_id` int(11) unsigned NOT NULL,
+  `lab_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_foreignkey_applicationformitem_itemcategory` (`itemcategory_id`),
+  KEY `index_foreignkey_applicationformitem_applicationform` (`applicationform_id`),
+  KEY `index_foreignkey_applicationformitem_lab` (`lab_id`),
+  CONSTRAINT `c_fk_applicationformitem_itemcategory_id` FOREIGN KEY (`itemcategory_id`) REFERENCES `itemcategory` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_applicationformitem_applicationform_id` FOREIGN KEY (`applicationform_id`) REFERENCES `applicationform` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_applicationformitem_lab_id` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `applicationformitem`
+--
+
+LOCK TABLES `applicationformitem` WRITE;
+/*!40000 ALTER TABLE `applicationformitem` DISABLE KEYS */;
+/*!40000 ALTER TABLE `applicationformitem` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `branch`
 --
 
@@ -417,6 +480,41 @@ CREATE TABLE `teacher` (
 LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `display_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `office_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created` int(11) unsigned NOT NULL,
+  `uid` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mail` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_login` int(11) unsigned DEFAULT NULL,
+  `authentication_source` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `school_id` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `mail_UNIQUE` (`mail`),
+  KEY `index_foreignkey_user_school` (`school_id`),
+  CONSTRAINT `c_fk_user_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

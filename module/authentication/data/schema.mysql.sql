@@ -18,23 +18,32 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `mail` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_login` int(11) unsigned DEFAULT NULL,
-  `password` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `display_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `office_name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created` int(11) unsigned NOT NULL,
   `uid` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mail` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_login` int(11) unsigned DEFAULT NULL,
   `authentication_source` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `role` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `school_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `mail_UNIQUE` (`mail`),
   KEY `index_foreignkey_user_school` (`school_id`),
-  CONSTRAINT `c_fk_user_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `c_fk_user_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
