@@ -14,11 +14,11 @@ return function (Slim\App $app) {
 
     $events = $container['events'];
 
-    $events('on', 'app.autoload', function ($stop, $autoloader) {
+    $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('SchSSO\\', __DIR__ . '/src/');
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container['init_cas'] = $container->protect(function () use ($container) {
             $settings = $container['settings']['sso']['phpcas'];
             phpCAS::client(
@@ -95,7 +95,7 @@ return function (Slim\App $app) {
         };
     });
 
-    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
+    $events('on', 'app.bootstrap', function ($app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
         $app->get('/user/login/sso', SchSSO\Action\Login::class)
             ->setName('user.login.sso');
@@ -104,13 +104,12 @@ return function (Slim\App $app) {
             ->setName('user.logout.sso');
     });
 
-    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
+    $events('on', 'app.bootstrap', function ($app, $container) {
         $container['router']->getNamedRoute('user.login.sso')
             ->add(GrEduLabs\Authorization\Middleware\RoleProvider::class);
     }, -100);
 
     $events('on', 'logout', function (
-        callable $stop,
         GrEduLabs\Authentication\Identity $identity,
         $redirect = null
     ) use (&$container) {

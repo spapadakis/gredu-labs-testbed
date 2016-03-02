@@ -13,11 +13,11 @@ return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
 
-    $events('on', 'app.autoload', function ($stop, $autoloader) {
+    $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('SchInventory\\', __DIR__ . '/src/');
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container['SchInventory\\Service'] = function ($c) {
             $settings = $c['settings'];
 

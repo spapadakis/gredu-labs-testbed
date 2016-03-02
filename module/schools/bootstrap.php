@@ -18,11 +18,11 @@ return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
 
-    $events('on', 'app.autoload', function ($stop, $autoloader) {
+    $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('GrEduLabs\\Schools\\', __DIR__ . '/src/');
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
 
         // actions
 
@@ -203,7 +203,7 @@ return function (Slim\App $app) {
 
     });
 
-    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
+    $events('on', 'app.bootstrap', function ($app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
 
         $app->group('/school', function () {

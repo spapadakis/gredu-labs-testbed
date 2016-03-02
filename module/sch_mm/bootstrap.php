@@ -13,11 +13,11 @@ return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
 
-    $events('on', 'app.autoload', function ($stop, $autoloader) {
+    $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('SchMM\\', __DIR__ . '/src/');
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container[SchMM\FetchUnit::class] = function ($c) {
             $settings = $c['settings'];
 

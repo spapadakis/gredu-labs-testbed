@@ -13,7 +13,7 @@ return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container['ldap'] = function ($c) {
             $settings = $c['settings']['ldap'];
 

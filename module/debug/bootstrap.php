@@ -13,11 +13,11 @@ return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container['settings']->set('displayErrorDetails', true);
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container->extend('view', function ($view) {
             $view->addExtension(new Twig_Extension_Debug());
             $view->getEnvironment()->enableDebug();

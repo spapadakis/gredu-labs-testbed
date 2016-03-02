@@ -13,11 +13,11 @@ return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
 
-    $events('on', 'app.autoload', function ($stop, $autoloader) {
+    $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('GrEduLabs\\Application\\', __DIR__ . '/src');
     });
 
-    $events('on', 'app.services', function ($stop, Slim\Container $container) {
+    $events('on', 'app.services', function (Slim\Container $container) {
         session_name('GrEduLabs');
         session_start();
 
@@ -29,11 +29,6 @@ return function (Slim\App $app) {
             $container['settings']['db']['pass'],
             isset($container['settings']['db']['freeze']) ? $container['settings']['db']['freeze'] : true
         );
-
-        // override default router
-        $container['router'] = $container->extend('router', function () {
-            return new GrEduLabs\Application\Router();
-        });
 
         $container['view'] = function ($c) {
             $settings = $c['settings'];
@@ -98,7 +93,7 @@ return function (Slim\App $app) {
         };
     });
 
-    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
+    $events('on', 'app.bootstrap', function ($app, $container) {
         $app->get('/', GrEduLabs\Application\Action\Index::class)->setName('index');
         $app->get('/about', GrEduLabs\Application\Action\About::class)->setName('about');
     });

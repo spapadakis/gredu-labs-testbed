@@ -13,11 +13,11 @@ return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
 
-    $events('on', 'app.autoload', function ($stop, $autoloader) {
+    $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('GrEduLabs\\Authentication\\', __DIR__ . '/src');
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container['authentication_storage'] = function ($c) {
             return new GrEduLabs\Authentication\Storage\PhpSession();
         };
@@ -88,7 +88,7 @@ return function (Slim\App $app) {
         $container['settings']->set('navigation', $nav);
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container->extend('view', function ($view, $c) {
             $view->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
             $view->addExtension(new GrEduLabs\Authentication\Twig\Extension\Identity(
@@ -99,7 +99,7 @@ return function (Slim\App $app) {
         });
     }, -10);
 
-    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
+    $events('on', 'app.bootstrap', function ($app, $container) {
         $app->group('/user', function () {
             $this->map(['GET', 'POST'], '/login', GrEduLabs\Authentication\Action\User\Login::class)
                 ->add(GrEduLabs\Application\Middleware\AddCsrfToView::class)
@@ -117,7 +117,7 @@ return function (Slim\App $app) {
         });
     });
 
-    $events('on', 'authenticate.success', function ($stop, $identity) use ($container) {
+    $events('on', 'authenticate.success', function ($identity) use ($container) {
         if (isset($container['logger'])) {
             $container['logger']->info(sprintf(
                 'Authentication through %s for %s',

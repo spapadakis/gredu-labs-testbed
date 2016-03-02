@@ -12,11 +12,11 @@ return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
 
-    $events('on', 'app.autoload', function ($stop, $autoloader) {
+    $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('GrEduLabs\\ApplicationForm\\', __DIR__ . '/src/');
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
 
         $container[GrEduLabs\ApplicationForm\Service\ApplicationFormServiceInterface::class] = function ($c) {
             return new GrEduLabs\ApplicationForm\Service\ApplicationFormService();
@@ -77,7 +77,7 @@ return function (Slim\App $app) {
         };
     });
 
-    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
+    $events('on', 'app.bootstrap', function ($app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
         $container['router']->getNamedRoute('school')
                 ->add(GrEduLabs\ApplicationForm\Middleware\SchoolApplicationForm::class);

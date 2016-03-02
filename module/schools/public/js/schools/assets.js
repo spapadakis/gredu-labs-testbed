@@ -172,7 +172,7 @@
                 type: 'delete',
                 dataType: 'json',
                 data: {
-                    id: that.asset.get('id'),
+                    id: that.asset.get('id')
                 }
             }).done(function () {
                 that.model.remove(that.asset.get('id'));

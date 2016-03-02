@@ -22,7 +22,7 @@
         "guzzlehttp/guzzle": "^6.1",
         "jasig/phpcas": "1.3.4",
         "kanellov/config-merge": "dev-master",
-        "kanellov/php-events": "^1.0.0",
+        "kanellov/php-events": "^2.0",
         "kanellov/slim-twig-flash": "^0.1",
         "monolog/monolog": "^1.13",
         "slim/csrf": "^0.6.0",

@@ -13,11 +13,11 @@ return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
 
-    $events('on', 'app.autoload', function ($stop, $autoloader) {
+    $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('GrEduLabs\\Authorization\\', __DIR__ . '/src');
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container['settings']->set('determineRouteBeforeAppMiddleware', true);
 
         $container[GrEduLabs\Authorization\Acl::class] = function ($c) {
@@ -70,7 +70,7 @@ return function (Slim\App $app) {
         };
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container->extend('identity_class_resolver', function () {
             return function () {
                 return 'GrEduLabs\\Authorization\\Identity';
@@ -84,7 +84,7 @@ return function (Slim\App $app) {
         });
     }, -10);
 
-    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
+    $events('on', 'app.bootstrap', function ($app, $container) {
         $container['router']->getNamedRoute('user.login')
             ->add(GrEduLabs\Authorization\Middleware\RoleProvider::class);
 

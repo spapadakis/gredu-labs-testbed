@@ -23,11 +23,11 @@ return function (App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
 
-    $events('on', 'app.autoload', function ($stop, $autoloader) {
+    $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('SchSync\\', __DIR__ . '/src');
     });
 
-    $events('on', 'app.services', function ($stop, $container) {
+    $events('on', 'app.services', function ($container) {
         $container[CreateUser::class] = function ($c) {
             return new CreateUser(
                 $c->get('authentication_service'),
@@ -62,7 +62,7 @@ return function (App $app) {
         };
     });
 
-    $events('on', 'app.bootstrap', function ($stop, $app, $container) {
+    $events('on', 'app.bootstrap', function ($app, $container) {
         $container['router']->getNamedRoute('user.login.sso')
             ->add(CreateUser::class)
             ->add(CreateSchool::class)
