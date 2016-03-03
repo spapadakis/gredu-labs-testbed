@@ -43,7 +43,7 @@ class DeleteSoftware
         }
 
         $software = $this->softwareService->getSoftwareById($id);
-        if ($teacher['school_id'] != $school->id) {
+        if ($software['school_id'] != $school->id) {
             $res = $res->withStatus(403, 'Schools not match');
 
             return $res;
