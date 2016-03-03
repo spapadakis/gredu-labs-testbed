@@ -114,7 +114,8 @@ return function (Slim\App $app) {
         $container[Action\Software\ListAll::class] = function ($c) {
             return new Action\Software\ListAll(
                 $c->get('view'),
-                $c->get(Service\SoftwareServiceInterface::class)
+                $c->get(Service\SoftwareServiceInterface::class),
+                $c->get(Service\LabServiceInterface::class)
             );
         };
 
