@@ -112,7 +112,6 @@
             _.each(this.form[0].elements, function (element) {
                 var element = $(element),
                     name = element.attr('name');
-                    //if ('checkbox')
                     element.val(softwareAttributes[name] || '');
             });
             this.show();
@@ -143,8 +142,22 @@
                 }
             });
         },
+        removeSoftware: function () {
+            var that = this;
+            $.ajax({
+                url: that.url,
+                type: 'delete',
+                data: {
+                    'id': that.software.get('id')
+                }
+           }).done(function () {
+                that.model.remove(that.sowftare.get('id'));
+                that.hide();
+            }).fail(function(xhr, err){
+            });
+        }
 
     });
-    
+
     new SoftwareCollectionView({model: new SoftwareCollection() });
 }(window.EDULABS.utils));
