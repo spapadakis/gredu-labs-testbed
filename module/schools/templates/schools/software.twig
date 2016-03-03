@@ -64,7 +64,7 @@
                     </div>
                     <div class="modal-body">
                         {{ macros.input('title', 'Τίτλος', '', 'text', {'required': ''}) }}
-                        {{ macros.input('softwarecategory_id', 'Κατηγορία', '', 'text', {'required': ''}) }}
+                        {{ macros.select('softwarecategory_id', 'Κατηγορία', categories, '', {'required': ''}) }}
                         {{ macros.input('vendor', 'Προμηθευτής','', 'tel', {'required': ''}) }}
                         {{ macros.input('url', 'URL','', 'text', {'required': ''}) }}
                         {{ macros.input('lab_id', 'Χώρος','', 'text', {}) }}
