@@ -124,7 +124,7 @@ return function (Slim\App $app) {
             );
         };
 
-        $container[Action\Assets\DeleteSoftware::class] = function ($c) {
+        $container[Action\Software\DeleteSoftware::class] = function ($c) {
             return new Action\Software\DeleteSoftware(
                 $c->get(Service\SoftwareServiceInterface::class)
             );
