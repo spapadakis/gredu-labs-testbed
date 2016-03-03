@@ -68,7 +68,7 @@
                         {{ macros.select('softwarecategory_id', 'Κατηγορία', categories, '', {'required': ''}) }}
                         {{ macros.input('vendor', 'Προμηθευτής','', 'tel', {'required': ''}) }}
                         {{ macros.input('url', 'URL','', 'text', {'required': ''}) }}
-                        {{ macros.input('lab_id', 'Χώρος','', 'text', {}) }}
+                        {{ macros.select('lab_id', 'Χώρος', labs, '', {}) }}
                         <input type="hidden" name="id" value="">
                     </div>
                     <div class="modal-footer">
