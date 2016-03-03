@@ -36,7 +36,9 @@ class ListAll
         $categories = $this->softwareService->getSoftwareCategories();
         return $this->view->render($res, 'schools/software.twig', [
             'softwareArray'     => $software,
-            'categories'   => $categories
+            'categories'   => array_map(function ($category) {
+                return ['value' => $category['id'], 'label' => $category['name']];
+            }, $categories),
         ]);
     }
 }
