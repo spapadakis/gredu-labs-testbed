@@ -65,7 +65,7 @@ class SoftwareService implements SoftwareServiceInterface
             $data['lab_id'] = NULL;
         }
         
-        $software->softwarecategory_id = $data['softwarecategory'];
+        $software->softwarecategory_id  = $data['softwarecategory_id'];
         $software->school_id            = $data['school_id'];
         $software->lab_id               = $data['lab_id'];
         $software->title                = $data['title'];
@@ -103,7 +103,10 @@ class SoftwareService implements SoftwareServiceInterface
         $exported = [];
         foreach($beans as $bean)
         {
-            $exported[] = $bean->export();
+            $cat = $this->getSoftwareCategoryById($bean->id);
+            $exported_bean = $bean->export();
+            $exported_bean['softwarecategory'] = $cat['name'];
+            $exported[] = $exported_bean;
         }
         return $exported;
     }
