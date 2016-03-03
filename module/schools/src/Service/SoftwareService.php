@@ -9,7 +9,6 @@
 
 namespace GrEduLabs\Schools\Service;
 
-use InvalidArgumentException;
 use RedBeanPHP\R;
 
 class SoftwareService implements SoftwareServiceInterface
@@ -17,7 +16,7 @@ class SoftwareService implements SoftwareServiceInterface
 
     public function createSoftwareCategory($name)
     {
-        $software_category = R::dispense('softwarecategory');
+        $software_category       = R::dispense('softwarecategory');
         $software_category->name = $name;
         R::store($software_category);
     }
@@ -25,18 +24,22 @@ class SoftwareService implements SoftwareServiceInterface
     public function getSoftwareCategoryById($id)
     {
         $software_category = R::load('softwarecategory', $id);
+
         return $software_category->export();
     }
 
     public function getSoftwareCategories()
     {
         $software_categories = R::findAll('softwarecategory');
-        return $this->exportAll($software_categories);
+
+        return array_map(function ($bean) {
+            return $bean->export();
+        }, $software_categories);
     }
 
     public function updateSoftwareCategory($id, $data)
     {
-        $software_category = R::load('softwarecategory');
+        $software_category       = R::load('softwarecategory');
         $software_category->name = $name;
         R::store($software_category);
     }
@@ -46,7 +49,8 @@ class SoftwareService implements SoftwareServiceInterface
         unset($data['id']);
         $software = R::dispense('software');
         $this->persistSoftware($software, $data);
-        return $software->export();
+
+        return $this->export($software);
     }
 
     public function updateSoftware(array $data, $id)
@@ -56,40 +60,44 @@ class SoftwareService implements SoftwareServiceInterface
             throw new \InvalidArgumentException('No software found');
         }
         $this->persistSoftware($software, $data);
-        return $software->export();
+
+        return $this->export($software);
     }
 
     private function persistSoftware($software, array $data)
     {
-        if (!$data['lab_id']){
+        if (!$data['lab_id']) {
             $data['lab_id'] = NULL;
         }
-        
+
         $software->softwarecategory_id  = $data['softwarecategory_id'];
         $software->school_id            = $data['school_id'];
         $software->lab_id               = $data['lab_id'];
         $software->title                = $data['title'];
         $software->vendor               = $data['vendor'];
         $software->url                  = $data['url'];
-        
+
         R::store($software);
     }
 
     public function getSoftwareById($id)
     {
         $software = R::load('software', $id);
-        return $software->export();
+
+        return $this->export($software);
     }
 
     public function getSoftwareBySchoolId($id)
     {
         $software = R::findAll('software', 'school_id = ?', [$id]);
+
         return $this->exportAll($software);
     }
 
     public function getSoftwareByLabId($id)
     {
         $software = R::findAll('software', 'lab_id = ?', [$id]);
+
         return $software->exportAll();
     }
 
@@ -98,16 +106,21 @@ class SoftwareService implements SoftwareServiceInterface
         R::trash('software', $id);
     }
 
+    private function export($bean)
+    {
+        $softwareCategory     = $bean->softwarecategory;
+        $softwareCategoryName = ($softwareCategory) ? $softwareCategory->name : '';
+        $lab                  = $bean->lab;
+        $labName              = ($lab) ? $lab->name : '';
+
+        return array_merge($bean->export(), [
+            'softwarecategory' => $softwareCategoryName,
+            'lab'              => $labName,
+        ]);
+    }
+
     private function exportAll($beans)
     {
-        $exported = [];
-        foreach($beans as $bean)
-        {
-            $cat = $this->getSoftwareCategoryById($bean->id);
-            $exported_bean = $bean->export();
-            $exported_bean['softwarecategory'] = $cat['name'];
-            $exported[] = $exported_bean;
-        }
-        return $exported;
+        return array_map([$this, 'export'], $beans);
     }
 }

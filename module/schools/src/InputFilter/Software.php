@@ -42,7 +42,7 @@ class Software
         $school_id->setRequired(true)
             ->getValidatorChain()
             ->attach(new Validator\Digits());
-        
+
         $lab_id = new Input('lab_id');
         $lab_id->setRequired(false)
             ->getValidatorChain()

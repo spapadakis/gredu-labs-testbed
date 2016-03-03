@@ -21,5 +21,4 @@ interface SoftwareServiceInterface
     public function getSoftwareBySchoolId($id);
     public function getSoftwareByLabId($id);
     public function removeSoftware($id);
-
 }
