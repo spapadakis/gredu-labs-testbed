@@ -22,7 +22,7 @@ class ListAll
 
     public function __construct(Twig $view, SoftwareServiceInterface $softwareService)
     {
-        $this->view         = $view;
+        $this->view            = $view;
         $this->softwareService = $softwareService;
     }
 
@@ -34,9 +34,11 @@ class ListAll
         }
         $software   = $this->softwareService->getSoftwareBySchoolId($school->id);
         $categories = $this->softwareService->getSoftwareCategories();
+
         return $this->view->render($res, 'schools/software.twig', [
+            'school'            => $school,
             'softwareArray'     => $software,
-            'categories'   => array_map(function ($category) {
+            'categories'        => array_map(function ($category) {
                 return ['value' => $category['id'], 'label' => $category['name']];
             }, $categories),
         ]);

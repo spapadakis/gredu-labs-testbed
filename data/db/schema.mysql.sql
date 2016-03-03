@@ -460,7 +460,7 @@ CREATE TABLE `teacher` (
   `school_id` int(11) unsigned NOT NULL,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `surname` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `telephone` int(11) unsigned NOT NULL,
+  `telephone` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `branch_id` int(11) unsigned NOT NULL,
   `is_principle` tinyint(1) unsigned DEFAULT '0',
@@ -516,6 +516,64 @@ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `softwarecategory`
+--
+
+DROP TABLE IF EXISTS `softwarecategory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `softwarecategory` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+--
+-- Dumping data for table `softwarecategory`
+--
+
+LOCK TABLES `softwarecategory` WRITE;
+/*!40000 ALTER TABLE `softwarecategory` DISABLE KEYS */;
+INSERT INTO `softwarecategory` VALUES (1,'ΕΦΑΡΜΟΓΕΣ ΟΙΚΟΝΟΜΙΚΗΣ ΔΙΑΧΕΙΡΙΣΗΣ'),(2,'ΕΦΑΡΜΟΓΕΣ ΔΙΑΧΕΙΡΙΣΗΣ ΣΧΟΛΙΚΗΣ ΜΟΝΑΔΑΣ'),(3,'ΕΦΑΡΜΟΓΕΣ ΑΥΤΟΜΑΤΙΣΜΟΥ ΓΡΑΦΕΙΟΥ (OFFICE)'),(4,'ΒΑΣΕΙΣ ΔΕΔΟΜΕΝΩΝ'),(5,'ΓΛΩΣΣΕΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΥ'),(6,'ΕΚΠΑΙΔΕΥΤΙΚΟ ΛΟΓΙΣΜΙΚΟ'),(7,'ΔΙΑΧΕΙΡΙΣΗ ΔΙΚΤΥΟΥ'),(8,'ΛΕΙΤΟΥΡΓΙΚΑ ΣΥΣΤΗΜΑΤΑ'),(9,'ΑΣΦΑΛΕΙΑ ΚΑΙ ΠΡΟΣΤΑΣΙΑ'),(10,'ΒΟΗΘΗΜΑΤΑ');
+/*!40000 ALTER TABLE `softwarecategory` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `schoolasset`
+--
+
+DROP TABLE IF EXISTS `software`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+ CREATE TABLE `software` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `softwarecategory_id` int(11) unsigned NOT NULL,
+  `school_id` int(11) unsigned NOT NULL,
+  `lab_id` int(11) unsigned DEFAULT NULL,
+  `title` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `vendor` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `url` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_foreignkey_software_softwarecategory` (`softwarecategory_id`),
+  KEY `index_foreignkey_software_school` (`school_id`),
+  CONSTRAINT `c_fk_software_lab_id` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `c_fk_software_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_software_softwarecategory_id` FOREIGN KEY (`softwarecategory_id`) REFERENCES `softwarecategory` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `software`
+--
+
+LOCK TABLES `software` WRITE;
+/*!40000 ALTER TABLE `software` DISABLE KEYS */;
+/*!40000 ALTER TABLE `software` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

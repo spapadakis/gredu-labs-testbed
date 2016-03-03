@@ -21,8 +21,7 @@ class RedBeanPHP extends AbstractAdapter
      * @var string
      */
 
-    private static $failMessage = 'Δεν ήταν δυνατή η σύνδεση. Παρακαλώ ελέγξτε το ' .
-                                  'email και το συνθηματικό σας και δοκιμάστε ξανά.';
+    private static $failMessage = 'Δεν ήταν δυνατή η σύνδεση. Παρακαλώ ελέγξτε το email και το συνθηματικό σας και δοκιμάστε ξανά.';
     /**
      * @var callable
      */
