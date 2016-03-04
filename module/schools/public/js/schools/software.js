@@ -140,6 +140,7 @@
                 } else {
                     that.model.add(response);
                 }
+                that.hide();
             });
         },
         removeSoftware: function () {
@@ -148,12 +149,13 @@
                 url: that.url,
                 type: 'delete',
                 data: {
-                    'id': that.software.get('id')
+                    id: that.software.get('id')
                 }
            }).done(function () {
-                that.model.remove(that.sowftare.get('id'));
+                that.model.remove(that.software.get('id'));
                 that.hide();
             }).fail(function(xhr, err){
+                alert('Δεν ήταν δυνατή η διαγραφή του λογισμικού.');
             });
         }
 

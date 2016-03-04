@@ -35,7 +35,7 @@
                         <td class="title">{{ software.title }}</td>
                         <td class="category">{{ software.softwarecategory }}</td>
                         <td class="vendor">{{ software.vendor}}</td>
-                        <td class="url">{{ software.url }}</td>
+                        <td class="url"><a href="{{ software.url }}" target="_blank">{{ software.url }}</a></td>
                         <td class="lab">{{ software.lab }}</td>
                     </tr>
                     {% else %}
@@ -85,7 +85,7 @@
         <td class="title"><%= software.title %></td>
         <td class="category"><%= software.softwarecategory %></td>
         <td class="vendor"><%= software.vendor %></td>
-        <td class="url"><%= software.url %></td>
+        <td class="url"><a href="<%= software.url %>" target="_blank"><%= software.url %></a></td>
         <td class="lab"><%= software.lab %></td>
     </script>
 

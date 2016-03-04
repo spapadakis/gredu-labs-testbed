@@ -10,8 +10,8 @@
 
 namespace GrEduLabs\Schools\Action\Software;
 
-use GrEduLabs\Schools\Service\SoftwareServiceInterface;
 use GrEduLabs\Schools\Service\LabServiceInterface;
+use GrEduLabs\Schools\Service\SoftwareServiceInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
@@ -22,11 +22,10 @@ class ListAll
     private $softwareService;
 
     public function __construct(
-        Twig $view, 
+        Twig $view,
         SoftwareServiceInterface $softwareService,
-        LabServiceInterface      $labservice    
-    )
-    {
+        LabServiceInterface      $labservice
+    ) {
         $this->view            = $view;
         $this->softwareService = $softwareService;
         $this->labservice      = $labservice;
@@ -43,10 +42,12 @@ class ListAll
         $categories = $this->softwareService->getSoftwareCategories();
 
         return $this->view->render($res, 'schools/software.twig', [
-            'school'            => $school,
-            'labs'              => $labs,
-            'softwareArray'     => $software,
-            'categories'        => array_map(function ($category) {
+            'school' => $school,
+            'labs'   => array_map(function ($lab) {
+                return ['value' => $lab['id'], 'label' => $lab['name']];
+            }, $labs),
+            'softwareArray' => $software,
+            'categories'    => array_map(function ($category) {
                 return ['value' => $category['id'], 'label' => $category['name']];
             }, $categories),
         ]);
