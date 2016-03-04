@@ -11,4 +11,5 @@ return [
     // Slim Settings
     'determineRouteBeforeAppMiddleware' => false,
     'displayErrorDetails'               => false,
+    'forum_url'                         => '/#forum-help',
 ];

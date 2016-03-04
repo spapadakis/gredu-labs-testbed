@@ -50,8 +50,12 @@ return function (Slim\App $app) {
         };
 
         $container[GrEduLabs\Application\Twig\Extension\Navigation::class] = function ($c) {
+            $settings                     = $c['settings'];
+            $nav                          = $settings['navigation'];
+            $nav['main']['forum']['href'] = $settings['forum_url'];
+
             return new GrEduLabs\Application\Twig\Extension\Navigation(
-                $c['settings']['navigation'],
+                $nav,
                 $c['router'],
                 $c['request']
             );
@@ -94,6 +98,16 @@ return function (Slim\App $app) {
     });
 
     $events('on', 'app.bootstrap', function ($app, $container) {
+
+        $app->add(function ($req, $res, $next) use ($container) {
+            $settings           = $container->get('settings');
+            $forumUrl           = $settings['forum_url'];
+            $view               = $container->get('view');
+            $view['_forum_url'] = $forumUrl;
+
+            return $next($req, $res);
+        });
+
         $app->get('/', GrEduLabs\Application\Action\Index::class)->setName('index');
         $app->get('/about', GrEduLabs\Application\Action\About::class)->setName('about');
     });
