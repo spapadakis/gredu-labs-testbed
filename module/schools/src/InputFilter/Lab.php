@@ -66,7 +66,23 @@ class Lab
                 'randomize' => true,
             ]));
         $attachment->getValidatorChain()
-            ->attach(new Validator\File\UploadFile());
+            ->attach(new Validator\File\UploadFile())
+            ->attach(new Validator\File\MimeType([
+                'application/zip',
+                'application/x-rar-compressed',
+                'application/octet-stream',
+                'application/pdf',
+                'image/png',
+                'image/jpeg',
+                'image/gif',
+                'image/bmp',
+                'image/vnd.microsoft.icon',
+                'image/tiff',
+                'image/tiff',
+                'image/svg+xml',
+                'image/svg+xml',
+                'image/vnd.adobe.photoshop',
+            ]));
 
         $use_ext_program= new Input('use_ext_program');
         $use_ext_program->setRequired(false);

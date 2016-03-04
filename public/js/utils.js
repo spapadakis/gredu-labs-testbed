@@ -23,15 +23,21 @@
         render: function (form, messages) {
             var renderMessages = function (element, messages) {
                 var key,
-                    ul;
+                    ul,
+                    inputGrp;
                 element.parents('.form-group').addClass('has-error');
+                inputGrp = element.parents('.input-group');
                 ul = $('<ul class="help-block has-error">');
                 for (key in messages) {
                     if (messages.hasOwnProperty(key)) {
                         ul.append($('<li>').text(messages[key]));
                     }
                 }
-                element.after(ul);
+                if (inputGrp.length > 0) {
+                    inputGrp.after(ul);
+                } else {
+                    element.after(ul);
+                }
             };
             var prop;
             this.clear(form);

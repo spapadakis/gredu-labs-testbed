@@ -142,7 +142,9 @@ class LabService implements LabServiceInterface
             mkdir($fullPath, 0700, true);
         }
         // remove previous
-        unlink($this->filesPath . '/' . $lab->attachment);
+        if ($lab->attachment) {
+            unlink($this->filesPath . '/' . $lab->attachment);
+        }
         // move new file 
         rename($attachment['tmp_name'], $fullPath . '/' . $attachment['name']);
         $lab->attachment      = $schoolPath . '/' . $attachment['name'];
