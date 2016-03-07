@@ -193,6 +193,7 @@ It also provides the routes for home and about pages.
 - `slim/csrf`: ^0.6.0
 - `slim/flash`: ^0.1.0
 - `kanellov/slim-twig-flash`: ^0.1
+- `kanellov/assets-manager-middleware`: ^1.0,
 - `monolog/monolog`: ^1.13
 
 ### application_form
@@ -207,14 +208,6 @@ It also overrides schools index view by appending application form information.
 - authentication module
 - schools module
 - `zendframework/zend-inputfilter`: ^2.0
-
-### assets_manager
-
-A module that is responsible to serve asset files, like css and js from within module's directory. See [`assets_manager.global.php` in Slim settings files](#slim-settings-files).
-
-#### Dependencies
-
-None
 
 ### authentication
 
@@ -302,13 +295,17 @@ This module provides the services, views and javascript for schools to submit th
 - application module
 - `zendframework/zend-inputfilter`: ^2.0
 
+## ER diagram
+
+![ER diagram](https://github.com/eellak/gredu_labs/blob/develop/data/db/er.png)
+
 ## Run it:
 
 1. `$ cd gredu_labs`
 2. `$ php -S 0.0.0.0:8888 -t public public/index.php`
 3. Browse to http://localhost:8888
 
-**Warning:** assets_manager module does not work with php-server sapi. Assets from modules will have to be copied in `public` directory by hand.
+**Warning:** kanellov/assets-manager-middleware does not work with php-server sapi. Assets from modules will have to be copied in `public` directory by hand.
 
 ## Links
 - [Slim Framework](http://www.slimframework.com/)
@@ -316,6 +313,7 @@ This module provides the services, views and javascript for schools to submit th
 - [slimphp/Slim-Flash](https://github.com/slimphp/Slim-Flash)
 - [kanellov/config-merge](https://github.com/kanellov/config-merge)
 - [kanellov/php-events](https://github.com/kanellov/php-events)
+- [kanellov/assets-manager-middleware](https://github.com/kanellov/assets-manager-middleware)
 - [monolog](https://github.com/Seldaek/monolog)
 - [zendframework/zend-ldap](https://github.com/zendframework/zend-ldap)
 - [zendframework/zend-authentication](https://github.com/zendframework/zend-authentication)

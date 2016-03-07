@@ -11,8 +11,8 @@ return [
     'assets' => [
         'web_dir'    => __DIR__ . '/../../public',
         'paths'      => [
-            'module/schools/public',
-            'module/application_form/public',
+            __DIR__ . '/../../module/schools/public',
+            __DIR__ . '/../../module/application_form/public',
         ],
     ],
 ];

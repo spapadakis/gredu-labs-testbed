@@ -11,7 +11,6 @@
 return [
     'modules' => [
         'module/application/bootstrap.php',
-        'module/assets_manager/bootstrap.php',
         'module/authentication/bootstrap.php',
         'module/authorization/bootstrap.php',
         'module/sch_ldap/bootstrap.php',

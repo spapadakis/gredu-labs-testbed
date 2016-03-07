@@ -89,6 +89,12 @@ return function (Slim\App $app) {
             );
         };
 
+        $container['assets'] = function ($c) {
+            $settings = $c['settings']['assets'];
+
+            return new Knlv\Middleware\AssetsManager($settings);
+        };
+
         $container[GrEduLabs\Application\Action\Index::class] = function ($c) {
             return new GrEduLabs\Application\Action\Index($c['view']);
         };
@@ -98,6 +104,8 @@ return function (Slim\App $app) {
     });
 
     $events('on', 'app.bootstrap', function ($app, $container) {
+
+
 
         $app->add(function ($req, $res, $next) use ($container) {
             $settings           = $container->get('settings');
@@ -111,4 +119,9 @@ return function (Slim\App $app) {
         $app->get('/', GrEduLabs\Application\Action\Index::class)->setName('index');
         $app->get('/about', GrEduLabs\Application\Action\About::class)->setName('about');
     });
+
+    // low priority means add middleware last and for slim means run middleware first
+    $events('on', 'app.bootstrap', function ($app, $container) {
+        $app->add('assets');
+    }, -1000);
 };
