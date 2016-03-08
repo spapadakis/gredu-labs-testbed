@@ -6,7 +6,8 @@
         StaffRow,
         StaffView,
         TeacherView,
-        teacherTemplate;
+        teacherTemplate,
+        staffModel;
 
     Teacher = Backbone.Model.extend({ idAttribute: 'id' });
 
@@ -63,7 +64,7 @@
         },
         editEmployee: function (evt) {
             var teacherId;
-            if ($(evt.target).is('a')) return;
+            if (!$(evt.target).is('td')) return;
             teacherId = $(evt.target).closest('tr').data('id');
             this.teacherView.render(teacherId);
             return this;
@@ -176,6 +177,10 @@
             });
         }
     });
-
-    new StaffView({ model: new Staff() });
+    staffModel = new Staff();
+    new StaffView({ model: staffModel });
+    
+    window.EDULABS.models = window.EDULABS.models || {};
+    window.EDULABS.models.staff = staffModel;
+    
 }(window.EDULABS.utils));

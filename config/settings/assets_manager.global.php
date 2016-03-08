@@ -13,6 +13,7 @@ return [
         'paths'      => [
             __DIR__ . '/../../module/schools/public',
             __DIR__ . '/../../module/application_form/public',
+            __DIR__ . '/../../module/tpe_survey/public',
         ],
     ],
 ];

@@ -11,7 +11,11 @@
     window.EDULABS.utils.serializeObject = function (form) {
         return _.reduce(form.serializeArray(), function (hash, pair) {
             if (!!hash[pair.name]) {
-                hash[pair.name] = [hash[pair.name], pair.value];
+                if (typeof hash[pair.name].push === 'function') {
+                    hash[pair.name].push(pair.value);
+                } else {
+                    hash[pair.name] = [hash[pair.name], pair.value];
+                }
             } else {
                 hash[pair.name] = pair.value;
             }

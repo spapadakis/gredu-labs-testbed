@@ -1,0 +1,21 @@
+{% macro multicheckbox(name, label, options, checked, attributes={freeText: false}) %}
+    <div class="form-group">
+        <label class="control-label hidden-xs hidden-sm col-md-3">{{ label|raw }}</label>
+        <div class="col-xs-12 col-sm-12 col-md-9">
+            {% for checkbox in options %}
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" value="{{ checkbox.value }}" name="{{ name }}">
+                        {{ checkbox.label }}
+                    </label>
+                </div>
+            {% endfor %}
+            {% if attributes.freeText %}
+                <div class="checkbox">
+                <input type="text" value="" name="{{ name }}" class="form-control" placeholder="Άλλο">
+                </div>
+            {% endif %}
+        </div>
+        
+    </div>
+{% endmacro %}
