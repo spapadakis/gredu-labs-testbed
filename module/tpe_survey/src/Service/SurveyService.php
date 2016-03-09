@@ -18,6 +18,9 @@ class SurveyService implements SurveyServiceInterface
     public function getAnswers($teacherId)
     {
         $bean                  = R::findOne('tpesurvey', 'teacher_id = ?', [$teacherId]);
+        if (null === $bean) {
+            return;
+        }
         $data                  = $bean->export();
         $data['assets_in_use'] = explode('|', $data['assets_in_use']);
         if (!$data['assets_in_use']) {

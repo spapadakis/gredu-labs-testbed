@@ -295,6 +295,15 @@ This module provides the services, views and javascript for schools to submit th
 - application module
 - `zendframework/zend-inputfilter`: ^2.0
 
+### tpe_survey
+
+This module overrides staff view of schools module. It allows school user to submit 
+information about teachers using IT in education.
+
+#### Dependencies
+
+ - schools module
+
 ## ER diagram
 
 ![ER diagram](https://github.com/eellak/gredu_labs/blob/develop/data/db/er.png)
