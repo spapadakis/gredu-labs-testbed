@@ -1,6 +1,10 @@
 <?php
 
+use GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity;
+use GrEduLabs\Schools\Service\StaffServiceInterface;
+use GrEduLabs\TpeSurvey\Action\SubmitTeachersCount;
 use GrEduLabs\TpeSurvey\Action\SurveyForm;
+use GrEduLabs\TpeSurvey\InputFilter\Survey;
 use GrEduLabs\TpeSurvey\Middleware\SurveyFormDefaults;
 use GrEduLabs\TpeSurvey\Service\SurveyService;
 use GrEduLabs\TpeSurvey\Service\SurveyServiceInterface;
@@ -35,7 +39,21 @@ return function (App $app) {
         };
 
         $c[SurveyForm::class] = function ($c) {
-            return new SurveyForm($c->get(SurveyServiceInterface::class));
+            return new SurveyForm(
+                $c->get(SurveyServiceInterface::class),
+                $c->get(Survey::class),
+                $c->get(StaffServiceInterface::class)
+            );
+        };
+
+        $c[SubmitTeachersCount::class] = function ($c) {
+            return new SubmitTeachersCount(
+                $c->get(SurveyServiceInterface::class)
+            );
+        };
+
+        $c[Survey::class] = function ($c) {
+            return new Survey();
         };
     });
 
@@ -44,7 +62,8 @@ return function (App $app) {
 
         $app->group('/tpe_survey', function () {
             $this->map(['GET', 'POST'], '', SurveyForm::class)->setName('tpe_survey');
-        });
+            $this->post('/total-teachers', SubmitTeachersCount::class)->setName('tpe_survey.total_teachers');
+        })->add(FetchSchoolFromIdentity::class);
     });
 
     $events('on', 'app.bootstrap', function (App $app, Container $c) {

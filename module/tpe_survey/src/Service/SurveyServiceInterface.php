@@ -26,4 +26,11 @@ interface SurveyServiceInterface
      * @param array $data
      */
     public function saveAnswers($teacherId, array $data);
+
+    /**
+     * 
+     * @param int $school_id
+     * @param int $teachersCount
+     */
+    public function setTotalTeachers($school_id, $teachersCount);
 }

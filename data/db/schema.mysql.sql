@@ -278,7 +278,7 @@ CREATE TABLE `lesson` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -287,7 +287,7 @@ CREATE TABLE `lesson` (
 
 LOCK TABLES `lesson` WRITE;
 /*!40000 ALTER TABLE `lesson` DISABLE KEYS */;
-INSERT INTO `lesson` VALUES (1,'ΠΛΗΡΟΦΟΡΙΚΗ'),(2,'ΦΥΣΙΚΗ');
+INSERT INTO `lesson` VALUES (1,'ΠΛΗΡΟΦΟΡΙΚΗ'),(2,'ΦΥΣΙΚΩΝ ΕΠΙΣΤΗΜΩΝ'),(3,'ΤΕΧΝΟΛΟΓΙΑΣ'),(4,'ΦΙΛΟΛΟΓΙΚΑ'),(5,'ΑΙΣΘΗΤΙΚΗ ΑΓΩΓΗ'),(6,'ΕΘΝΙΚΑ Ή ΕΥΡΩΠΑΪΚΑ ΕΚΠΑΙΔΕΥΤΙΚΑ ΠΡΟΓΡΑΜΜΑΤΑ'),(7,'ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ ΕΚΤΟΣ ΩΡΑΡΙΟΥ ΛΕΙΤΟΥΡΓΙΑΣ ΣΧΟΛΕΙΟΥ'),(8,'ΜΑΘΗΜΑΤΑ ΕΙΔΙΚΟΤΗΤΑΣ (ΕΠΑΛ)');
 /*!40000 ALTER TABLE `lesson` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -348,11 +348,14 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `school`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+DROP TABLE IF EXISTS `school`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `school` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `street_address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `postal_code` int(11) unsigned DEFAULT NULL,
+  `postal_code` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `phone_number` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fax_number` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -364,16 +367,17 @@ CREATE TABLE `school` (
   `created` int(11) unsigned NOT NULL,
   `creator` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `registry_no` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `teachers_count` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `registry_no_UNIQUE` (`registry_no`),
   KEY `index_foreignkey_school_schooltype` (`schooltype_id`),
   KEY `index_foreignkey_school_prefecture` (`prefecture_id`),
   KEY `index_foreignkey_school_educationlevel` (`educationlevel_id`),
   KEY `index_foreignkey_school_eduadmin` (`eduadmin_id`),
-  CONSTRAINT `c_fk_school_schooltype_id` FOREIGN KEY (`schooltype_id`) REFERENCES `schooltype` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `c_fk_school_prefecture_id` FOREIGN KEY (`prefecture_id`) REFERENCES `prefecture` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `c_fk_school_educationlevel_id` FOREIGN KEY (`educationlevel_id`) REFERENCES `educationlevel` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `c_fk_school_eduadmin_id` FOREIGN KEY (`eduadmin_id`) REFERENCES `eduadmin` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+  CONSTRAINT `c_fk_school_eduadmin_id` FOREIGN KEY (`eduadmin_id`) REFERENCES `eduadmin` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_school_educationlevel_id` FOREIGN KEY (`educationlevel_id`) REFERENCES `educationlevel` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_school_prefecture_id` FOREIGN KEY (`prefecture_id`) REFERENCES `prefecture` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_school_schooltype_id` FOREIGN KEY (`schooltype_id`) REFERENCES `schooltype` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -572,6 +576,44 @@ DROP TABLE IF EXISTS `software`;
 LOCK TABLES `software` WRITE;
 /*!40000 ALTER TABLE `software` DISABLE KEYS */;
 /*!40000 ALTER TABLE `software` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tpesurvey`
+--
+
+DROP TABLE IF EXISTS `tpesurvey`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tpesurvey` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `teacher_id` int(11) unsigned NOT NULL,
+  `already_using_tpe` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `knowledge_level` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `assets_in_use` text COLLATE utf8mb4_unicode_ci,
+  `sw_web2` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sw_packages` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sw_digitalschool` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sw_other` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `uc_eduprograms` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `uc_digitaldesign` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `uc_asyncedu` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `uc_other` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `extra_needs` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `teacher_id_UNIQUE` (`teacher_id`),
+  KEY `index_foreignkey_tpesurvey_teacher` (`teacher_id`),
+  CONSTRAINT `c_fk_tpesurvey_teacher_id` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tpesurvey`
+--
+
+LOCK TABLES `tpesurvey` WRITE;
+/*!40000 ALTER TABLE `tpesurvey` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tpesurvey` ENABLE KEYS */;
 UNLOCK TABLES;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

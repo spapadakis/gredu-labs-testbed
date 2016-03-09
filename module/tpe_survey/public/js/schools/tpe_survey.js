@@ -86,7 +86,14 @@
             }).done(function (response) {
                 that.hide();
             }).fail(function (xhr, err) {
-                alert('Προέκυψε κάποιο σφάλμα');
+                var messages;
+                if (422 === xhr.status) {
+                    messages = JSON.parse(xhr.responseText).messages || {};
+                    utils.formMessages.render(form, messages);
+                } else {
+                    alert('Προέκυψε κάποιο σφάλμα');
+                }
+                
             });
             
             return false;
@@ -107,6 +114,26 @@
         }
         modal.model = teacher;
         modal.render();
+    });
+    
+    $('#form-total-teachers').on('submit', function (evt) {
+        var that = $(this);
+        $.ajax({
+            url: that.attr('action'),
+            type: 'post',
+            dataType: 'json',
+            data: utils.serializeObject(that)
+        }).fail(function (xhr, err) {
+            var messages;
+            if (422 === xhr.status) {
+                messages = JSON.parse(xhr.responseText).messages || {};
+                utils.formMessages.render(that, messages);
+            } else {
+                alert('Προέκυψε κάποιο σφάλμα');
+            }
+
+        });
+        evt.preventDefault();
     });
     
 }(jQuery, _, window.EDULABS.utils));

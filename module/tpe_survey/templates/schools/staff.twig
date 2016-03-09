@@ -16,90 +16,99 @@
 {% endblock %}
 
 {% block schoolContent %}
-<div id="school-staff">
-    <p>
-        Σε αυτή τη καρτέλα καταχωρούνται ο Δ/ντης του σχολείου, οι Υπεύθυνοι 
-        σχολικών εργαστηρίων, καθώς και εκείνοι οι εκπαιδευτικοί που χρησιμοποιούν
-        ή πρόκειται να χρησιμοποιήσουν ΤΠΕ στο σχολείο.
-    </p>
-    <div class="table-responsive">
-        <table class="table table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>Όνομα</th>
-                    <th>Επώνυμο</th>
-                    <th>Τηλέφωνο</th>
-                    <th>Email</th>
-                    <th>Ειδικότητα</th>
-                    <th>Θέση</th>
-                    <th>Χρήση ΤΠΕ</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for teacher in staff %}
-                    <tr data-teacher="{{ teacher|json_encode }}" data-id="{{ teacher.id }}">
-                        <td class="name">{{ teacher.name }}</td>
-                        <td class="surname">{{ teacher.surname }}</td>
-                        <td class="telephone">{{ teacher.telephone }}</td>
-                        <td class="email">
-                            <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
-                        </td>
-                        <td class="branch">{{ teacher.branch }}</td>
-                        <td class="position">{{ teacher.position }}</td>
-                        <td class="tpe_survey">
-                            <a href="#tpe_survey" class="btn btn-primary btn-xs" type="button" data-id="{{ teacher.id }}">
-                                <i class="fa fa-file-text-o"></i>
-                                &nbsp;Ερωτηματολόγιο
-                            </a>
-                        </td>
+    <div id="school-staff">
+        <p>
+            Σε αυτή τη καρτέλα καταχωρούνται ο Δ/ντης του σχολείου, οι Υπεύθυνοι 
+            σχολικών εργαστηρίων, καθώς και εκείνοι οι εκπαιδευτικοί που χρησιμοποιούν
+            ή πρόκειται να χρησιμοποιήσουν ΤΠΕ στο σχολείο.
+        </p>
+        <hr>
+        <form id="form-total-teachers" class="form-inline" action="{{ path_for('tpe_survey.total_teachers') }}" method="post">
+            <div class="form-group">
+                <label class="control-label" for="input-total_teachers">Αριθμός εκπαιδευτικών που διδάσκουν στο σχολείο:</label>
+                <input type="number" name="total_teachers" min="1" class="form-control" id="input-total_teachers" value="{{ school.teachers_count }}">
+            </div>
+            <button type="submit" class="btn btn-default">Αποθήκευση</button>
+        </form>
+        <hr>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Όνομα</th>
+                        <th>Επώνυμο</th>
+                        <th>Τηλέφωνο</th>
+                        <th>Email</th>
+                        <th>Ειδικότητα</th>
+                        <th>Θέση</th>
+                        <th>Χρήση ΤΠΕ</th>
                     </tr>
+                </thead>
+                <tbody>
+                    {% for teacher in staff %}
+                        <tr data-teacher="{{ teacher|json_encode }}" data-id="{{ teacher.id }}">
+                            <td class="name">{{ teacher.name }}</td>
+                            <td class="surname">{{ teacher.surname }}</td>
+                            <td class="telephone">{{ teacher.telephone }}</td>
+                            <td class="email">
+                                <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
+                            </td>
+                            <td class="branch">{{ teacher.branch }}</td>
+                            <td class="position">{{ teacher.position }}</td>
+                            <td class="tpe_survey">
+                                <a href="#tpe_survey" class="btn btn-primary btn-xs" type="button" data-id="{{ teacher.id }}">
+                                    <i class="fa fa-file-text-o"></i>
+                                    &nbsp;Ερωτηματολόγιο
+                                </a>
+                            </td>
+                        </tr>
                     {% else %}
-                    <tr class="no-records">
-                        <td colspan="7" class="text-center text-muted">
-                            Δεν έχουν καταχωρηθεί εκπαιδευτικοί.
-                        </td>
+                        <tr class="no-records">
+                            <td colspan="7" class="text-center text-muted">
+                                Δεν έχουν καταχωρηθεί εκπαιδευτικοί.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="7"></th>
                     </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-            <tr>
-                <th colspan="7"></th>
-            </tr>
-            </tfoot>
-        </table>
-    </div>
-    <div class="modal fade" id="teacher-form-modal" tabindex="-1" role="dialog" aria-labelledby="teacher-from">
-        <form class="form-horizontal" data-url="{{ path_for('school.staff') }}">
-            <div class="modal-dialog" role="form">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title">Στοιχεία εκπαιδευτικού</h4>
-                    </div>
-                    <div class="modal-body">
-                        {{ macros.input('name', 'Όνομα', '', 'text', {'required': ''}) }}
-                        {{ macros.input('surname', 'Επώνυμο', '', 'text', {'required': ''}) }}
-                        {{ macros.input('telephone', 'Τηλέφωνο','', 'tel', {'required': ''}) }}
-                        {{ macros.input('email', 'Email','', 'email', {'required': ''}) }}
-                        {{ macros.select('branch_id', 'Ειδικότητα', branches, '', {'required': ''}) }}
-                        {{ macros.checkbox('is_principle', 'Διευθυντής') }}
-                        {{ macros.checkbox('is_responsible', 'Υπεύθυνος εργαστηρίου') }}
-                        <input type="hidden" name="id" value="">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger pull-left remove">Διαγραφή</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Κλείσιμο</button>
-                        <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+                </tfoot>
+            </table>
+        </div>
+        <div class="modal fade" id="teacher-form-modal" tabindex="-1" role="dialog" aria-labelledby="teacher-from">
+            <form class="form-horizontal" data-url="{{ path_for('school.staff') }}">
+                <div class="modal-dialog" role="form">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Στοιχεία εκπαιδευτικού</h4>
+                        </div>
+                        <div class="modal-body">
+                            {{ macros.input('name', 'Όνομα', '', 'text', {'required': ''}) }}
+                            {{ macros.input('surname', 'Επώνυμο', '', 'text', {'required': ''}) }}
+                            {{ macros.input('telephone', 'Τηλέφωνο','', 'tel', {'required': ''}) }}
+                            {{ macros.input('email', 'Email','', 'email', {'required': ''}) }}
+                            {{ macros.select('branch_id', 'Ειδικότητα', branches, '', {'required': ''}) }}
+                            {{ macros.checkbox('is_principle', 'Διευθυντής') }}
+                            {{ macros.checkbox('is_responsible', 'Υπεύθυνος εργαστηρίου') }}
+                            <input type="hidden" name="id" value="">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger pull-left remove">Διαγραφή</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Κλείσιμο</button>
+                            <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
 
-    {% include "tpe_survey/form.twig" %}              
-    <script type="text/template" id="teacher-row">
+        {% include "tpe_survey/form.twig" %}              
+        <script type="text/template" id="teacher-row">
         <td class="name"><%= teacher.name %></td>
         <td class="surname"><%= teacher.surname %></td>
         <td class="telephone"><%= teacher.telephone %></td>
@@ -114,11 +123,16 @@
                 &nbsp;Ερωτηματολόγιο
             </a>
         </td>
-    </script>
+        </script>
 
-</div>
+    </div>
 {% endblock %}
 
+{% block htmlHead %}
+    <style>
+        #input-total_teachers {width: 70px;}
+    </style>
+{% endblock %}
 {% block inlinejs %}
     {{ parent() }}
     <script src="{{ base_url }}/js/schools/staff.js"></script>

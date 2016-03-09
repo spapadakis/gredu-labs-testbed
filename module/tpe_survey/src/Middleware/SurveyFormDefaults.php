@@ -17,6 +17,16 @@ use Slim\Views\Twig;
 
 class SurveyFormDefaults
 {
+    private static $alreadyUsingTpe = [
+        [
+            'value' => 'ΝΑΙ',
+            'label' => 'Ναι',
+        ],
+        [
+            'value' => 'ΟΧΙ',
+            'label' => 'Όχι, αλλά θα χρησιμοποιούσε αν είχε τα κατάλληλα εργαλεία',
+        ],
+    ];
     private static $knowledgeLevels = ['ΜΕΤΡΙΑ', 'ΚΑΛΑ', 'ΠΟΛΥ ΚΑΛΑ', 'ΑΡΙΣΤΑ'];
     private static $assetsInUse     = ['Η/Υ', 'TABLET', 'ΔΣΔ (Διαδραστικό Σύστημα Διδασκαλίας)', 'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ', 'ΚΙΤ ΡΟΜΠΟΤΙΚΗΣ'];
     private static $softwareInUse   = [
@@ -74,10 +84,11 @@ class SurveyFormDefaults
 
         if ($req->isGet()) {
             $this->view['tpe_survey'] = [
-                'knowledge_levels' => array_map($map, self::$knowledgeLevels),
-                'assets_in_use'    => array_map($map, self::$assetsInUse),
-                'software_in_use'  => self::$softwareInUse,
-                'use_case'         => self::$useCase,
+                'already_using_tpe' => self::$alreadyUsingTpe,
+                'knowledge_levels'  => array_map($map, self::$knowledgeLevels),
+                'assets_in_use'     => array_map($map, self::$assetsInUse),
+                'software_in_use'   => self::$softwareInUse,
+                'use_case'          => self::$useCase,
             ];
         }
 

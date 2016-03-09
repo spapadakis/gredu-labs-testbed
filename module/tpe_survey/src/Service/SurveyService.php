@@ -20,13 +20,16 @@ class SurveyService implements SurveyServiceInterface
         $bean                  = R::findOne('tpesurvey', 'teacher_id = ?', [$teacherId]);
         $data                  = $bean->export();
         $data['assets_in_use'] = explode('|', $data['assets_in_use']);
+        if (!$data['assets_in_use']) {
+            $data['assets_in_use'] = [];
+        }
 
         return $data;
     }
 
     public function saveAnswers($teacherId, array $data)
     {
-        if (isset($data['assets_in_use'])) {
+        if (isset($data['assets_in_use']) && is_array($data['assets_in_use'])) {
             $data['assets_in_use'] = implode('|', $data['assets_in_use']);
         }
         $bean = R::findOne('tpesurvey', 'teacher_id = ?', [$teacherId]);
@@ -35,6 +38,7 @@ class SurveyService implements SurveyServiceInterface
         }
         $bean->teacher_id = (int) $teacherId;
         $bean->import($data, [
+            'already_using_tpe',
             'knowledge_level',
             'assets_in_use',
             'sw_web2',
@@ -45,7 +49,15 @@ class SurveyService implements SurveyServiceInterface
             'uc_digitaldesign',
             'uc_asyncedu',
             'uc_other',
+            'extra_needs',
         ]);
         R::store($bean);
+    }
+
+    public function setTotalTeachers($school_id, $teachersCount)
+    {
+        $school                 = R::load('school', $school_id);
+        $school->teachers_count = (int) $teachersCount;
+        R::store($school);
     }
 }

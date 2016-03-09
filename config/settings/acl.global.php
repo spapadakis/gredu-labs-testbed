@@ -32,6 +32,7 @@ return [
                 ['/application-form', ['school'], ['get', 'post'], 'GrEduLabs\ApplicationForm\Acl\Assertion\CanSubmit'],
                 ['/application-form/submit-success', ['school'], ['get']],
                 ['/tpe_survey', ['school'], ['get', 'post']],
+                ['/tpe_survey/total-teachers', ['school'], ['post']],
             ],
         ],
     ],

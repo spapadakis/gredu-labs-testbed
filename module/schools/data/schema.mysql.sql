@@ -215,7 +215,7 @@ CREATE TABLE `lesson` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -224,7 +224,7 @@ CREATE TABLE `lesson` (
 
 LOCK TABLES `lesson` WRITE;
 /*!40000 ALTER TABLE `lesson` DISABLE KEYS */;
-INSERT INTO `lesson` VALUES (1,'ΠΛΗΡΟΦΟΡΙΚΗ'),(2,'ΦΥΣΙΚΗ');
+INSERT INTO `lesson` VALUES (1,'ΠΛΗΡΟΦΟΡΙΚΗ'),(2,'ΦΥΣΙΚΩΝ ΕΠΙΣΤΗΜΩΝ'),(3,'ΤΕΧΝΟΛΟΓΙΑΣ'),(4,'ΦΙΛΟΛΟΓΙΚΑ'),(5,'ΑΙΣΘΗΤΙΚΗ ΑΓΩΓΗ'),(6,'ΕΘΝΙΚΑ Ή ΕΥΡΩΠΑΪΚΑ ΕΚΠΑΙΔΕΥΤΙΚΑ ΠΡΟΓΡΑΜΜΑΤΑ'),(7,'ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ ΕΚΤΟΣ ΩΡΑΡΙΟΥ ΛΕΙΤΟΥΡΓΙΑΣ ΣΧΟΛΕΙΟΥ'),(8,'ΜΑΘΗΜΑΤΑ ΕΙΔΙΚΟΤΗΤΑΣ (ΕΠΑΛ)');
 /*!40000 ALTER TABLE `lesson` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -289,7 +289,7 @@ CREATE TABLE `school` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `street_address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `postal_code` int(11) unsigned DEFAULT NULL,
+  `postal_code` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `phone_number` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fax_number` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -307,10 +307,10 @@ CREATE TABLE `school` (
   KEY `index_foreignkey_school_prefecture` (`prefecture_id`),
   KEY `index_foreignkey_school_educationlevel` (`educationlevel_id`),
   KEY `index_foreignkey_school_eduadmin` (`eduadmin_id`),
-  CONSTRAINT `c_fk_school_schooltype_id` FOREIGN KEY (`schooltype_id`) REFERENCES `schooltype` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `c_fk_school_prefecture_id` FOREIGN KEY (`prefecture_id`) REFERENCES `prefecture` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `c_fk_school_educationlevel_id` FOREIGN KEY (`educationlevel_id`) REFERENCES `educationlevel` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `c_fk_school_eduadmin_id` FOREIGN KEY (`eduadmin_id`) REFERENCES `eduadmin` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+  CONSTRAINT `c_fk_school_eduadmin_id` FOREIGN KEY (`eduadmin_id`) REFERENCES `eduadmin` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_school_educationlevel_id` FOREIGN KEY (`educationlevel_id`) REFERENCES `educationlevel` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_school_prefecture_id` FOREIGN KEY (`prefecture_id`) REFERENCES `prefecture` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_school_schooltype_id` FOREIGN KEY (`schooltype_id`) REFERENCES `schooltype` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
