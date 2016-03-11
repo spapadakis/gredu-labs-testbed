@@ -16,93 +16,101 @@
 {% endblock %}
 
 {% block schoolContent %}
-<div id="school-staff">
-    <p>
-        Σε αυτή τη καρτέλα καταχωρούνται ο Δ/ντης του σχολείου, ο Υπεύθυνος 
-        σχολικού εργαστηρίου και οι εκπαιδευτικοί που θα έχουν εξουσιοδότηση 
-        καταχώρησης πληροφοριών στο σύστημα.
-    </p>
-    <div class="table-responsive">
-        <table class="table table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>Όνομα</th>
-                    <th>Επώνυμο</th>
-                    <th>Τηλέφωνο</th>
-                    <th>Email</th>
-                    <th>Ειδικότητα</th>
-                    <th>Θέση</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for teacher in staff %}
-                    <tr data-teacher="{{ teacher|json_encode }}" data-id="{{ teacher.id }}">
-                        <td class="name">{{ teacher.name }}</td>
-                        <td class="surname">{{ teacher.surname }}</td>
-                        <td class="telephone">{{ teacher.telephone }}</td>
-                        <td class="email">
-                            <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
-                        </td>
-                        <td class="branch">{{ teacher.branch }}</td>
-                        <td class="position">{{ teacher.position }}</td>
+    <div id="school-staff">
+        <p>
+            Καταχωρούνται ο Δ/ντης του σχολείου, ο Υπεύθυνος σχολικού εργαστηρίου 
+            και άλλοι εκπαιδευτικοί του σχολείου που θα ορισθούν από τη Δ/νση του 
+            σχολείου για να καταχωρούν πληροφορίες στο σύστημα. 
+        </p>
+        <p>Κάθε εκπαιδευτικός που καταχωρείται είτε χρησιμοποιεί, είτε θα 
+            επιθυμούσε να χρησιμοποιήσει ΤΠΕ στο μάθημά του θα πρέπει 
+            να καταχωρήσει πληροφορίες που βρίσκονται στο πλήκτρο 
+            «Ερωτηματολόγιο». Το «Ερωτηματολόγιο» θα εκτυπωθεί από τον υπεύθυνο 
+            εκπαιδευτικό για την συμπλήρωση της εφαρμογής, θα παραδοθεί 
+            στους ενδιαφερόμενους εκπαιδευτικούς και στη συνέχεια θα παραδοθεί 
+            πίσω συμπληρωμένο στον υπεύθυνο καταχώρησης για την αποτύπωση των 
+            πληροφοριών στην εφαρμογή.</p>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Όνομα</th>
+                        <th>Επώνυμο</th>
+                        <th>Τηλέφωνο</th>
+                        <th>Email</th>
+                        <th>Ειδικότητα</th>
+                        <th>Θέση</th>
                     </tr>
+                </thead>
+                <tbody>
+                    {% for teacher in staff %}
+                        <tr data-teacher="{{ teacher|json_encode }}" data-id="{{ teacher.id }}">
+                            <td class="name">{{ teacher.name }}</td>
+                            <td class="surname">{{ teacher.surname }}</td>
+                            <td class="telephone">{{ teacher.telephone }}</td>
+                            <td class="email">
+                                <a href="mailto:{{ teacher.email }}">{{ teacher.email }}</a>
+                            </td>
+                            <td class="branch">{{ teacher.branch }}</td>
+                            <td class="position">{{ teacher.position }}</td>
+                        </tr>
                     {% else %}
-                    <tr class="no-records">
-                        <td colspan="6" class="text-center text-muted">
-                            Δεν έχουν καταχωρηθεί εκπαιδευτικοί.
-                        </td>
+                        <tr class="no-records">
+                            <td colspan="6" class="text-center text-muted">
+                                Δεν έχουν καταχωρηθεί εκπαιδευτικοί.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="6"></th>
                     </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-            <tr>
-                <th colspan="6"></th>
-            </tr>
-            </tfoot>
-        </table>
-    </div>
-    <div class="modal fade" id="teacher-form-modal" tabindex="-1" role="dialog" aria-labelledby="teacher-from">
-        <form class="form-horizontal" data-url="{{ path_for('school.staff') }}">
-            <div class="modal-dialog" role="form">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title">Στοιχεία εκπαιδευτικού</h4>
-                    </div>
-                    <div class="modal-body">
-                        {{ macros.input('name', 'Όνομα', '', 'text', {'required': ''}) }}
-                        {{ macros.input('surname', 'Επώνυμο', '', 'text', {'required': ''}) }}
-                        {{ macros.input('telephone', 'Τηλέφωνο','', 'tel', {'required': ''}) }}
-                        {{ macros.input('email', 'Email','', 'email', {'required': ''}) }}
-                        {{ macros.select('branch_id', 'Ειδικότητα', branches, '', {'required': ''}) }}
-                        {{ macros.checkbox('is_principle', 'Διευθυντής') }}
-                        {{ macros.checkbox('is_responsible', 'Υπεύθυνος εργαστηρίου') }}
-                        <input type="hidden" name="id" value="">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger pull-left remove">Διαγραφή</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Κλείσιμο</button>
-                        <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+                </tfoot>
+            </table>
+        </div>
+        <div class="modal fade" id="teacher-form-modal" tabindex="-1" role="dialog" aria-labelledby="teacher-from">
+            <form class="form-horizontal" data-url="{{ path_for('school.staff') }}">
+                <div class="modal-dialog" role="form">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Στοιχεία εκπαιδευτικού</h4>
+                        </div>
+                        <div class="modal-body">
+                            {{ macros.input('name', 'Όνομα', '', 'text', {'required': ''}) }}
+                            {{ macros.input('surname', 'Επώνυμο', '', 'text', {'required': ''}) }}
+                            {{ macros.input('telephone', 'Τηλέφωνο','', 'tel', {'required': ''}) }}
+                            {{ macros.input('email', 'Email','', 'email', {'required': ''}) }}
+                            {{ macros.select('branch_id', 'Ειδικότητα', branches, '', {'required': ''}) }}
+                            {{ macros.checkbox('is_principle', 'Διευθυντής') }}
+                            {{ macros.checkbox('is_responsible', 'Υπεύθυνος εργαστηρίου') }}
+                            <input type="hidden" name="id" value="">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger pull-left remove">Διαγραφή</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Κλείσιμο</button>
+                            <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
 
-    <script type="text/template" id="teacher-row">
-        <td class="name"><%= teacher.name %></td>
-        <td class="surname"><%= teacher.surname %></td>
-        <td class="telephone"><%= teacher.telephone %></td>
-        <td class="email">
+        <script type="text/template" id="teacher-row">
+            <td class="name"><%= teacher.name %></td>
+            <td class="surname"><%= teacher.surname %></td>
+            <td class="telephone"><%= teacher.telephone %></td>
+            <td class="email">
             <a href="mailto:<%= teacher.email %>"><%= teacher.email %></a>
-        </td>
-        <td class="branch"><%= teacher.branch %></td>
-        <td class="positionLabel"><%= teacher.position %></td>
-    </script>
+            </td>
+            <td class="branch"><%= teacher.branch %></td>
+            <td class="positionLabel"><%= teacher.position %></td>
+        </script>
 
-</div>
+    </div>
 {% endblock %}
 
 {% block inlinejs %}

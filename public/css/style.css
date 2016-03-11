@@ -43,12 +43,14 @@ body {
   padding: 14px 24px;
   font-size: 21px;
 }
+
+.home.jumbotron p, .home.jumbotron li {
+    font-size: 120%;
+}
+
 .home.jumbotron h1 {
     text-align: center;
     font-size: 210%;
-}
-.home.jumbotron p {
-    font-size: 120%;
 }
 
 .home.jumbotron p.lead {
@@ -56,7 +58,7 @@ body {
 }
 
 .about p {
-    text-align: justify;
+    font-size: 110%;
 }
 
 
