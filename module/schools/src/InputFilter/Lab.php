@@ -22,7 +22,8 @@ class Lab
 
     public function __construct(
         $uploadTmpPath,
-        LabServiceInterface $labService
+        LabServiceInterface $labService,
+        $attachmentSize
     ) {
         $id = new Input('id');
         $id->setRequired(false)
@@ -82,6 +83,9 @@ class Lab
                 'image/svg+xml',
                 'image/svg+xml',
                 'image/vnd.adobe.photoshop',
+            ]))
+            ->attach(new Validator\File\Size([
+                'max' => $attachmentSize,
             ]));
 
         $use_ext_program= new Input('use_ext_program');

@@ -218,10 +218,12 @@ return function (Slim\App $app) {
         $container[InputFilter\Lab::class] = function ($c) {
             $settings = $c->get('settings');
             $uploadTmpPath = $settings['schools']['file_upload']['tmp_path'];
+            $attachmentSize = $settings['schools']['file_upload']['max_size'];
 
             return new InputFilter\Lab(
                 $uploadTmpPath,
-                $c->get(Service\LabServiceInterface::class)
+                $c->get(Service\LabServiceInterface::class),
+                $attachmentSize
             );
         };
 

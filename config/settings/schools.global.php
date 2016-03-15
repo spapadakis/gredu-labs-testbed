@@ -12,6 +12,7 @@ return [
         'file_upload' => [
             'tmp_path'    => 'data/tmp',
             'target_path' => 'data/uploads',
+            'max_size'    => '5MB',
         ],
     ],
 ];
