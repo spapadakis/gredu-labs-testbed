@@ -67,7 +67,7 @@
                         <div class="modal-body">
                             {{ macros.select('itemcategory_id', 'Τύπος', item_categories, '') }}
                             {{ macros.select('lab_id', 'Χώρος', labs, '') }}
-                            {{ macros.input('qty', 'Πλήθος', '0', 'number') }}
+                            {{ macros.input('qty', 'Πλήθος', '0', 'number', {'min': '1'}) }}
                             {{ macros.select_year('acquisition_year', 'Έτος κτήσης') }}
                             {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις') }}
                             <input type="hidden" name="id" value="">
