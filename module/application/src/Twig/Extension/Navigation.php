@@ -110,7 +110,9 @@ class Navigation extends Twig_Extension
             }
 
             $path = parse_url($page['href'], PHP_URL_PATH);
-
+            if (isset($page['external'])) {
+                return true;
+            }
             $resource = 'route' . $path;
 
             return $this->acl->isAllowed($this->currentRole, $resource, 'get');

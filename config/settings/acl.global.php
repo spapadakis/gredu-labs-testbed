@@ -33,6 +33,7 @@ return [
                 ['/application-form/submit-success', ['school'], ['get']],
                 ['/tpe_survey', ['school'], ['get', 'post']],
                 ['/tpe_survey/total-teachers', ['school'], ['post']],
+                ['/forum', ['guest', 'user'], ['get']],
             ],
         ],
     ],

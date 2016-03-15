@@ -105,13 +105,12 @@ return function (Slim\App $app) {
 
     $events('on', 'app.bootstrap', function ($app, $container) {
 
-
-
         $app->add(function ($req, $res, $next) use ($container) {
             $settings           = $container->get('settings');
             $forumUrl           = $settings['forum_url'];
             $view               = $container->get('view');
             $view['_forum_url'] = $forumUrl;
+            $view['_egkyklios_file'] = $settings['egkyklios_file'];
 
             return $next($req, $res);
         });

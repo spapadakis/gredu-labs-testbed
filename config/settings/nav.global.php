@@ -56,8 +56,9 @@ return [
                 'route' => 'about',
             ],
             'forum' => [
-                'label' => 'Φόρουμ βοήθειας',
-                'href'  => '/#forum',
+                'label'    => 'Φόρουμ βοήθειας',
+                'href'     => '/#forum',
+                'external' => true,
             ],
 
         ],

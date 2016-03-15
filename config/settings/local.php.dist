@@ -8,9 +8,6 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 return [
-    // Slim Settings
-    'determineRouteBeforeAppMiddleware' => false,
-    'displayErrorDetails'               => false,
-    'forum_url'                         => '/#forum',
-    'egkyklios_file'                    => '/#file',
+    'forum_url'                         => 'http://edulabs.minedu.gov.gr/forum',
+    'egkyklios_file'                    => 'http://edulabs.minedu.gov.gr/files/egkyklios.pdf',
 ];
