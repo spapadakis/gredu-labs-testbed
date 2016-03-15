@@ -109,7 +109,8 @@ class CreateSchool
             $this->logger->error(sprintf('Unit for user %s not found in LDAP', $identity->mail), $identity->toArray());
 
             return $this->logoutAndRediret($res, sprintf(
-                'School not found.  <a href="%s" title="SSO logout">SSO Logout</a>',
+                'Το σχολείο με email %s δεν βρέθηκε στο Κατάλογο του ΠΣΔ. <a href="%s" title="SSO logout">SSO Logout</a>',
+                $identity->mail,
                 $this->ssoLogoutUrl
             ));
         }
@@ -124,7 +125,8 @@ class CreateSchool
             $this->logger->debug('Trace', ['registryNo'=> $registryNo, 'identity' => $identity->toArray()]);
 
             return $this->logoutAndRediret($res, sprintf(
-                'School not found.  <a href="%s" title="SSO logout">SSO Logout</a>',
+                'Το σχολείο με κωδικό %s δεν βρέθηκε στο Μητρώο Μονάδων του ΠΣΔ.  <a href="%s" title="SSO logout">SSO Logout</a>',
+                $registryNo,
                 $this->ssoLogoutUrl
             ));
         }
