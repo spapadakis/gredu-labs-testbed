@@ -1,132 +1,4 @@
 {% extends "layout.twig" %}
-
-{% macro input(name, label, value, type, attributes) %}
-<div class="form-group">
-    <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>
-    <div class="col-xs-12 col-sm-12 col-md-9">
-        <input placeholder="{{ label|striptags }}" class="form-control input-sm"
-            type="{{ type|default('text') }}" name="{{ name }}"
-            id="el-{{ name }}" value="{{ value|default('')|raw }}"
-        {% for attr_name, attr_value in attributes|default({}) %}
-            {{ attr_name }}="{{ attr_value }}"
-        {% endfor %}>
-    </div>
-</div>
-{% endmacro %}
-
-{% macro checkbox(name, label, checked, attributes) %}
-<div class="form-group">
-    <div class="col-xs-12 col-sm-12 col-md-9 col-md-offset-3">
-        <div class="checkbox">
-            <label for="el-{{ name }}">
-                <input type="checkbox" name="{{ name }}" id="el-{{ name }}" 
-                    {% for attr_name, attr_value in attributes|default({}) %}
-                        {{ attr_name }}="{{ attr_value }}"
-                    {% endfor %}
-                    {% if checked %} checked{% endif %} value="asdasdasd">
-                {{ label|raw }}
-            </label>
-        </div>
-    </div>
-</div>
-{% endmacro %}
-
-{% macro file(name, label, value, attributes) %}
-<div class="form-group">
-    <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>
-    <div class="col-xs-12 col-sm-12 col-md-9">
-        <div class="input-group">
-            <span class="input-group-btn">
-                <span class="btn btn-default btn-file">
-                    Επιλέξτε&hellip; <input type="file" multiple name="{{ name }}" id="el-{{ name }}">
-                </span>
-            </span>
-            <input type="text" class="form-control" readonly placeholder="{{ label|striptags }}"
-            {% for attr_name, attr_value in attributes|default({}) %}
-                {{ attr_name }}="{{ attr_value }}"
-            {% endfor %}>
-            
-            <span class="input-group-btn">
-                <span class="btn btn-default btn-file-remove">
-                    <i class="fa fa-remove"></i>
-                </span>
-            </span>
-        </div>
-        {% if value %}
-        <div class="pull-right uploaded btn-group btn-group-sm" data-href="{{ value }}">
-            <a href="#" target="_blank" class="btn-download btn bnt-link btn-sm">
-                <i class="fa fa-download"></i> Λήψη</a>
-            <a href="#" class="btn-remove btn bnt-link btn-sm text-danger">
-                <i class="fa fa-remove"></i> Διαγραφή</a>
-        </div>
-        {% endif %}       
-    </div>
-</div>
-{% endmacro %}
-
-{% macro select(name, label, options, selected, attributes) %}
-<div class="form-group">
-    <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>
-    <div class="col-xs-12 col-sm-12 col-md-9">
-        <select class="form-control input-sm" name="{{ name }}" id="el-{{ name }}"
-        {% for attr_name, attr_value in attributes|default({}) %}
-            {{ attr_name }}="{{ attr_value }}"
-        {% endfor %}>
-        {% set multi = attributes.multiple is defined %}
-        {% if multi %}
-            <optgroup label="{{ label|striptags }}">
-        {% endif %}
-            {% if not multi %}
-                <option value="" disabled{% if selected is empty %} selected{% endif %}>{{ label|striptags }}</option>
-            {% endif %}
-            {% for option in options %}
-                <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
-                    {{ option.label }}
-                </option>
-            {% endfor %}
-        {% if multi %}
-            </optgroup>
-        {% endif %}
-        </select>
-    </div>
-</div>
-{% endmacro %}
-
-{% macro select_year(name, label, selected, start, attributes) %}
-    <div class="form-group">
-    <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>
-    <div class="col-xs-12 col-sm-12 col-md-9">
-        <select class="form-control input-sm" name="{{ name }}" id="el-{{ name }}"
-        {% for attr_name, attr_value in attributes|default({}) %}
-            {{ attr_name }}="{{ attr_value }}"
-        {% endfor %}>
-            <option value="" disabled{% if selected is empty %} selected{% endif %}>{{ label|striptags }}</option>
-            {% for option in range("now"|date("Y"), start|default(1980)) %}
-            <option value="{{ option|e }}"{% if selected == option %} selected{% endif %}>
-                {{ option }}
-            </option>
-            {% endfor %}
-        </select>
-    </div>
-</div>
-{% endmacro %}
-
-{% macro text(name, label, value, attributes) %}
-    <div class="form-group">
-        <label for="el-{{ name }}" class="col-xs-12 pull-left">
-            {{ label|e }}
-        </label>
-        <div class="col-xs-12">
-            <textarea id="el-{{ name }}" name="{{ name }}" class="form-control" placeholder="{{ label|striptags }}"
-        {% for attr_name, attr_value in attributes|default({}) %}
-            {{ attr_name }}="{{ attr_value }}"
-        {% endfor %}>
-                {{ value|striptags }}
-            </textarea>
-        </div>
-    </div>
-{% endmacro %}
-
 {% block content %}
     <div id="school">
         <h1>
@@ -151,13 +23,13 @@
                 {% block schoolContent %}
                 <div id="school-info">
                     <p class="col-md-12">
-                        Σε αυτή την καρτέλα θα καταχωρήσετε πληροφορίες που 
-                        αφορούν στο σχολείο σας, όπως τους εκπαιδευτικούς 
-                        που θα ασχοληθούν με την υλοποίηση του έργου, 
-                        τους χώρους που χρησιμοποιείτε για χρήση ΤΠΕ ή 
-                        τους επιπλέον χώρους που θα επιθυμούσατε να 
-                        χρησιμοποιήσετε για χρήση ΤΠΕ, τον εξοπλισμό 
-                        ΤΠΕ που διαθέτει το σχολείο και τον τρόπο που τον 
+                        Σε αυτή την καρτέλα θα καταχωρήσετε πληροφορίες που
+                        αφορούν στο σχολείο σας, όπως τους εκπαιδευτικούς
+                        που θα ασχοληθούν με την υλοποίηση του έργου,
+                        τους χώρους που χρησιμοποιείτε για χρήση ΤΠΕ ή
+                        τους επιπλέον χώρους που θα επιθυμούσατε να
+                        χρησιμοποιήσετε για χρήση ΤΠΕ, τον εξοπλισμό
+                        ΤΠΕ που διαθέτει το σχολείο και τον τρόπο που τον
                         χρησιμοποιείτε κλπ.
                     </p>
                     <div class="col-md-4">
@@ -241,16 +113,27 @@
                                             <dt>Σχόλια/Παρατηρήσεις</dt>
                                             <dd>{{ appForm.comments }}</dd>
                                         </dl>
-
                                     </div>
                                     <h5>Αιτούμενος εξοπλισμός</h5>
-                                    <dl class="dl-horizontal">
-                                    {% for item in appForm.items %}
-                                        <dt>{{ item.category }}</dt>
-                                        <dd>{{ item.count }}<dd>
-                                    {% endfor %}
-                                    </dl>
-                                {% else %}        
+                                    <div class="table-responsive">
+                                        <table class="table table-condensed table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Είδος/Τύπος</th>
+                                                    <th>Ποσότητα</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for item in appForm.items %}
+                                                <tr>
+                                                    <th>{{ item.category }}</th>
+                                                    <td>{{ item.count }}<td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
                                     <p>Δεν έχετε υποβάλει αίτηση ακόμα.</p>
                                 {% endif %}
                             </div>

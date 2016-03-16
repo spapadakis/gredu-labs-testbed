@@ -1,6 +1,6 @@
 {% extends "schools/index.twig" %}
 
-{% import "schools/index.twig" as macros %}
+{% import "schools/form.twig" as macros %}
 
 {% block schoolTitle %}
     {{ parent() }} <small>Λογισμικό</small>
@@ -56,7 +56,7 @@
             </tfoot>
         </table>
     </div>
-    <div class="modal fade" id="software-form-modal" tabindex="-1" role="dialog" aria-labelledby="software-from">
+    <div class="modal fade" id="software-form-modal" role="dialog" aria-labelledby="software-from">
         <form class="form-horizontal" data-url="{{ path_for('school.software') }}">
             <div class="modal-dialog" role="form">
                 <div class="modal-content">

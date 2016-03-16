@@ -1,6 +1,6 @@
 {% extends "schools/index.twig" %}
 
-{% import "schools/index.twig" as macros %}
+{% import "schools/form.twig" as macros %}
 
 {% block schoolTitle %}
     {{ parent() }} <small>Χώροι</small>
@@ -67,7 +67,7 @@
                 </tfoot>
             </table>
         </div>
-        <div class="modal fade" id="lab-form-modal" tabindex="-1" role="dialog" aria-labelledby="lab-from">
+        <div class="modal fade" id="lab-form-modal" role="dialog" aria-labelledby="lab-from">
             <form class="form-horizontal" method="post" action="{{ path_for('school.labs') }}" 
                   data-url="{{ path_for('school.labs') }}" enctype="multipart/form-data">
                 <div class="modal-dialog" role="form">
@@ -87,6 +87,7 @@
                             {{ macros.input('area', 'Επιφάνεια (m<sup>2</sup>)', '', 'number', {'required': '', 'min': 0, 'max': 500}) }}
                             {{ macros.file('attachment', 'Αρχείο κάτοψης ή φωτογραφία', path_for('school.labs.attachment', {}, {'lab_id': '__lab_id__'})) }}
                             {{ macros.select('lessons', 'Μαθήματα', lessons_options, '', {'multiple': ''}) }}
+                            <small class="help-block pull-right">Κρατήστε πατημένο το Ctrl για να επιλέξετε περισσότερα από ένα μαθήματα</small>
                             {{ macros.text('use_in_program', 'Χρήση στα πλαίσια μαθημάτων') }}
                             {{ macros.text('use_ext_program', 'Χρήση για δραστηριότητες εκτός εκπαιδευτικού προγράμματος') }}
                             <input type="hidden" name="id" value="">

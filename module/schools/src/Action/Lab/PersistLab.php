@@ -33,7 +33,9 @@ class PersistLab
         $params              = $req->getParams();
         $id                  = $params['id'];
         $params['school_id'] = $school->id;
-
+        if (isset($params['lessons']) && !is_array($params['lessons'])) {
+            $params['lessons'] = explode(',', $params['lessons']);
+        }
         unset($params['id']);
         try {
             if ($id) {

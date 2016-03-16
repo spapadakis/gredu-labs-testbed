@@ -118,7 +118,10 @@ class LabService implements LabServiceInterface
             $responsible = sprintf("%s %s", $responsible->name, $responsible->surname);
         }
 
-        return array_merge($bean->export(), [
+        $lab               = $bean->export();
+        $lab['attachment'] = basename($lab['attachment']);
+
+        return array_merge($lab, [
             'labtype'     => $bean->labtype->name,
             'responsible' => $responsible,
             'lessons'     => array_reduce($bean->sharedLesson, function ($ids, $lesson) {
@@ -126,7 +129,6 @@ class LabService implements LabServiceInterface
 
                 return $ids;
             }, []),
-
         ]);
     }
 

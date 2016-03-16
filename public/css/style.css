@@ -122,3 +122,8 @@ body {
 #app-form #items-list tbody tr:first-of-type button.remove-row { 
     display: none;
 }
+
+
+.select2-container {
+  width: auto!important;
+}

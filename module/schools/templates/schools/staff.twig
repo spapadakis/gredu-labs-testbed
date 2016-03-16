@@ -1,6 +1,6 @@
 {% extends "schools/index.twig" %}
 
-{% import "schools/index.twig" as macros %}
+{% import "schools/form.twig" as macros %}
 
 {% block schoolTitle %}
     {{ parent() }} <small>Εκπαιδευτικοί</small>
@@ -69,7 +69,7 @@
                 </tfoot>
             </table>
         </div>
-        <div class="modal fade" id="teacher-form-modal" tabindex="-1" role="dialog" aria-labelledby="teacher-from">
+        <div class="modal fade" id="teacher-form-modal" role="dialog" aria-labelledby="teacher-from">
             <form class="form-horizontal" data-url="{{ path_for('school.staff') }}">
                 <div class="modal-dialog" role="form">
                     <div class="modal-content">

@@ -86,6 +86,7 @@
         form: null,
         lab: null,
         attachment: null,
+        uploadedLabel: null,
         url: null,
         events: {
             'submit': 'persistLab',
@@ -107,6 +108,7 @@
                 url = $(evt.target).closest('a').attr('href');
                 that.removeAttachment(url);
             });
+            this.uploadedLabel = _.template(that.attachment.find('.uploaded-label').html().replace(':',  ' <%= filename %>:'));
         },
         render: function (labId) {
             var labAttributes;
@@ -131,13 +133,14 @@
                 if ('checkbox' === element.attr('type')) {
                     element.prop('checked', utils.parseInt(labAttributes[name]));
                 } else {
-                    element.val(labAttributes[name] || '');
+                element.val(labAttributes[name] || '');
                 }
             });
             if (!this.lab || !this.lab.get('attachment')) {
                 this.attachment.find('a').attr('href', '#');
                 this.attachment.hide();
             } else {
+                this.attachment.find('.uploaded-label').html(this.uploadedLabel({filename: this.lab.get('attachment')}));
                 this.attachment.find('a').attr('href', this.attachment.data('href').replace('__lab_id__', this.lab.get('id')));
                 this.attachment.show();
             }
