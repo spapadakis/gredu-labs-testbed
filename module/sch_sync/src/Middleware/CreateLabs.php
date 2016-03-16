@@ -58,13 +58,20 @@ class CreateLabs
      */
     private $logger;
 
+    /**
+     *
+     * @var array
+     */
+    private $categoryMap;
+
     public function __construct(
         LabServiceInterface $labService,
         AssetServiceInterface $assetService,
         InventoryService $inventoryService,
         SchoolServiceInterface $schoolService,
         AuthenticationServiceInterface $authService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        array $categoryMap = []
     ) {
         $this->labService       = $labService;
         $this->assetService     = $assetService;
@@ -72,6 +79,7 @@ class CreateLabs
         $this->schoolService    = $schoolService;
         $this->authService      = $authService;
         $this->logger           = $logger;
+        $this->categoryMap      = $categoryMap;
     }
 
     public function __invoke(Request $req, Response $res, callable $next)
@@ -134,10 +142,10 @@ class CreateLabs
 
                 $categoryName = $item['item_template.category.name'];
 
-                $type = reset(array_filter(array_keys($assetTypes), function ($type) use ($categoryName) {
+                $type = reset(array_filter(array_keys($this->categoryMap), function ($type) use ($categoryName) {
                     return $type == $categoryName;
                 }));
-                $type = ($type) ? $assetTypes[$type] : false;
+                $type = ($type) ? $assetTypes[$this->categoryMap[$type]] : false;
 
                 if ($type !== false) {
                     if (!isset($uniq[$item['location.id']]->ownSchoolAsset[$type])) {

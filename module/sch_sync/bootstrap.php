@@ -51,13 +51,18 @@ return function (App $app) {
             );
         };
         $container[CreateLabs::class] = function ($c) {
+            $settings = $c->get('settings');
+            $categoryMap = isset($settings['inventory']['category_map'])
+                ? $settings['inventory']['category_map'] : [];
+
             return new CreateLabs(
                 $c->get(LabServiceInterface::class),
                 $c->get(AssetServiceInterface::class),
                 $c->get('SchInventory\\Service'),
                 $c->get(SchoolServiceInterface::class),
                 $c->get('authentication_service'),
-                $c->get('logger')
+                $c->get('logger'),
+                $categoryMap
             );
         };
     });
