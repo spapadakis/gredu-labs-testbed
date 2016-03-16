@@ -136,4 +136,24 @@
         evt.preventDefault();
     });
     
+    (function () {
+        var origA, origB;
+
+        $('#tpe_survey-form-modal').on('change', 'select#el-already_using_tpe', function (evt) {
+            if (!origA) {
+                origA = $('.assets_in_use-container > .form-group > label').html();
+            }
+            if (!origB) {
+                origB = $('.software_in_use-container > .form-group > label').html();
+            }
+            if ($(this).val() === 'ΟΧΙ') {
+                $('.assets_in_use-container > .form-group > label').html('Υλικό που θα χρησιμοποιούσε');
+                $('.software_in_use-container > .form-group > label').html('Λογισμικό που θα χρησιμοποιούσε');
+            } else {
+                $('.assets_in_use-container > .form-group > label').html(origA);
+                $('.software_in_use-container > .form-group > label').html(origB);
+            }
+        });
+    } ());
+    
 }(jQuery, _, window.EDULABS.utils));

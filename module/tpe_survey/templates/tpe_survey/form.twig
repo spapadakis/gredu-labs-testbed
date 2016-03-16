@@ -13,14 +13,18 @@
                 <div class="modal-body">
                     {{ macros.select('already_using_tpe', 'Χρησιμοποιεί ήδη ΤΠΕ', tpe_survey.already_using_tpe, '', {'required': ''}) }}
                     {{ macros.select('knowledge_level', 'Επίπεδο γνώσης ΤΠΕ', tpe_survey.knowledge_levels, '', {'required': ''}) }}
+                    <div class="assets_in_use-container">
                     {{ form.multicheckbox('assets_in_use', 'Υλικό που χρησιμοποιεί', tpe_survey.assets_in_use, '', {freeText: true, required: ''}) }}
-                    <div class="form-group">
-                        <label class="control-label hidden-xs hidden-sm col-md-3">Λογισμικό που χρησιμοποιεί</label>
-                        <div class="col-xs-12 col-sm-12 col-md-9 text-left">
-                        {% for swKey, sw in tpe_survey.software_in_use %}
-                            <label class="control-label"> {{ sw.label }}</label>
-                            <input class="form-control" type="text" name="{{ swKey }}" placeholder="{{ sw.desc }}">
-                        {% endfor %}
+                    </div>
+                    <div class="software_in_use-container">
+                        <div class="form-group">
+                            <label class="control-label hidden-xs hidden-sm col-md-3">Λογισμικό που χρησιμοποιεί</label>
+                            <div class="col-xs-12 col-sm-12 col-md-9 text-left">
+                            {% for swKey, sw in tpe_survey.software_in_use %}
+                                <label class="control-label"> {{ sw.label }}</label>
+                                <input class="form-control" type="text" name="{{ swKey }}" placeholder="{{ sw.desc }}">
+                            {% endfor %}
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
