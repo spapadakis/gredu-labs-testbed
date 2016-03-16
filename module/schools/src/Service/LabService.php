@@ -118,7 +118,7 @@ class LabService implements LabServiceInterface
             $responsible = sprintf("%s %s", $responsible->name, $responsible->surname);
         }
 
-        $lab               = $bean->export();
+        $lab                    = $bean->export();
         $lab['attachment_file'] = basename($lab['attachment']);
 
         return array_merge($lab, [

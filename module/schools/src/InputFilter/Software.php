@@ -38,11 +38,6 @@ class Software
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 3]));
 
-        $school_id = new Input('school_id');
-        $school_id->setRequired(true)
-            ->getValidatorChain()
-            ->attach(new Validator\Digits());
-
         $lab_id = new Input('lab_id');
         $lab_id->setRequired(false)
             ->getValidatorChain()
@@ -58,13 +53,15 @@ class Software
         $url = new Input('url');
         $url->setRequired(false)
             ->getValidatorChain()
-            ->attach(new Validator\Hostname());
+            ->attach(new Validator\Uri([
+                'allowRelative' => false,
+                'allowAbsolute' => true,
+            ]));
 
         $this->inputFilter = new InputFilter();
         $this->inputFilter
             ->add($id)
             ->add($softwarecategory_id)
-            ->add($school_id)
             ->add($lab_id)
             ->add($title)
             ->add($vendor)

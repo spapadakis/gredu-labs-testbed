@@ -66,8 +66,8 @@ class SoftwareService implements SoftwareServiceInterface
 
     private function persistSoftware($software, array $data)
     {
-        if (!$data['lab_id']) {
-            $data['lab_id'] = NULL;
+        if (!isset($data['lab_id']) || empty($data['lab_id'])) {
+            $data['lab_id'] = null;
         }
 
         $software->softwarecategory_id  = $data['softwarecategory_id'];

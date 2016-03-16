@@ -192,6 +192,12 @@ return function (Slim\App $app) {
             );
         };
 
+        $container[Middleware\InputFilterSoftware::class] = function ($c) {
+            return new Middleware\InputFilterSoftware(
+                $c->get(InputFilter\Software::class)
+            );
+        };
+
         $container[Middleware\FetchSchoolFromIdentity::class] = function ($c) {
             return new Middleware\FetchSchoolFromIdentity($c['authentication_service']);
         };
@@ -227,6 +233,10 @@ return function (Slim\App $app) {
             );
         };
 
+        $container[InputFilter\Software::class] = function ($c) {
+            return new InputFilter\Software();
+        };
+
     });
 
     $events('on', 'app.bootstrap', function ($app, $container) {
@@ -255,7 +265,8 @@ return function (Slim\App $app) {
             $this->delete('/assets', Action\Assets\DeleteAsset::class);
 
             $this->get('/software', Action\Software\ListAll::class)->setName('school.software');
-            $this->post('/software', Action\Software\PersistSoftware::class);
+            $this->post('/software', Action\Software\PersistSoftware::class)
+                ->add(Middleware\InputFilterSoftware::class);
             $this->delete('/software', Action\Software\DeleteSoftware::class);
 
         })->add(Middleware\FetchSchoolFromIdentity::class);

@@ -141,7 +141,15 @@
                     that.model.add(response);
                 }
                 that.hide();
-            });
+            }).fail(function (xhr, err) {
+                var messages;
+                if (422 === xhr.status) {
+                    messages = JSON.parse(xhr.responseText).messages || {};
+                    utils.formMessages.render(that.form, messages);
+                } else {
+                    alert('Προέκυψε κάποιο σφάλμα');
+                }
+            });;
         },
         removeSoftware: function () {
             var that = this;
