@@ -27,8 +27,8 @@
                 <tr>
                     <th>Τίτλος</th>
                     <th>Κατηγορία</th>
-                    <th>Προμηθευτής</th>
                     <th>URL</th>
+                    <th>Προμηθευτής</th>
                     <th>Χώρος</th>
                 </tr>
             </thead>
@@ -37,8 +37,8 @@
                     <tr data-software="{{ software|json_encode }}" data-id="{{ software.id }}">
                         <td class="title">{{ software.title }}</td>
                         <td class="category">{{ software.softwarecategory }}</td>
-                        <td class="vendor">{{ software.vendor}}</td>
                         <td class="url"><a href="{{ software.url }}" target="_blank">{{ software.url }}</a></td>
+                        <td class="vendor">{{ software.vendor}}</td>
                         <td class="lab">{{ software.lab }}</td>
                     </tr>
                     {% else %}
@@ -69,9 +69,9 @@
                     <div class="modal-body">
                         {{ macros.input('title', 'Τίτλος', '', 'text', {'required': ''}) }}
                         {{ macros.select('softwarecategory_id', 'Κατηγορία', categories, '', {'required': ''}) }}
-                        {{ macros.input('vendor', 'Προμηθευτής','', 'tel', {'required': ''}) }}
                         {{ macros.input('url', 'URL','', 'text', {'required': ''}) }}
-                        {{ macros.select('lab_id', 'Χώρος', labs, '', {}) }}
+                        {{ macros.input('vendor', 'Προμηθευτής','', 'tel', {'required': ''}) }}
+                        {{ macros.select('lab_id', 'Χώρος', labs, '', {empty_value: 'ΟΧΙ ΣΕ ΣΥΓΚΕΚΡΙΜΕΝΟ ΧΩΡΟ'}) }}
                         <input type="hidden" name="id" value="">
                     </div>
                     <div class="modal-footer">
@@ -87,8 +87,8 @@
     <script type="text/template" id="software-row">
         <td class="title"><%= software.title %></td>
         <td class="category"><%= software.softwarecategory %></td>
-        <td class="vendor"><%= software.vendor %></td>
         <td class="url"><a href="<%= software.url %>" target="_blank"><%= software.url %></a></td>
+        <td class="vendor"><%= software.vendor %></td>
         <td class="lab"><%= software.lab %></td>
     </script>
 

@@ -81,6 +81,9 @@
             {% if not multi %}
                 <option value="" disabled{% if selected is empty %} selected{% endif %}>{{ label|striptags }}</option>
             {% endif %}
+            {% if attributes.empty_value %}
+                <option value="">{{ attributes.empty_value }}</option>
+            {% endif %}
             {% for option in options %}
                 <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
                     {{ option.label }}
