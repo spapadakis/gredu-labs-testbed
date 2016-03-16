@@ -171,7 +171,7 @@ CREATE TABLE `itemcategory` (
 
 LOCK TABLES `itemcategory` WRITE;
 /*!40000 ALTER TABLE `itemcategory` DISABLE KEYS */;
-INSERT INTO `itemcategory` VALUES (8,'ACCESS POINT'),(26,'LAPTOP'),(6,'MODEM / ROUTER '),(5,'PATCH PANEL'),(14,'PRINTER'),(3,'RACK'),(13,'SCANNER'),(24,'SERVER'),(2,'SWITCH/ HUB'),(23,'TABLET'),(11,'WEBCAM'),(22,'WORKSTATION'),(41,'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ'),(40,'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ'),(38,'ΕΠΕΞΕΡΓΑΣΤΗΣ (CPU)'),(34,'ΚΙΝΗΤΟ ΕΡΓΑΣΤΗΡΙΟ'),(32,'ΜΝΗΜΗ RAM'),(30,'ΟΘΟΝΗ'),(29,'ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ');
+INSERT INTO `itemcategory` VALUES (8,'ACCESS POINT'),(26,'LAPTOP'),(6,'MODEM / ROUTER '),(5,'PATCH PANEL'),(14,'PRINTER'),(3,'RACK'),(13,'SCANNER'),(24,'SERVER'),(2,'SWITCH/ HUB'),(23,'TABLET'),(11,'WEBCAM'),(22,'ΣΤΑΘΜΟΣ ΕΡΓΑΣΙΑΣ'),(41,'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ'),(40,'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ'),(38,'ΕΠΕΞΕΡΓΑΣΤΗΣ (CPU)'),(34,'ΚΙΝΗΤΟ ΕΡΓΑΣΤΗΡΙΟ'),(32,'ΜΝΗΜΗ RAM'),(30,'ΟΘΟΝΗ'),(29,'ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ'),(42,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΕΚΤΥΠΩΤΗΣ'),(43,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΣΑΡΩΤΗΣ'),(44,'ΣΕΤ ΡΟΜΠΟΤΙΚΗΣ - ΑΙΣΘΗΤΗΡΩΝ'),(45,'ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ');
 /*!40000 ALTER TABLE `itemcategory` ENABLE KEYS */;
 UNLOCK TABLES;
 
