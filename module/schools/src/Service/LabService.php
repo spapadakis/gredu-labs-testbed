@@ -119,7 +119,7 @@ class LabService implements LabServiceInterface
         }
 
         $lab               = $bean->export();
-        $lab['attachment'] = basename($lab['attachment']);
+        $lab['attachment_file'] = basename($lab['attachment']);
 
         return array_merge($lab, [
             'labtype'     => $bean->labtype->name,

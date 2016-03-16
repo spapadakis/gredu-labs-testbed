@@ -140,7 +140,7 @@
                 this.attachment.find('a').attr('href', '#');
                 this.attachment.hide();
             } else {
-                this.attachment.find('.uploaded-label').html(this.uploadedLabel({filename: this.lab.get('attachment')}));
+                this.attachment.find('.uploaded-label').html(this.uploadedLabel({filename: this.lab.get('attachment_file')}));
                 this.attachment.find('a').attr('href', this.attachment.data('href').replace('__lab_id__', this.lab.get('id')));
                 this.attachment.show();
             }
