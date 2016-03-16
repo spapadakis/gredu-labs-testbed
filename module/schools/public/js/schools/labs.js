@@ -159,6 +159,7 @@
             var formData = utils.serializeObject(this.form),
                 that = this,
                 upload = this.form.find('input[type="file"]').fileupload({
+                    formData: formData,
                     autoUpload: false
                 }),
                 postPromise;
