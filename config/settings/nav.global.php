@@ -59,6 +59,7 @@ return [
                 'label'    => 'Φόρουμ βοήθειας',
                 'href'     => '/#forum',
                 'external' => true,
+                'target'   => '_blank',
             ],
 
         ],

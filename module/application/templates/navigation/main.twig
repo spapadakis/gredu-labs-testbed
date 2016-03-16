@@ -1,7 +1,8 @@
 {% macro li(page) %}
     
     <li role="presentation" class="{% if page.active %}active {% endif %}{{ page.class|default('') }}">
-        <a href="{{ page.href }}" {% if page.id %}id="{{ page.id }}"{% endif %} title="{{ page.label|striptags|e }}">
+        <a href="{{ page.href }}" {% if page.id %}id="{{ page.id }}"{% endif %} title="{{ page.label|striptags|e }}"
+           {% if page.target %}target="{{ page.target }}"{% endif %}>
             {% if page.icon %}
                 <i class="fa fa-{{ page.icon }}"></i>
             {% endif %}
