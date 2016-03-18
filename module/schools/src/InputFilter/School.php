@@ -86,7 +86,9 @@ class School
         $email = new Input('email');
         $email->setRequired(false)
             ->getValidatorChain()
-            ->attach(new Validator\EmailAddress());
+            ->attach(new Validator\EmailAddress([
+                'useDomainCheck' => false,
+            ]));
 
         $municipality = new Input('municipality');
         $municipality->setRequired(true)
@@ -117,7 +119,9 @@ class School
         $creator = new Input('creator');
         $creator->setRequired(true)
             ->getValidatorChain()
-            ->attach(new Validator\EmailAddress());
+            ->attach(new Validator\EmailAddress([
+                'useDomainCheck' => false,
+            ]));
 
         $this->inputFilter = new InputFilter();
         $this->inputFilter

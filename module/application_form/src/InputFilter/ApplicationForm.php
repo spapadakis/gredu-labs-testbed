@@ -63,7 +63,9 @@ class ApplicationForm extends InputFilter
         $submittedBy->setRequired(true)
             ->getValidatorChain()
             ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\EmailAddress());
+            ->attach(new Validator\EmailAddress([
+                'useDomainCheck' => false,
+            ]));
 
         $this->add($schoolId)
             ->add($applyFor)

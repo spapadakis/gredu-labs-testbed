@@ -107,12 +107,7 @@ class ApplicationForm
             ];
         }
 
-        // todo replace with labs from service
-        $labs = array_map(function ($bean) {
-            return $bean->export();
-        }, \RedBeanPHP\R::findAll('lab', ' school_id = ? ', [$school->id]));
-
-//        $labs = $this->labService->getLabsBySchoolId($school->id);
+        $labs = $this->labService->getLabsBySchoolId($school->id);
 
         $res = $this->view->render($res, 'application_form/form.twig', [
             'lab_choices' => array_map(function ($lab) {
