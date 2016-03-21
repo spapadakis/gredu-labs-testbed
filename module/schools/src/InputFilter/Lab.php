@@ -43,6 +43,11 @@ class Lab
         $labTypeId->getValidatorChain()
             ->attach(new Validator\NotEmpty());
 
+        $isNew = new Input('is_new');
+        $isNew->setRequired(false)
+            ->getFilterChain()
+            ->attach(new Filter\ToInt());
+
         $responsibleId = new Input('responsible_id');
         $responsibleId->setRequired(false)
             ->getValidatorChain()
@@ -115,6 +120,7 @@ class Lab
             ->add($id)
             ->add($name)
             ->add($labTypeId)
+            ->add($isNew)
             ->add($responsibleId)
             ->add($area)
             ->add($lessons)

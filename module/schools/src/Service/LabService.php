@@ -47,6 +47,7 @@ class LabService implements LabServiceInterface
         $lab->school_id           = $data['school_id'];
         $lab->name                = $data['name'];
         $lab->labtype_id          = $data['labtype_id'];
+        $lab->is_new              = isset($data['is_new']);
         $lab->area                = $data['area'];
         $lab->sharedLesson        = $this->getLessonsById($data['lessons']);
         $lab->use_ext_program     = $data['use_ext_program'];

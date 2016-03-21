@@ -73,7 +73,9 @@ class ListAssets
             }, $itemCategories),
             'labs' => array_map(function ($lab) {
                 return ['value' => $lab['id'], 'label' => $lab['name']];
-            }, $labs),
+            }, array_filter($labs, function ($lab) {
+                return $lab['is_new'] !== "1";
+            })),
         ]);
     }
 }

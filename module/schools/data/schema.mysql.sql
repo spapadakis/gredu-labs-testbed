@@ -124,6 +124,7 @@ CREATE TABLE `lab` (
   `school_id` int(11) unsigned NOT NULL,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `labtype_id` int(11) unsigned NOT NULL,
+  `is_new` tinyint(1) unsigned DEFAULT 0,
   `responsible_id` int(11) unsigned DEFAULT NULL,
   `area` int(11) unsigned DEFAULT NULL,
   `attachment` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,

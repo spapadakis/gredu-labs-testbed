@@ -40,6 +40,7 @@
                     <tr>
                         <th>Ονομασία</th>
                         <th>Τύπος</th>
+                        <th>Δημιουργία νέου χώρου</th>
                         <th>Υπεύθυνος</th>
                         <th>Δίκτυο</th>
                         <th>Server</th>
@@ -51,6 +52,7 @@
                     <tr data-lab="{{ lab|json_encode }}" data-id="{{ lab.id }}">
                         <td>{{ lab.name }}</td>
                         <td>{{ lab.labtype }}</td>
+                        <td>{{ lab.is_new ? 'ΝΑΙ' : 'ΟΧΙ' }}</td>
                         <td>{{ lab.responsible }}</td>
                         <td>{{ lab.has_network }}</td>
                         <td>{{ lab.has_server }}</td>
@@ -58,7 +60,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" class="no-records text-center text-muted">
+                        <td colspan="7" class="no-records text-center text-muted">
                             Δεν έχουν καταχωρηθεί χώροι.
                         </td>
                     </tr>
@@ -66,7 +68,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="6"></td>
+                        <td colspan="7"></td>
                     </tr>
                 </tfoot>
             </table>
@@ -86,6 +88,7 @@
                             {{ macros.input('name', 'Όνομα', '', 'text', {'required': ''}) }}
                             {{ macros.select('responsible_id', 'Υπεύθυνος', staff, '', {'required': ''}) }}
                             {{ macros.select('labtype_id', 'Τύπος', lab_types, '', {'required': ''}) }}
+                            {{ macros.checkbox('is_new', 'Δημιουργία νέου χώρου') }}
                             {{ macros.select('has_network', 'Δίκτυο', network_options, '', {'required': ''}) }}
                             {{ macros.select('has_server', 'Ύπαρξη server', server_options, '', {'required': ''}) }}
                             {{ macros.input('area', 'Επιφάνεια (m<sup>2</sup>)', '', 'number', {'required': '', 'min': 0, 'max': 500}) }}
@@ -109,6 +112,7 @@
         <script type="text/template" id="lab-row-template">
             <td><%= lab.name %></td>
             <td><%= lab.labtype %></td>
+            <td><%= parseInt(lab.is_new, 10) ? 'ΝΑΙ' : 'OXI' %></td>
             <td><%= lab.responsible %></td>
             <td><%= lab.has_network %></td>
             <td><%= lab.has_server %></td>
