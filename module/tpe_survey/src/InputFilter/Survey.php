@@ -130,16 +130,34 @@ class Survey
                 'max' => '191',
             ]));
 
+        $eduFieldsCurrent = new Input('edu_fields_current');
+        $eduFieldsCurrent->setRequired(false)
+            ->getFilterChain()
+            ->attach(new Filter\StripTags())
+            ->attach(new Filter\StringTrim());
+
+        $eduFieldsFuture = new Input('edu_fields_future');
+        $eduFieldsFuture->setRequired(false)
+            ->getFilterChain()
+            ->attach(new Filter\StripTags())
+            ->attach(new Filter\StringTrim());
+
+        $eduFieldsFutureSyncType = new Input('edu_fields_future_sync_type');
+        $eduFieldsFutureSyncType->setRequired(false)
+            ->getFilterChain()
+            ->attach(new Filter\ToInt());
+
+        $eduFieldsFutureASyncType = new Input('edu_fields_future_async_type');
+        $eduFieldsFutureASyncType->setRequired(false)
+            ->getFilterChain()
+            ->attach(new Filter\ToInt());
+
+
         $extraNeeds = new Input('extra_needs');
         $extraNeeds->setRequired(false)
             ->getFilterChain()
             ->attach(new Filter\StripTags())
             ->attach(new Filter\StringTrim());
-        $extraNeeds->getValidatorChain()
-            ->attach(new Validator\StringLength([
-                'max' => '191',
-            ]));
-
 
         $this->inputFilter = new InputFilter();
         $this->inputFilter
@@ -155,6 +173,10 @@ class Survey
             ->add($ucDigitaldesign)
             ->add($ucAsyncedu)
             ->add($ucOther)
+            ->add($eduFieldsCurrent)
+            ->add($eduFieldsFuture)
+            ->add($eduFieldsFutureSyncType)
+            ->add($eduFieldsFutureASyncType)
             ->add($extraNeeds);
     }
 }

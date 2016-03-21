@@ -116,10 +116,6 @@ class ApplicationForm
             'type_choices' => array_map(function ($category) {
                 return ['value' => $category['id'], 'label' => $category['name']];
             }, $this->assetsService->getAllItemCategories()),
-            'apply_for_choices' => array_map(function ($choice) {
-                return ['value' => $choice, 'label' => $choice];
-            }, $this->appFormService->getApplyForChoices()),
-
         ]);
 
         return $res;

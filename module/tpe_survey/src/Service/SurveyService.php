@@ -39,7 +39,9 @@ class SurveyService implements SurveyServiceInterface
         if (null === $bean) {
             $bean = R::dispense('tpesurvey');
         }
-        $bean->teacher_id = (int) $teacherId;
+        $data['edu_fields_future_sync_type']  = isset($data['edu_fields_future_sync_type']);
+        $data['edu_fields_future_async_type'] = isset($data['edu_fields_future_async_type']);
+        $bean->teacher_id                     = (int) $teacherId;
         $bean->import($data, [
             'already_using_tpe',
             'knowledge_level',
@@ -52,6 +54,10 @@ class SurveyService implements SurveyServiceInterface
             'uc_digitaldesign',
             'uc_asyncedu',
             'uc_other',
+            'edu_fields_current',
+            'edu_fields_future',
+            'edu_fields_future_sync_type',
+            'edu_fields_future_async_type',
             'extra_needs',
         ]);
         R::store($bean);

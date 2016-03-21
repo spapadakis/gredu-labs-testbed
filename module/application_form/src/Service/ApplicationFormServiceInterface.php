@@ -12,8 +12,6 @@ namespace GrEduLabs\ApplicationForm\Service;
 
 interface ApplicationFormServiceInterface
 {
-    public function getApplyForChoices();
-
     public function submit(array $data);
 
     public function findSchoolApplicationForm($schoolId);

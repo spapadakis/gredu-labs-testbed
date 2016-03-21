@@ -11,7 +11,7 @@
 
         <h2>Στοιχεία αίτησης</h2>
         <div class="row">
-            <dl class="col-sm-12 col-md-6">
+            <dl class="col-lg-12">
                 <dt>A/A αίτησης</dt>
                 <dd>{{ appForm.id }}</dd>
                 <dt>Ημερ. υποβολής</dt>
@@ -20,12 +20,6 @@
                 <dd>{{ school.name }}</dd>
                 <dt>Κωδικός Υπουργείου</dt>
                 <dd>{{ school.registry_no }}<dd>
-            </dl>
-            <dl class="col-sm-12 col-md-6">
-                <dt>Αίτημα του σχολείου για</dt>
-                <dd>{{ appForm.apply_for }}</dd>
-                <dt>Ύπαρξη - προοπτική αίθουσας για δημιουργία νέου εργαστηρίου</dt>
-                <dd>{{ appForm.new_lab_perspective }}<dd>
                 <dt>Σχόλια/Παρατηρήσεις</dt>
                 <dd>{{ appForm.comments }}</dd>
             </dl>

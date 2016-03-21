@@ -24,7 +24,7 @@ return [
             'casServerCnValidate'   => '',
             'noCasServerValidation' => true,
         ],
-    
+        'enable_database_login' => false,
         'allowed' => [
             [
                 'physicaldeliveryofficename' => '/^ΕΠΙΣΗΜΟΣ ΛΟΓΑΡΙΑΣΜΟΣ$/i',

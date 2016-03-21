@@ -15,23 +15,10 @@ use RedBeanPHP\R;
 
 class ApplicationFormService implements ApplicationFormServiceInterface
 {
-    protected static $applyForChoices = [
-        'ΠΛΗΡΕΣ ΕΡΓΑΣΤΗΡΙΟ',
-        'ΑΝΑΒΑΘΜΙΣΗ ΕΡΓΑΣΤΗΡΙΟΥ',
-        'ΚΙΝΗΤΟ ΕΡΓΑΣΤΗΡΙΟ',
-    ];
-
-    public function getApplyForChoices()
-    {
-        return static::$applyForChoices;
-    }
-
     public function submit(array $data)
     {
         $appForm                      = R::dispense('applicationform');
         $appForm->school_id           = $data['school_id'];
-        $appForm->apply_for           = $data['apply_for'];
-        $appForm->new_lab_perspective = $data['new_lab_perspective'];
         $appForm->comments            = $data['comments'];
         $appForm->submitted           = time();
         $appForm->submitted_by        = $data['submitted_by'];

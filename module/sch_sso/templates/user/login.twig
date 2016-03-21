@@ -3,7 +3,7 @@
 {% block content %}
     <h1>Σύνδεση</h1>
     <div class="row">
-        <div class="col-sm-12 col-md-6">
+        <div class="{% if enable_database_login %}col-sm-12 col-md-6{% else %}col-lg-12{% endif %}">
             <p>Για την σύνδεση των <strong>σχολικών μονάδων</strong>, η σύνδεση 
                 πραγματοποιείται μέσω του Κεντρικής Υπηρεσίας Πιστοποίησης χρηστών 
                 του Πανελλήνιου Σχολικού Δικτύου, χρησιμοποιώντας τον <strong>επίσημο λογαριασμό</strong>
@@ -15,9 +15,9 @@
                 </p>
             </form>
         </div>
+        {% if enable_database_login %}
         <div class="clearfix visible-sm"></div>
         <div class="col-sm-12 col-md-6">
-            <p>Αν έχετε ήδη δημιουργήσει λογαριασμό στο σύστημα, συνδεθείτε εδώ.</p>
             <form method="post" action="{{ path_for('user.login') }}" id="user-login-form" class="form-horizontal">
             <div class="form-group">
                 <label class="hidden-sm col-sm-3 control-label">Email</label>
@@ -49,5 +49,6 @@
             <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
         </form>
         </div>
+        {% endif %}
     </div>
 {% endblock %}

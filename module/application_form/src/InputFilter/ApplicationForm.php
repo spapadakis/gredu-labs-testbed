@@ -37,22 +37,6 @@ class ApplicationForm extends InputFilter
                 'message' => 'Έχει ήδη γίνει αίτηση',
             ]));
 
-        $applyFor = new Input('apply_for');
-        $applyFor->setRequired(true)
-            ->getValidatorChain()
-            ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\InArray([
-                'haystack' => $appFormService->getApplyForChoices(),
-            ]));
-
-        $newLabPerspective = new Input('new_lab_perspective');
-        $newLabPerspective->setRequired(true)
-            ->getValidatorChain()
-            ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\InArray([
-                'haystack' => ['ΝΑΙ', 'ΟΧΙ'],
-            ]));
-
         $comments = new Input('comments');
         $comments->setRequired(false)
             ->getFilterChain()
@@ -68,8 +52,6 @@ class ApplicationForm extends InputFilter
             ]));
 
         $this->add($schoolId)
-            ->add($applyFor)
-            ->add($newLabPerspective)
             ->add($comments)
             ->add($submittedBy)
             ->add($itemsInputFilter, 'items');

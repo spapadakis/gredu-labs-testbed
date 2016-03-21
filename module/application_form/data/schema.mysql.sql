@@ -19,8 +19,6 @@ DROP TABLE IF EXISTS `applicationform`;
 CREATE TABLE `applicationform` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `school_id` int(11) unsigned NOT NULL,
-  `apply_for` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `new_lab_perspective` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `comments` text COLLATE utf8mb4_unicode_ci,
   `submitted` int(11) unsigned NOT NULL,
   `submitted_by` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,

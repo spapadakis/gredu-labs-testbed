@@ -105,6 +105,13 @@ return function (Slim\App $app) {
     });
 
     $events('on', 'app.bootstrap', function ($app, $container) {
+        $container['router']->getNamedRoute('user.login')->add(function ($req, $res, $next) use ($container) {
+            $settings = $container->get('settings');
+            $container['view']['enable_database_login'] = (bool) $settings['sso']['enable_database_login'];
+
+            return $next($req, $res);
+        });
+
         $container['router']->getNamedRoute('user.login.sso')
             ->add(GrEduLabs\Authorization\Middleware\RoleProvider::class);
     }, -100);

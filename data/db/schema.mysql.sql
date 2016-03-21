@@ -19,8 +19,6 @@ DROP TABLE IF EXISTS `applicationform`;
 CREATE TABLE `applicationform` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `school_id` int(11) unsigned NOT NULL,
-  `apply_for` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `new_lab_perspective` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `comments` text COLLATE utf8mb4_unicode_ci,
   `submitted` int(11) unsigned NOT NULL,
   `submitted_by` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -171,7 +169,7 @@ CREATE TABLE `itemcategory` (
 
 LOCK TABLES `itemcategory` WRITE;
 /*!40000 ALTER TABLE `itemcategory` DISABLE KEYS */;
-INSERT INTO `itemcategory` VALUES (8,'ACCESS POINT'),(26,'LAPTOP'),(6,'MODEM / ROUTER '),(5,'PATCH PANEL'),(14,'PRINTER'),(3,'RACK'),(13,'SCANNER'),(24,'SERVER'),(2,'SWITCH/ HUB'),(23,'TABLET'),(11,'WEBCAM'),(22,'ΣΤΑΘΜΟΣ ΕΡΓΑΣΙΑΣ'),(41,'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ'),(40,'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ'),(38,'ΕΠΕΞΕΡΓΑΣΤΗΣ (CPU)'),(34,'ΚΙΝΗΤΟ ΕΡΓΑΣΤΗΡΙΟ'),(32,'ΜΝΗΜΗ RAM'),(30,'ΟΘΟΝΗ'),(29,'ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ'),(42,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΕΚΤΥΠΩΤΗΣ'),(43,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΣΑΡΩΤΗΣ'),(44,'ΣΕΤ ΡΟΜΠΟΤΙΚΗΣ - ΑΙΣΘΗΤΗΡΩΝ'),(45,'ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ');
+INSERT INTO `itemcategory` VALUES (8,'ACCESS POINT'),(26,'ΦΟΡΗΤΟΣ Η/Υ (LAPTOP)'),(6,'MODEM / ROUTER '),(5,'PATCH PANEL'),(14,'ΕΚΤΥΠΩΤΗΣ (PRINTER)'),(3,'ΚΡΙΩΜΑ (RACK)'),(13,'ΣΑΡΩΤΗΣ (SCANNER)'),(24,'SERVER'),(2,'SWITCH/ HUB'),(23,'TABLET'),(11,'WEBCAM'),(22,'ΣΤΑΘΜΟΣ ΕΡΓΑΣΙΑΣ'),(41,'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ'),(40,'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ'),(38,'ΕΠΕΞΕΡΓΑΣΤΗΣ (CPU)'),(34,'ΚΙΝΗΤΟ ΕΡΓΑΣΤΗΡΙΟ'),(32,'ΜΝΗΜΗ RAM'),(30,'ΟΘΟΝΗ'),(29,'ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ'),(42,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΕΚΤΥΠΩΤΗΣ'),(43,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΣΑΡΩΤΗΣ'),(44,'ΣΕΤ ΡΟΜΠΟΤΙΚΗΣ - ΑΙΣΘΗΤΗΡΩΝ'),(45,'ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ');
 /*!40000 ALTER TABLE `itemcategory` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -599,6 +597,10 @@ CREATE TABLE `tpesurvey` (
   `uc_digitaldesign` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `uc_asyncedu` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `uc_other` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `edu_fields_current` text COLLATE utf8mb4_unicode_ci,
+  `edu_fields_future` text COLLATE utf8mb4_unicode_ci,
+  `edu_fields_future_sync_type` tinyint(1) unsigned DEFAULT 0,
+  `edu_fields_future_async_type` tinyint(1) unsigned DEFAULT 0,
   `extra_needs` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   UNIQUE KEY `teacher_id_UNIQUE` (`teacher_id`),

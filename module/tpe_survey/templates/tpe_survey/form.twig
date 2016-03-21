@@ -20,20 +20,43 @@
                         <div class="form-group">
                             <label class="control-label hidden-xs hidden-sm col-md-3">Λογισμικό που χρησιμοποιεί</label>
                             <div class="col-xs-12 col-sm-12 col-md-9 text-left">
-                            {% for swKey, sw in tpe_survey.software_in_use %}
+                    {% for swKey, sw in tpe_survey.software_in_use %}
                                 <label class="control-label"> {{ sw.label }}</label>
                                 <input class="form-control" type="text" name="{{ swKey }}" placeholder="{{ sw.desc }}">
-                            {% endfor %}
+                    {% endfor %}
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label hidden-xs hidden-sm col-md-3">Τρόπος χρήσης</label>
                         <div class="col-xs-12 col-sm-12 col-md-9 text-left">
-                        {% for ucKey, uc in tpe_survey.use_case %}
+                    {% for ucKey, uc in tpe_survey.use_case %}
                             <label class="control-label"> {{ uc.label }}</label>
                             <input class="form-control" type="text" name="{{ ucKey }}" placeholder="{{ uc.desc }}">
-                        {% endfor %}
+                    {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label hidden-xs hidden-sm col-md-3">Επιμόρφωση</label>
+                        <div class="col-xs-12 col-sm-12 col-md-9 text-left">
+                            <strong>Σε τι θέματα έχετε επιμορφωθεί:</strong>
+                            <textarea name="edu_fields_current" class="form-control"></textarea>
+                            <div class="clearfix"></div>
+                            <strong>Σε τι επιπλέον θέματα θα επιθυμούσατε να επιμορφωθείτε:</strong>
+                            <textarea name="edu_fields_future" class="form-control"></textarea>
+                            <strong>Τι είδους επιπλέον επιμόρφωση θα επιθυμούσατε;</strong>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="1" name="edu_fields_future_sync_type">                       
+                                    Σύγχρονη Τηλεκπαίδευση
+                                </label>
+                            </div>  
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="1" name="edu_fields_future_async_type">                       
+                                    Ασύγχρονη Τηλεκπαίδευση
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
