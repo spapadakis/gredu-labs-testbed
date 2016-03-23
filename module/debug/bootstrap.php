@@ -36,16 +36,4 @@ return function (Slim\App $app) {
             return $logger;
         });
     }, -10);
-
-//    $events('on', 'app.bootstrap', function ($app, $container) {
-//        $container->get('router')->getNamedRoute('application_form')->add(function ($req, $res, $next) {
-//            $school_id = $req->getAttribute('school')->id;
-//            $appForm = RedBeanPHP\R::findOne('applicationform', 'school_id = ?', [$school_id]);
-//            if ($appForm) {
-//                RedBeanPHP\R::trash($appForm);
-//            }
-//
-//            return $next($req, $res);
-//        });
-//    }, -10);
 };
