@@ -115,25 +115,24 @@ class CreateSchool
             ));
         }
 
-        $unit = call_user_func($this->fetchUnit, $registryNo);
-        if (null === $unit) {
-            $this->logger->error(sprintf(
-                'Unit with %s for user %s not found in MM',
-                $identity->mail,
-                $registryNo
-            ));
-            $this->logger->debug('Trace', ['registryNo'=> $registryNo, 'identity' => $identity->toArray()]);
-
-            return $this->logoutAndRediret($res, sprintf(
-                'Το σχολείο με κωδικό %s δεν βρέθηκε στο Μητρώο Μονάδων του ΠΣΔ.  <a href="%s" title="SSO logout">SSO Logout</a>',
-                $registryNo,
-                $this->ssoLogoutUrl
-            ));
-        }
-
         $school = R::findOne('school', 'registry_no = ?', [$registryNo]);
         try {
             if (!$school) {
+                $unit = call_user_func($this->fetchUnit, $registryNo);
+                if (null === $unit) {
+                    $this->logger->error(sprintf(
+                        'Unit with %s for user %s not found in MM',
+                        $identity->mail,
+                        $registryNo
+                    ));
+                    $this->logger->debug('Trace', ['registryNo'=> $registryNo, 'identity' => $identity->toArray()]);
+
+                    return $this->logoutAndRediret($res, sprintf(
+                        'Το σχολείο με κωδικό %s δεν βρέθηκε στο Μητρώο Μονάδων του ΠΣΔ.  <a href="%s" title="SSO logout">SSO Logout</a>',
+                        $registryNo,
+                        $this->ssoLogoutUrl
+                    ));
+                }
                 $data = [
                     'id'                => '',
                     'registry_no'       => $unit['registry_no'],
@@ -157,12 +156,11 @@ class CreateSchool
                 }
                 $school = $this->schoolService->createSchool($filtered['values']);
                 $this->logger->info(sprintf('School %s imported from MM to database', $registryNo), $filtered['values']);
-
-                $user            = R::load('user', $identity->id);
-                $user->school_id = $school['id'];
-                R::store($user);
-                $this->logger->info(sprintf('Set school %s to user %s', $registryNo, $identity->mail));
             }
+            $user            = R::load('user', $identity->id);
+            $user->school_id = $school['id'];
+            R::store($user);
+            $this->logger->info(sprintf('Set school %s to user %s', $registryNo, $identity->mail));
         } catch (Exception $e) {
             $this->logger->error(sprintf('Problem inserting school %s form MM in database', $registryNo));
             $this->logger->debug('Exception', [$e->getMessage(), $e->getTraceAsString()]);
