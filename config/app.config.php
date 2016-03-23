@@ -23,6 +23,7 @@ return [
         'module/tpe_survey/bootstrap.php',
         'module/in_numbers/bootstrap.php',
         'module/in_numbers_mm/bootstrap.php',
+        'module/export/bootstrap.php',
     ],
     'cache_config' => 'data/cache/config/settings.php',
 ];
