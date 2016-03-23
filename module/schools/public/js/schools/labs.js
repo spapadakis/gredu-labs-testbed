@@ -116,11 +116,11 @@
             if (!labId) {
                 this.$el.find('.modal-footer button.remove')
                     .prop('disabled', true)
-                    .hide();
+                    .addClass('hidden');
             } else {
-                this.$el.find('.modal-fotter button.remove')
+                this.$el.find('.modal-footer button.remove')
                     .prop('disabled', false)
-                    .show();
+                    .removeClass('hidden');
             }
             this.lab = labId && this.model.get(labId) || null;
             labAttributes = this.lab && this.lab.attributes || {};

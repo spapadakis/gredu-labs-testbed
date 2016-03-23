@@ -185,7 +185,6 @@ CREATE TABLE `lab` (
   `school_id` int(11) unsigned NOT NULL,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `labtype_id` int(11) unsigned NOT NULL,
-  `is_new` tinyint(1) unsigned DEFAULT 0,
   `responsible_id` int(11) unsigned DEFAULT NULL,
   `area` int(11) unsigned DEFAULT NULL,
   `attachment` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -194,14 +193,17 @@ CREATE TABLE `lab` (
   `has_server` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `use_ext_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `use_in_program` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `is_new` tinyint(1) unsigned DEFAULT NULL,
+  `inventory_key` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_foreignkey_lab_school` (`school_id`),
   KEY `index_foreignkey_lab_labtype` (`labtype_id`),
   KEY `index_foreignkey_lab_responsible` (`responsible_id`),
-  CONSTRAINT `c_fk_lab_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `c_fk_lab_labtype_id` FOREIGN KEY (`labtype_id`) REFERENCES `labtype` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `c_fk_lab_responsible_id` FOREIGN KEY (`responsible_id`) REFERENCES `teacher` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  KEY `index_lab_inventory_key` (`inventory_key`),
+  CONSTRAINT `c_fk_lab_labtype_id` FOREIGN KEY (`labtype_id`) REFERENCES `labtype` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_lab_responsible_id` FOREIGN KEY (`responsible_id`) REFERENCES `teacher` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `c_fk_lab_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

@@ -1,0 +1,140 @@
+{% extends "schools/index.twig" %}
+
+{% import "schools/form.twig" as macros %}
+
+{% block schoolTitle %}
+    {{ parent() }} <small>Χώροι</small>
+{% endblock %}
+
+{% block navItems %}
+    <li role="presentation" class="pull-right">
+        <a href="#" class="btn btn-primary btn-add-lab" title="Καταχώρηση χώρου">
+            <i class="fa fa-plus"></i>
+            <span class="hidden-xs">Καταχώρηση χώρου</span>
+        </a>
+    </li>
+{% endblock %}
+
+{% block schoolContent %}
+    <div id="school-labs">
+        <p>
+            Σε αυτήν τη καρτέλα εμφανίζονται χώροι που χρησιμοποιούνται ήδη για
+            ΤΠΕ και έχουν δηλωθεί σε άλλα πληροφοριακά συστήματα του ΥΠΠΕΘ.
+            Επίσης, μπορείτε να καταχωρήσετε νέους χώρους από το πλήκτρο
+            «καταχώρηση χώρου», που θα θέλατε να χρησιμοποιήσετε για χρήση
+            ΤΠΕ (πχ μια διαθέσιμη αίθουσα διδασκαλίας για τη δημιουργία ενός
+            νέου εργαστηρίου πληροφορικής ή το εργαστήριο Τεχνολογίας το οποίο
+            θα θέλατε να εξοπλίσετε με ένα Η/Υ και ένα βιντεοπροβολέα ή
+            οποιαδήποτε άλλη αίθουσα για την οποία θα ζητήσετε εξοπλισμό).
+            Σε κάθε περίπτωση θα πρέπει να τεκμηριωθεί η χρήση της αίθουσας
+            για κάθε ένα από τα μαθήματα που θα χρησιμοποιείται συμπληρώνοντας
+            τα αντίστοιχα πεδία.
+        </p>
+        <p>
+            Σε κάθε περίπτωση θα πρέπει να δικαιολογηθεί η χρήση της αίθουσας
+            συμπληρώνοντας όλα τα πεδία.
+        </p>
+        <p>
+
+            <button data-href="{{ path_for('sch_sync/sync') }}" class="btn btn-primary" id="inventory_sync"><i class="fa fa-copy"></i> Ενημέρωση από το Κτηματολόγιο</button>
+        </p>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Ονομασία</th>
+                        <th>Τύπος</th>
+                        <th>Δημιουργία νέου χώρου</th>
+                        <th>Υπεύθυνος</th>
+                        <th>Δίκτυο</th>
+                        <th>Server</th>
+                        <th>Επιφάνεια (m<sup>2</sup>)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lab in labs %}
+                    <tr data-lab="{{ lab|json_encode }}" data-id="{{ lab.id }}">
+                        <td>{{ lab.name }}</td>
+                        <td>{{ lab.labtype }}</td>
+                        <td>{{ lab.is_new ? 'ΝΑΙ' : 'ΟΧΙ' }}</td>
+                        <td>{{ lab.responsible }}</td>
+                        <td>{{ lab.has_network }}</td>
+                        <td>{{ lab.has_server }}</td>
+                        <td>{{ lab.area }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="no-records text-center text-muted">
+                            Δεν έχουν καταχωρηθεί χώροι.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="7"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="modal fade" id="lab-form-modal" role="dialog" aria-labelledby="lab-from">
+            <form class="form-horizontal" method="post" action="{{ path_for('school.labs') }}"
+                  data-url="{{ path_for('school.labs') }}" enctype="multipart/form-data">
+                <div class="modal-dialog" role="form">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Στοιχεία χώρου</h4>
+                        </div>
+                        <div class="modal-body">
+                            {{ macros.input('name', 'Όνομα', '', 'text', {'required': ''}) }}
+                            {{ macros.select('responsible_id', 'Υπεύθυνος', staff, '', {'required': ''}) }}
+                            {{ macros.select('labtype_id', 'Τύπος', lab_types, '', {'required': ''}) }}
+                            {{ macros.checkbox('is_new', 'Δημιουργία νέου χώρου') }}
+                            {{ macros.select('has_network', 'Δίκτυο', network_options, '', {'required': ''}) }}
+                            {{ macros.select('has_server', 'Ύπαρξη server', server_options, '', {'required': ''}) }}
+                            {{ macros.input('area', 'Επιφάνεια (m<sup>2</sup>)', '', 'number', {'required': '', 'min': 0, 'max': 500}) }}
+                            {{ macros.file('attachment', 'Αρχείο κάτοψης ή φωτογραφία', path_for('school.labs.attachment', {}, {'lab_id': '__lab_id__'})) }}
+                            {{ macros.select('lessons', 'Μαθήματα', lessons_options, '', {'multiple': ''}) }}
+                            <small class="help-block pull-right">Κρατήστε πατημένο το Ctrl για να επιλέξετε περισσότερα από ένα μαθήματα</small>
+                            {{ macros.text('use_in_program', 'Χρήση στα πλαίσια μαθημάτων') }}
+                            {{ macros.text('use_ext_program', 'Χρήση για δραστηριότητες εκτός εκπαιδευτικού προγράμματος') }}
+                            <input type="hidden" name="id" value="">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger pull-left remove">Διαγραφή</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Κλείσιμο</button>
+                            <button name="submit" value="submit" type="submit" class="btn btn-primary">Αποθήκευση</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <script type="text/template" id="lab-row-template">
+            <td><%= lab.name %></td>
+            <td><%= lab.labtype %></td>
+            <td><%= parseInt(lab.is_new, 10) ? 'ΝΑΙ' : 'OXI' %></td>
+            <td><%= lab.responsible %></td>
+            <td><%= lab.has_network %></td>
+            <td><%= lab.has_server %></td>
+            <td><%= lab.area %></td>
+        </script>
+    </div>
+{% endblock %}
+
+{% block htmlHead %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ base_url }}/css/jquery.fileupload.css">
+{% endblock %}
+
+{% block inlinejs %}
+    {{ parent() }}
+    <script src="{{ base_url }}/js/jquery.ui.widget.js"></script>
+    <script src="{{ base_url }}/js/jquery.iframe-transport.js"></script>
+    <script src="{{ base_url }}/js/jquery.fileupload.js"></script>
+    <script src="{{ base_url }}/js/schools/labs.js"></script>
+    <script src="{{ base_url }}/js/sch_sync/sync.js"></script>
+{% endblock %}

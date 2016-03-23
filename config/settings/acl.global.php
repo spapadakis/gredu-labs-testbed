@@ -34,6 +34,7 @@ return [
                 ['/tpe_survey', ['school'], ['get', 'post']],
                 ['/tpe_survey/total-teachers', ['school'], ['post']],
                 ['/forum', ['guest', 'user'], ['get']],
+                ['/sch_sync/sync', ['school'], ['get']],
             ],
         ],
     ],

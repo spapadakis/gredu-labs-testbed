@@ -50,24 +50,45 @@ return function (App $app) {
                 $c->get('logger')
             );
         };
-        $container[CreateLabs::class] = function ($c) {
+
+        $container[\SchSync\SyncFromInventory::class] = function ($c) {
             $settings = $c->get('settings');
             $categoryMap = isset($settings['inventory']['category_map'])
                 ? $settings['inventory']['category_map'] : [];
 
-            return new CreateLabs(
+            return new \SchSync\SyncFromInventory(
                 $c->get(LabServiceInterface::class),
                 $c->get(AssetServiceInterface::class),
                 $c->get('SchInventory\\Service'),
                 $c->get(SchoolServiceInterface::class),
-                $c->get('authentication_service'),
                 $c->get('logger'),
                 $categoryMap
+           );
+        };
+
+        $container[CreateLabs::class] = function ($c) {
+            return new CreateLabs(
+                $c->get(LabServiceInterface::class),
+                $c->get(\SchSync\SyncFromInventory::class),
+                $c->get('authentication_service')
+            );
+        };
+
+        $container[SchSync\Action\Sync::class] = function ($c) {
+
+            return new SchSync\Action\Sync(
+                $c->get(\SchSync\SyncFromInventory::class),
+                $c->get('authentication_service')
             );
         };
     });
 
     $events('on', 'app.bootstrap', function ($app, $container) {
+        $app->get('/sch_sync/sync', SchSync\Action\Sync::class)->setName('sch_sync/sync');
+    });
+
+    $events('on', 'app.bootstrap', function ($app, $container) {
+        $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
         $container['router']->getNamedRoute('user.login.sso')
             ->add(CreateUser::class)
             ->add(CreateSchool::class)
