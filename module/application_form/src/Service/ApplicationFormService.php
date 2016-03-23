@@ -42,7 +42,7 @@ class ApplicationFormService implements ApplicationFormServiceInterface
 
     public function findSchoolApplicationForm($schoolId)
     {
-        $appForm = R::findOne('applicationform', ' school_id = ? ', [$schoolId]);
+        $appForm = R::findOne('applicationform', ' school_id = ? ORDER BY id DESC', [$schoolId]);
         if (null === $appForm) {
             return;
         }

@@ -2,25 +2,25 @@
 {% block content %}
     <div id="school">
         <h1>
-        {% block schoolTitle %}
-            {{ school.name }}
-        {% endblock %}
+            {% block schoolTitle %}
+                {{ school.name }}
+            {% endblock %}
         </h1>
         <ul class="nav nav-tabs">
             {% for page in nav('main').school.pages %}
-            <li role="presentation" class="{% if page.active %}active{% endif %}">
-                <a href="{{ page.href }}" {% if page.id %}id="{{ page.id }}"{% endif %} title="{{ page.label }}">
-                    <i class="visible-xs fa fa-{{ page.icon }}"></i>
-                    <span class="hidden-xs">{{ page.label }}</span>
-                </a>
-            </li>
+                <li role="presentation" class="{% if page.active %}active{% endif %}">
+                    <a href="{{ page.href }}" {% if page.id %}id="{{ page.id }}"{% endif %} title="{{ page.label }}">
+                        <i class="visible-xs fa fa-{{ page.icon }}"></i>
+                        <span class="hidden-xs">{{ page.label }}</span>
+                    </a>
+                </li>
             {% endfor %}
-            {% block navItems %}{% endblock %}
-        </ul>
-        <br>
-        <div class="row">
-            <div class="col-xs-12 school-container">
-                {% block schoolContent %}
+        {% block navItems %}{% endblock %}
+    </ul>
+    <br>
+    <div class="row">
+        <div class="col-xs-12 school-container">
+            {% block schoolContent %}
                 <div id="school-info">
                     <p class="col-md-12">
                         Σε αυτή την καρτέλα θα καταχωρήσετε πληροφορίες που 
@@ -64,8 +64,8 @@
                             <div class="panel-body">
                                 <ul>
                                     {% for lab in labs %}
-                                    <li>{{ lab.name }}</li>
-                                    {% endfor %}
+                                        <li>{{ lab.name }}</li>
+                                        {% endfor %}
                                 </ul>
                             </div>
                             <div class="panel-footer text-center">
@@ -83,7 +83,7 @@
                                     {% for asset in assets %}
                                         <dt>{{ asset.category }}</dt>
                                         <dd>{{ asset.count }}<dd>
-                                    {% endfor %}
+                                        {% endfor %}
                                 </dl>
                             </div>
                             <div class="panel-footer text-center">
@@ -92,28 +92,26 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                         <div class="panel panel-default">
+                        <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4>Στοιχεία αίτησης</h4>
                             </div>
                             <div class="panel-body">
                                 {% if appForm %}
                                     <div class="row">
-                                        <dl class="col-sm-12 col-md-6 dl-horizontal">
+                                        <dl class="col-sm-12 col-md-6">
                                             <dt>A/A αίτησης</dt>
                                             <dd>{{ appForm.id }}</dd>
                                             <dt>Ημερ. υποβολής</dt>
                                             <dd>{{ appForm.submitted|date('d/m/Y') }}<dd>
+                                        </dl>
+                                        <dl class="col-sm-12 col-md-6">
                                             <dt>Σχολείο</dt>
                                             <dd>{{ school.name }}</dd>
                                             <dt>Κωδικός Υπουργείου</dt>
                                             <dd>{{ school.registry_no }}<dd>
                                         </dl>
-                                        <dl class="col-sm-12 col-md-6 dl-horizontal">
-                                            <dt>Αίτημα του σχολείου για</dt>
-                                            <dd>{{ appForm.apply_for }}</dd>
-                                            <dt>Ύπαρξη - προοπτική αίθουσας για δημιουργία νέου εργαστηρίου</dt>
-                                            <dd>{{ appForm.new_lab_perspective }}<dd>
+                                        <dl class="col-lg-12">
                                             <dt>Σχόλια/Παρατηρήσεις</dt>
                                             <dd>{{ appForm.comments }}</dd>
                                         </dl>
@@ -128,12 +126,12 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            {% for item in appForm.items %}
-                                                <tr>
-                                                    <th>{{ item.category }}</th>
-                                                    <td>{{ item.count }}<td>
-                                                </tr>
-                                            {% endfor %}
+                                                {% for item in appForm.items %}
+                                                    <tr>
+                                                        <th>{{ item.category }}</th>
+                                                        <td>{{ item.count }}<td>
+                                                    </tr>
+                                                {% endfor %}
                                             </tbody>
                                         </table>
                                     </div>
@@ -142,17 +140,27 @@
                                 {% endif %}
                             </div>
                             <div class="panel-footer text-center">
-                                {% if not appForm %}
-                                    <a class="btn btn-sm btn-primary" href="{{ path_for('application_form') }}">Υποβολή αίτησης</a>
-                                {% endif %}
+                                <a class="btn btn-sm btn-primary" href="{{ path_for('application_form') }}">
+                                    {% if not appForm %}
+                                        Υποβολή αίτησης
+                                    {% else %}
+                                        Υποβολή νέας αίτησης <sup>*</sup>
+                                    {% endif %}
+                                </a>
+                                <div class="text-left">
+                                    {% if appForm %}
+                                        <small class="text-muted"><sup>*</sup> Λαμβάνεται υπόψη μόνο η τελευταία αίτηση.</small>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
-                {% endblock %}
-            </div>
+            {% endblock %}
         </div>
     </div>
+</div>
 {% endblock %}
 {% block inlinejs %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>

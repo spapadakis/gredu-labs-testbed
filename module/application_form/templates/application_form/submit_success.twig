@@ -11,19 +11,22 @@
 
         <h2>Στοιχεία αίτησης</h2>
         <div class="row">
-            <dl class="col-lg-12">
+            <dl class="col-sm-12 col-md-6">
                 <dt>A/A αίτησης</dt>
                 <dd>{{ appForm.id }}</dd>
                 <dt>Ημερ. υποβολής</dt>
                 <dd>{{ appForm.submitted|date('d/m/Y') }}<dd>
+            </dl>
+            <dl class="col-sm-12 col-md-6">
                 <dt>Σχολείο</dt>
                 <dd>{{ school.name }}</dd>
                 <dt>Κωδικός Υπουργείου</dt>
                 <dd>{{ school.registry_no }}<dd>
+            </dl>
+            <dl class="col-lg-12">
                 <dt>Σχόλια/Παρατηρήσεις</dt>
                 <dd>{{ appForm.comments }}</dd>
             </dl>
-            
         </div>
         <h3>Αιτούμενος εξοπλισμός</h3>
         <div class="table-responsive">

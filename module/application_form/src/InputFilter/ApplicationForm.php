@@ -29,13 +29,7 @@ class ApplicationForm extends InputFilter
             ->getFilterChain()
             ->attach(new Filter\ToInt());
         $schoolId->getValidatorChain()
-            ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\Callback([
-                'callback' => function ($value) use ($appFormService) {
-                    return null === $appFormService->findSchoolApplicationForm($value);
-                },
-                'message' => 'Έχει ήδη γίνει αίτηση',
-            ]));
+            ->attach(new Validator\NotEmpty());
 
         $comments = new Input('comments');
         $comments->setRequired(false)

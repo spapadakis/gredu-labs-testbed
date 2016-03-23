@@ -29,7 +29,7 @@ return [
                 ['/school/assets', ['school'], ['get', 'post', 'delete']],
                 ['/school/labs/attachment', ['school'], ['get', 'delete']],
                 ['/school/software', ['school'], ['get', 'post', 'delete']],
-                ['/application-form', ['school'], ['get', 'post'], 'GrEduLabs\ApplicationForm\Acl\Assertion\CanSubmit'],
+                ['/application-form', ['school'], ['get', 'post']],
                 ['/application-form/submit-success', ['school'], ['get']],
                 ['/tpe_survey', ['school'], ['get', 'post']],
                 ['/tpe_survey/total-teachers', ['school'], ['post']],
