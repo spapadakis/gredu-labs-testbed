@@ -5,6 +5,7 @@ use GrEduLabs\Schools\Service\AssetServiceInterface;
 use GrEduLabs\Schools\Service\LabServiceInterface;
 use GrEduLabs\Schools\Service\SchoolServiceInterface;
 use SchMM\FetchUnit;
+use SchMM\FetchUnitByMmId;
 use SchSync\Middleware\CreateLabs;
 use SchSync\Middleware\CreateSchool;
 use SchSync\Middleware\CreateUser;
@@ -41,6 +42,7 @@ return function (App $app) {
             return new CreateSchool(
                 $c->get('ldap'),
                 $c->get(FetchUnit::class),
+                $c->get(FetchUnitByMmId::class),
                 $c->get('authentication_service'),
                 $c->get(SchoolServiceInterface::class),
                 $c->get(SchoolInputFilter::class),

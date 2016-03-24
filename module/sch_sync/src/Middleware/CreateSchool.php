@@ -37,6 +37,12 @@ class CreateSchool
     private $fetchUnit;
 
     /**
+     *
+     * @var callable
+     */
+    private $fetchUnitFromMMById;
+
+    /**
      * @var AuthenticationServiceInterface
      */
     private $authService;
@@ -73,9 +79,16 @@ class CreateSchool
      */
     private $logger;
 
+    /**
+     *
+     * @var \Zend\Ldap\Node
+     */
+    private $unit;
+
     public function __construct(
         Ldap $ldap,
         callable $fetchUnitFromMM,
+        callable $fetchUnitFromMMById,
         AuthenticationServiceInterface $authService,
         SchoolServiceInterface $schoolService,
         SchoolInputFilter $schoolInputFilter,
@@ -86,6 +99,7 @@ class CreateSchool
     ) {
         $this->ldap                    = $ldap;
         $this->fetchUnit               = $fetchUnitFromMM;
+        $this->fetchUnitFromMMById     = $fetchUnitFromMMById;
         $this->authService             = $authService;
         $this->schoolService           = $schoolService;
         $this->schoolInputFilter       = $schoolInputFilter;
@@ -120,12 +134,17 @@ class CreateSchool
             if (!$school) {
                 $unit = call_user_func($this->fetchUnit, $registryNo);
                 if (null === $unit) {
+                    $mmId = $this->findUnitMmId($identity);
+                    $unit = call_user_func($this->fetchUnitFromMMById, $mmId);
+                }
+
+                if (null === $unit) {
                     $this->logger->error(sprintf(
                         'Unit with %s for user %s not found in MM',
                         $identity->mail,
                         $registryNo
                     ));
-                    $this->logger->debug('Trace', ['registryNo'=> $registryNo, 'identity' => $identity->toArray()]);
+                    $this->logger->debug('Trace', ['registryNo'=> $registryNo, 'mmId' => $mmId, 'identity' => $identity->toArray()]);
 
                     return $this->logoutAndRediret($res, sprintf(
                         'Το σχολείο με κωδικό %s δεν βρέθηκε στο Μητρώο Μονάδων του ΠΣΔ.  <a href="%s" title="SSO logout">SSO Logout</a>',
@@ -135,7 +154,7 @@ class CreateSchool
                 }
                 $data = [
                     'id'                => '',
-                    'registry_no'       => $unit['registry_no'],
+                    'registry_no'       => $registryNo,
                     'name'              => $unit['name'],
                     'street_address'    => $unit['street_address'],
                     'postal_code'       => $unit['postal_code'],
@@ -176,19 +195,16 @@ class CreateSchool
 
     private function findUnitRegitryNo(Identity $identity)
     {
-        $filter = Filter::equals('mail', $identity->mail);
-        $baseDn = Dn::factory($this->ldap->getBaseDn())->prepend(['ou' => 'people']);
-        $result = $this->ldap->search($filter, $baseDn, Ldap::SEARCH_SCOPE_ONE, ['l']);
-
-        if (1 !== $result->count()) {
-            return;
-        }
-        $result = $result->current();
-        $unitDn = $result['l'][0];
-
-        $unit = $this->ldap->getNode($unitDn);
+        $unit = $this->findUnit($identity);
 
         return $unit->getAttribute('gsnunitcode', 0);
+    }
+
+    private function findUnitMmId(Identity $identity)
+    {
+        $unit = $this->findUnit($identity);
+
+        return $unit->getAttribute('gsnregistrycode', 0);
     }
 
     private function logoutAndRediret(Response $res, $message)
@@ -197,5 +213,24 @@ class CreateSchool
         $this->flash->addMessage('danger', $message);
 
         return $res->withRedirect($this->unitNotFoundRedirectUrl);
+    }
+
+    private function findUnit(Identity $identity)
+    {
+        if (null === $this->unit) {
+            $filter = Filter::equals('mail', $identity->mail);
+            $baseDn = Dn::factory($this->ldap->getBaseDn())->prepend(['ou' => 'people']);
+            $result = $this->ldap->search($filter, $baseDn, Ldap::SEARCH_SCOPE_ONE, ['l']);
+
+            if (1 !== $result->count()) {
+                return;
+            }
+            $result = $result->current();
+            $unitDn = $result['l'][0];
+
+            $this->unit = $this->ldap->getNode($unitDn);
+        }
+
+        return $this->unit;
     }
 }

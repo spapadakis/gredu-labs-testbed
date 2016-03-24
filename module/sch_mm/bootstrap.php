@@ -29,6 +29,18 @@ return function (Slim\App $app) {
                 ],
             ]));
         };
+
+        $container[SchMM\FetchUnitByMmId::class] = function ($c) {
+            $settings = $c['settings'];
+
+            return new SchMM\FetchUnitByMmId(new GuzzleHttp\Client([
+                'base_uri' => $settings['sch_mm']['api_url'],
+                'auth'     => [
+                    $settings['sch_mm']['api_user'],
+                    $settings['sch_mm']['api_pass'],
+                ],
+            ]));
+        };
     });
 
 };
