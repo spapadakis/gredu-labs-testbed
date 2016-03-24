@@ -10,4 +10,7 @@
 return [
     'forum_url'                         => 'http://edulabs.minedu.gov.gr/forum',
     'egkyklios_file'                    => 'http://edulabs.minedu.gov.gr/files/egkyklios.pdf',
+    'sch_sync'                         => [
+        'inventory_sync_on_demand' => false,
+    ],
 ];

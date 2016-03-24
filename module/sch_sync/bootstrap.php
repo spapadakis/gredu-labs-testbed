@@ -86,11 +86,26 @@ return function (App $app) {
     });
 
     $events('on', 'app.bootstrap', function ($app, $container) {
-        $app->get('/sch_sync/sync', SchSync\Action\Sync::class)->setName('sch_sync/sync');
+        $settings = $container['settings'];
+        $enabled = isset($settings['sch_sync']['inventory_sync_on_demand'])
+            ? (bool) $settings['sch_sync']['inventory_sync_on_demand'] : false;
+        if ($enabled) {
+            $app->get('/sch_sync/sync', SchSync\Action\Sync::class)->setName('sch_sync/sync');
+        }
     });
 
     $events('on', 'app.bootstrap', function ($app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
+        $container['router']->getNamedRoute('school.labs')
+            ->add(function ($req, $res, $next) use ($container) {
+                $settings = $container['settings'];
+                $enabled = isset($settings['sch_sync']['inventory_sync_on_demand'])
+                    ? (bool) $settings['sch_sync']['inventory_sync_on_demand'] : false;
+                $view = $container->get('view');
+                $view['enable_inventory_sync'] = $enabled;
+
+                return $next($req, $res);
+            });
         $container['router']->getNamedRoute('user.login.sso')
             ->add(CreateUser::class)
             ->add(CreateSchool::class)

@@ -34,10 +34,11 @@
             Σε κάθε περίπτωση θα πρέπει να δικαιολογηθεί η χρήση της αίθουσας
             συμπληρώνοντας όλα τα πεδία.
         </p>
+        {% if enable_inventory_sync %}
         <p>
-
             <button data-href="{{ path_for('sch_sync/sync') }}" class="btn btn-primary" id="inventory_sync"><i class="fa fa-copy"></i> Ενημέρωση από το Κτηματολόγιο</button>
         </p>
+        {% endif %}
         <div class="table-responsive">
             <table class="table table-hover table-striped">
                 <thead>
@@ -136,5 +137,7 @@
     <script src="{{ base_url }}/js/jquery.iframe-transport.js"></script>
     <script src="{{ base_url }}/js/jquery.fileupload.js"></script>
     <script src="{{ base_url }}/js/schools/labs.js"></script>
+    {% if enable_inventory_sync %}
     <script src="{{ base_url }}/js/sch_sync/sync.js"></script>
+    {% endif %}
 {% endblock %}
