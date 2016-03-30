@@ -160,7 +160,7 @@ class CreateSchool
                     'postal_code'       => $unit['postal_code'],
                     'phone_number'      => $unit['phone_number'],
                     'fax_number'        => $unit['fax_number'],
-                    'email'             => $unit['email'],
+                    'email'             => $identity->mail,
                     'municipality'      => $unit['municipality'],
                     'schooltype_id'     => $unit['unit_type_id'],
                     'prefecture_id'     => $unit['prefecture_id'],
