@@ -132,3 +132,20 @@ body {
 .select2-container {
   width: auto!important;
 }
+
+.in-numbers .home.jumbotron {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.panel-in-numbers {
+    margin-top: 48px;
+}
+
+.panel-in-numbers .number {
+    font-size: 24px;
+    font-weight: bold;
+    display: block;
+    float: right;
+    padding-left:10px;
+}

@@ -1,0 +1,26 @@
+{% extends '@application/index.twig' %}
+
+{% block content %}
+    <div class="row in-numbers">
+        <div class="col-md-9">{{ parent() }}</div>
+        <div class="col-md-3">
+            <div class="panel panel-default panel-in-numbers">
+                <div class="panel-heading">
+                    <h3 class="panel-title">EduLabs σε αριθμούς</h3>
+                </div>
+                <div class="panel-body">
+                    <p>
+                        <span class="number">{{ total_schools }}</span>  Σχολεία που έχουν καταχωρηθεί
+                    </p>
+                    <div class="clearfix"></div>
+                    <hr>
+                    <p>
+                        <span class="number">{{ total_app_forms }}</span> Αιτήσεις που έχουν υποβληθεί
+                    </p>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+{% endblock %}
