@@ -300,6 +300,13 @@ This module provides the services, views and javascript for schools to submit th
 This module overrides staff view of schools module. It allows school user to submit 
 information about teachers using IT in education.
 
+### in_numbers
+
+This module ovverides index page by placing a panel with the total numbers of schools 
+registered in application and of submitted application forms.
+
+It also provides the /in_numbers route where total numbers are analyzed by school type.
+
 #### Dependencies
 
  - schools module
