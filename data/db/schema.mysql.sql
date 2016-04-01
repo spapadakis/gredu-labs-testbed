@@ -364,7 +364,7 @@ CREATE TABLE `school` (
   `schooltype_id` int(11) unsigned NOT NULL,
   `prefecture_id` int(11) unsigned NOT NULL,
   `educationlevel_id` int(11) unsigned NOT NULL,
-  `eduadmin_id` int(11) unsigned NOT NULL,
+  `eduadmin_id` int(11) unsigned DEFAULT NULL,
   `created` int(11) unsigned NOT NULL,
   `creator` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `registry_no` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,

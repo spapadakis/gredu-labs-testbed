@@ -91,7 +91,7 @@ class School
             ]));
 
         $municipality = new Input('municipality');
-        $municipality->setRequired(true)
+        $municipality->setRequired(false)
             ->getFilterChain()
             ->attach(new Filter\StripTags())
             ->attach(new Filter\StringTrim());
@@ -112,10 +112,10 @@ class School
             ->attach(new Filter\ToInt());
 
         $eduadminId = new Input('eduadmin_id');
-        $eduadminId->setRequired(true)
+        $eduadminId->setRequired(false)
             ->getFilterChain()
             ->attach(new Filter\ToInt());
-
+        
         $creator = new Input('creator');
         $creator->setRequired(true)
             ->getValidatorChain()
