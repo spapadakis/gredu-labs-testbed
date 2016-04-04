@@ -337,6 +337,16 @@ return function (App $app) {
 
                 return $res->withRedirect($router->pathFor('index'));
             }
+            $config = $c['csv_export_config'];
+
+            if (!array_key_exists($type, $config)) {
+                return $res->withStatus(404);
+            }
+
+            $typeConfig = $config[$type];
+            $csvResponse = $c['csv_export_csv_response'];
+
+            return $csvResponse($res, $c[$typeConfig['data_callback']], $typeConfig['headers'], 'edulabs_' . $type . '.csv');
         })->setName('export.csv');
     });
 };
