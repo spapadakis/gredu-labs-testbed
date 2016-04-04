@@ -36,7 +36,8 @@
         "zendframework/zend-ldap": "^2.0",
         "zendframework/zend-permissions-acl": "^2.0",
         "zendframework/zend-inputfilter": "^2.0",
-        "zendframework/zend-uri": "^2.0"
+        "zendframework/zend-uri": "^2.0",
+        "league/csv": "^8.0"
     },
     "require-dev": {
         "fabpot/php-cs-fixer": "1.*",

@@ -36,6 +36,7 @@ return [
                 ['/forum', ['guest', 'user'], ['get']],
                 ['/sch_sync/sync', ['school'], ['get']],
                 ['/in_numbers', ['guest', 'user'], ['get']],
+                ['/export/csv/edulabs_{type}.csv', ['guest', 'user'], ['get']],
             ],
         ],
     ],
