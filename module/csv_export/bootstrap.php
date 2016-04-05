@@ -94,6 +94,19 @@ return function (App $app) {
                         'Αιτιολογία χρήσης',
                     ],
                 ],
+                'software' => [
+                    'data_callback' => 'csv_export_software',
+                    'headers'       => [
+                        'Τύπος',
+                        'Κωδικός σχολείου',
+                        'Ονομασία σχολείου',
+                        'ID χώρου',
+                        'Τύπος χώρου',
+                        'Ονομασία',
+                        'Κατασκευαστής',
+                        'URL',
+                    ],
+                ],
             ];
         };
 
@@ -265,22 +278,65 @@ return function (App $app) {
                 return $appForms;
             };
         };
+
+        $c['csv_export_software'] = function ($c) {
+
+            return function () {
+                $sql = 'SELECT softwarecategory.name AS name, '
+                     . ' school.registry_no AS school_registry_no, '
+                     . ' school.name AS school_name, '
+                     . ' lab.id AS lab_id, '
+                     . ' TRIM(labtype.name) AS lab_type, '
+                     . ' TRIM(software.title) AS title, '
+                     . ' TRIM(software.vendor) AS vendor, '
+                     . ' TRIM(software.url) AS url '
+                     . ' FROM software '
+                     . ' LEFT JOIN softwarecategory ON software.softwarecategory_id = softwarecategory.id '
+                     . ' LEFT JOIN school ON software.school_id = school.id '
+                     . ' LEFT JOIN lab ON software.lab_id = lab.id '
+                     . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
+                     . ' ORDER BY school_name ';
+
+                $software = R::getAll($sql);
+
+                $software = array_map(function ($row) {
+                    $row['url'] = strtolower($row['url']);
+                    $row['url'] = str_replace('\\', '/', $row['url']);
+                    $row['url'] = urldecode($row['url']);
+
+                    return $row;
+                }, $software);
+
+                return $software;
+            };
+        };
     });
 
     $events('on', 'app.bootstrap', function (App $app, Container $c) {
 
         $app->get('/export/csv/edulabs_{type}.csv', function (Request $req, Response $res, array $args) use ($c) {
             $type = $args['type'];
-            $config = $c['csv_export_config'];
+            try {
+                $config = $c['csv_export_config'];
 
-            if (!array_key_exists($type, $config)) {
-                return $res->withStatus(404);
+                if (!array_key_exists($type, $config)) {
+                    return $res->withStatus(404);
+                }
+
+                $typeConfig = $config[$type];
+                $csvResponse = $c['csv_export_csv_response'];
+
+                return $csvResponse($res, $c[$typeConfig['data_callback']], $typeConfig['headers'], 'edulabs_' . $type . '.csv');
+            } catch (Exception $ex) {
+                $flash = $c['flash'];
+                $log = $c['logger'];
+                $router = $c['router'];
+                $flash->addMessage('warning', 'Προέκυψε κάποιο σφάλμα. Δοκιμάστε αργότερα');
+                $log->error(sprintf('Problem downloading %s file. Exception message %s', $type, $ex->getMessage()));
+                $log->debug('Exception Trace', ['trace' => $ex->getTraceAsString()]);
+
+                return $res->withRedirect($router->pathFor('index'));
             }
-
-            $typeConfig = $config[$type];
-            $csvResponse = $c['csv_export_csv_response'];
-
-            return $csvResponse($res, $c[$typeConfig['data_callback']], $typeConfig['headers'], 'edulabs_' . $type . '.csv');
         })->setName('export.csv');
     });
 };
