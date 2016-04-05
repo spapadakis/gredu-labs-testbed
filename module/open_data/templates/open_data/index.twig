@@ -1,0 +1,70 @@
+{% extends "layout.twig" %}
+{% block content %}
+    <h1>Ανοικτά δεδομένα</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th colspan="2">Λίστα αρχείων</th>
+            <tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Μονάδες που συμμετέχουν στη δράση</td>
+                <td>
+                    <a href="{{ path_for('export.csv', {type: 'schools'}) }}">
+                        <i class="fa fa-download"></i>
+                        Μεταφόρτωση αρχείου .csv
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Χώροι μονάδων που καταγράφηκαν από τη δράση</td>
+                <td>
+                    <a href="{{ path_for('export.csv', {type: 'labs'}) }}">
+                        <i class="fa fa-download"></i>
+                        Μεταφόρτωση αρχείου .csv
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Εξοπλισμός μονάδων που καταγράφηκε από τη δράση</td>
+                <td>
+                    <a href="{{ path_for('export.csv', {type: 'assets'}) }}">
+                        <i class="fa fa-download"></i>
+                        Μεταφόρτωση αρχείου .csv
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Λογισμικό που χρησιμοποιείται από τις μονάδες και καταγράφηκε από τη δράση</td>
+                <td>
+                    <a href="{{ path_for('export.csv', {type: 'software'}) }}">
+                        <i class="fa fa-download"></i>
+                        Μεταφόρτωση αρχείου .csv
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Αιτήσεις που συγκεντρώθηκαν από τις μονάδες</td>
+                <td>
+                    <a href="{{ path_for('export.csv', {type: 'appforms'}) }}">
+                        <i class="fa fa-download"></i>
+                        Μεταφόρτωση αρχείου .csv
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Εξοπλισμός που αιτήθηκαν οι μονάδες</td>
+                <td>
+                    <a href="{{ path_for('export.csv', {type: 'appforms_items'}) }}">
+                        <i class="fa fa-download"></i>
+                        Μεταφόρτωση αρχείου .csv
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr><th colspan="2"></th><tr>
+        </tfoot>
+    </table>
+{% endblock %}

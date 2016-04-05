@@ -24,6 +24,7 @@ return [
         'module/in_numbers/bootstrap.php',
         'module/in_numbers_mm/bootstrap.php',
         'module/csv_export/bootstrap.php',
+        'module/open_data/bootstrap.php',
     ],
     'cache_config' => 'data/cache/config/settings.php',
 ];

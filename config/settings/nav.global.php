@@ -51,6 +51,10 @@ return [
                 'label' => 'Αίτηση',
                 'route' => 'application_form',
             ],
+            'open-data' => [
+                'label' => 'Ανοικτά δεδομένα',
+                'route' => 'open_data',
+            ],
             'about' => [
                 'label' => 'Σχετικά με τη δράση',
                 'route' => 'about',
