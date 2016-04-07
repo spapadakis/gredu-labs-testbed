@@ -6,6 +6,9 @@
             <thead>
                 <tr>
                     <th>Τύπος σχολείου</th>
+                    {% if schools_total_global is defined %}
+                    <th style="width: 1%;white-space: nowrap">Σχολεία συνολικά</th>
+                    {% endif %}
                     <th style="width: 1%;white-space: nowrap">Πλήθος καταχωρήσεων</th>
                     <th style="width: 1%;white-space: nowrap">Πλήθος αιτήσεων</th>
                 </tr>
@@ -14,6 +17,9 @@
                 {% for row in school_types %}
                     <tr>
                         <th>{{ row.type }}</th>
+                        {% if row.schools_total is defined %}
+                        <td class="text-center">{{ row.schools_total }}</td>
+                        {% endif %}
                         <td class="text-center">{{ row.schools_cnt }}</td>
                         <td class="text-center">{{ row.appforms_cnt }}</td>
                     </tr>
@@ -22,6 +28,9 @@
             <tfoot>
                 <tr>
                     <td></td>
+                    {% if schools_total_global is defined %}
+                    <th class="text-center">{{ schools_total_global }}</th>
+                    {% endif %}
                     <th class="text-center">{{ totals.schools_total }}</th>
                     <th class="text-center">{{ totals.appforms_total }}</th>
                 </tr>

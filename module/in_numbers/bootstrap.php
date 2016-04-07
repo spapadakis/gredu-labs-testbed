@@ -47,6 +47,7 @@ return function (\Slim\App $app) {
                         continue;
                     }
                     $results[$type] = [
+                        'type_id'      => $type,
                         'type'         => $schoolTypes[$type],
                         'schools_cnt'  => (int) $cnt,
                         'appforms_cnt' => isset($appFormByType[$type]) ? (int) $appFormByType[$type] : 0,
@@ -62,10 +63,12 @@ return function (\Slim\App $app) {
     });
 
     $events('on', 'app.bootstrap', function ($app, $c) {
+        $view = $c->get('view');
+        $view->getEnvironment()->getLoader()->prependPath(__DIR__ . '/../application/templates', 'application');
+        $view->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
         $app->get('/in_numbers', function (Slim\Http\Request $req, \Slim\Http\Response $res) use ($c) {
             try {
                 $view = $c->get('view');
-                $view->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
                 $inNumbersFunction = $c->get('in_numbers_by_school_type');
                 $schoolTypes = $inNumbersFunction();
                 $totals = array_reduce($schoolTypes, function ($result, $type) {
@@ -90,16 +93,13 @@ return function (\Slim\App $app) {
 
     $events('on', 'app.bootstrap', function ($app, $c) {
         $router = $c['router'];
-        $route = $router->getNamedRoute('index');
-        $route->add(function (Slim\Http\Request $req, Slim\Http\Response $res, callable $next) use ($c) {
+        $router->getNamedRoute('index')->add(function (Slim\Http\Request $req, Slim\Http\Response $res, callable $next) use ($c) {
             try {
                 $view = $c->get('view');
                 $inNumbersFunction = $c->get('in_numbers_totals');
                 list($total_schools, $total_app_forms) = array_values($inNumbersFunction());
                 $view['total_schools'] = $total_schools;
                 $view['total_app_forms'] = $total_app_forms;
-                $view->getEnvironment()->getLoader()->prependPath(__DIR__ . '/../application/templates', 'application');
-                $view->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
             } catch (\Exception $ex) {
                 $c->get('logger')->error(sprintf('Exception: %s', $ex->getMessage()), ['file' => __FILE__, 'line' => __LINE__]);
             }

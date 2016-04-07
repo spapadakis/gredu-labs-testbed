@@ -22,6 +22,7 @@ return [
         'module/application_form/bootstrap.php',
         'module/tpe_survey/bootstrap.php',
         'module/in_numbers/bootstrap.php',
+        'module/in_numbers_mm/bootstrap.php',
     ],
     'cache_config' => 'data/cache/config/settings.php',
 ];
