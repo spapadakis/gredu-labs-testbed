@@ -1,0 +1,31 @@
+{% extends "layout.twig" %}
+{% block content %}
+    <h1>EduLabs σε αριθμούς</h1>
+    <div class="table-responsive">
+        <table class="table table-borderless table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Τύπος σχολείου</th>
+                    <th style="width: 1%;white-space: nowrap">Πλήθος καταχωρήσεων</th>
+                    <th style="width: 1%;white-space: nowrap">Πλήθος αιτήσεων</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in school_types %}
+                    <tr>
+                        <th>{{ row.type }}</th>
+                        <td class="text-center">{{ row.schools_cnt }}</td>
+                        <td class="text-center">{{ row.appforms_cnt }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <th class="text-center">{{ totals.schools_total }}</th>
+                    <th class="text-center">{{ totals.appforms_total }}</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endblock %}
