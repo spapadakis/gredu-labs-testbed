@@ -21,18 +21,29 @@ class Index
      */
     protected $view;
 
+    protected $content;
+
     /**
      * Constructor.
      *
      * @param Twig $view
      */
-    public function __construct(Twig $view)
+    public function __construct(Twig $view, $content = 'welcome')
     {
-        $this->view = $view;
+        $this->view    = $view;
+        $this->content = $content;
     }
 
     public function __invoke(Request $req, Response $res)
     {
-        return $this->view->render($res, 'index.twig');
+        try {
+            return $this->view->render($res, 'index.twig', [
+                'content' => $this->content,
+            ]);
+        } catch (\Exception $ex) {
+            return $this->view->render($res, 'index.twig', [
+                'content' => 'welcome',
+            ]);
+        }
     }
 }

@@ -96,7 +96,10 @@ return function (Slim\App $app) {
         };
 
         $container[GrEduLabs\Application\Action\Index::class] = function ($c) {
-            return new GrEduLabs\Application\Action\Index($c['view']);
+            $settings = $c['settings'];
+            $content = $settings['index_content'];
+
+            return new GrEduLabs\Application\Action\Index($c['view'], $content);
         };
         $container[GrEduLabs\Application\Action\About::class] = function ($c) {
             return new GrEduLabs\Application\Action\About($c['view']);
