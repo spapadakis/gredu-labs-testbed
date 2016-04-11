@@ -36,6 +36,7 @@ return function (App $app) {
                 $auth         = $config['auth'];
                 $url          = $baseUri->withQueryValue($baseUri, 'unit_type', $type);
                 $url          = $url->withQueryValue($url, 'pagesize', 1);
+                $url          = $url->withQueryValue($url, 'state', 1);
                 $response     = $httpClient->request('GET', $url, ['auth' => $auth]);
                 $responseData = json_decode($response->getBody()->getContents(), true);
 
