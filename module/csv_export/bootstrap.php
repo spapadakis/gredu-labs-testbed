@@ -254,6 +254,10 @@ return function (App $app) {
 
                 $appFormIds = R::getCol($appFormIdsSql);
 
+                if (empty($appFormIds)) {
+                    return [];
+                }
+
                 $in       = implode(',', array_fill(0, count($appFormIds), '?'));
                 $sql = 'SELECT applicationform.id AS id, '
                      . ' school.registry_no AS school_registry_no, '
