@@ -31,6 +31,7 @@ return [
                 ['/school/software', ['school'], ['get', 'post', 'delete']],
                 ['/application-form', ['school'], ['get', 'post']],
                 ['/application-form/submit-success', ['school'], ['get']],
+                ['/application-form/report', ['school'], ['get']],
                 ['/tpe_survey', ['school'], ['get', 'post']],
                 ['/tpe_survey/total-teachers', ['school'], ['post']],
                 ['/forum', ['guest', 'user'], ['get']],

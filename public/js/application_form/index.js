@@ -60,6 +60,5 @@
     $('#app-form-load-modal').modal({
         backdrop: 'static'
     }).modal('show');
-
     
 }(window.jQuery, _, window.EDULABS.utils));

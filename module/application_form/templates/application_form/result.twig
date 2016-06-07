@@ -1,0 +1,52 @@
+<h1 class="no-print">
+    {% block title %}
+        Επιτυχής Καταχώρηση <small>αίτησης για νέο εξοπλισμό</small>
+    {% endblock %}
+</h1> 
+<p class="no-print">Η αίτηση για το σχολείο {{ school.name }} με <strong>Α/Α {{ appForm.id }}</strong>, καταχωρήθηκε επιτυχώς.</p>
+
+<h2>Στοιχεία αίτησης</h2>
+<div class="row">
+    <dl class="col-sm-12 col-md-6">
+        <dt>A/A αίτησης</dt>
+        <dd>{{ appForm.id }}</dd>
+        <dt>Ημερ. υποβολής</dt>
+        <dd>{{ appForm.submitted|date('d/m/Y') }}<dd>
+    </dl>
+    <dl class="col-sm-12 col-md-6">
+        <dt>Σχολείο</dt>
+        <dd>{{ school.name }}</dd>
+        <dt>Κωδικός Υπουργείου</dt>
+        <dd>{{ school.registry_no }}<dd>
+    </dl>
+    <dl class="col-lg-12">
+        <dt>Σχόλια/Παρατηρήσεις</dt>
+        <dd>{{ appForm.comments }}</dd>
+    </dl>
+</div>
+<h3>Αιτούμενος εξοπλισμός</h3>
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Πλήθος</th>
+                <th>Τύπος</th>
+                <th>Χώρος</th>
+                <th>Αιτιολογία χρήσης</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in appForm.items %}
+                <tr>
+                    <td>{{ item.qty }}</td>
+                    <td>{{ item.itemcategory }}</td>
+                    <td>{{ item.lab }}</td>
+                    <td>{{ item.reasons|e }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+        <td colspan="4"></td>
+        </tfoot>
+    </table>
+</div>

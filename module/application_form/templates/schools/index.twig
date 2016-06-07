@@ -113,7 +113,7 @@
                                         </dl>
                                         <dl class="col-lg-12">
                                             <dt>Σχόλια/Παρατηρήσεις</dt>
-                                            <dd>{{ appForm.comments }}</dd>
+                                            <dd>{{ appForm.comments|e }}</dd>
                                         </dl>
                                     </div>
                                     <h5>Αιτούμενος εξοπλισμός</h5>
@@ -146,6 +146,9 @@
                                     {% else %}
                                         Υποβολή νέας αίτησης <sup>*</sup>
                                     {% endif %}
+                                </a>
+                                <a class="btn btn-sm btn-default" href="{{ path_for('application_form.report') }}">
+                                    Εκτύπωση
                                 </a>
                                 <div class="text-left">
                                     {% if appForm %}

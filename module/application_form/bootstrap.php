@@ -62,6 +62,13 @@ return function (Slim\App $app) {
             );
         };
 
+        $container[GrEduLabs\ApplicationForm\Action\ApplicationFormPdf::class] = function ($c) {
+            return new GrEduLabs\ApplicationForm\Action\ApplicationFormPdf(
+                $c->get(GrEduLabs\ApplicationForm\Service\ApplicationFormServiceInterface::class),
+                $c->get('view')
+            );
+        };
+
         $container[GrEduLabs\ApplicationForm\Acl\Assertion\CanSubmit::class] = function ($c) {
             return new GrEduLabs\ApplicationForm\Acl\Assertion\CanSubmit(
                 $c->get('authentication_service'),
@@ -89,6 +96,8 @@ return function (Slim\App $app) {
                 ->setName('application_form');
             $this->get('/submit-success', GrEduLabs\ApplicationForm\Action\SubmitSuccess::class)
                 ->setName('application_form.submit_success');
+            $this->get('/report', GrEduLabs\ApplicationForm\Action\ApplicationFormPdf::class)
+                ->setName('application_form.report');
         })->add(GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity::class);
     });
 };

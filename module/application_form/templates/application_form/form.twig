@@ -154,7 +154,7 @@
                         </tfoot>
                     </table>
                 </div>
-                {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.value.comments) }}
+                {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.values.comments) }}
             </fieldset>
         </div>
         <hr>
@@ -164,6 +164,23 @@
         <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
         <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
     </form>
+    {% if choose %}
+    <div class="modal fade" id="app-form-load-modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Επιθυμείτε η νέα αίτηση να βασιστεί στη τελευταία αίτησή σας;</p>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">
+                            Όχι
+                        </button>
+                        <a class="btn btn-primary" href="{{ path_for('application_form', {}, { load: 1 }) }}">Ναι</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     <script type="text/template" id="app-form-item-row-template">
         <td>{{ macros.itemCount('qty', 'Πλήθος') }}</td>
         <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices) }}</td>

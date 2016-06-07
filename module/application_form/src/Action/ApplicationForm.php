@@ -107,9 +107,17 @@ class ApplicationForm
             ];
         }
 
+        $loadForm             = (bool) $req->getParam('load', false);
+        $this->view['choose'] = !$loadForm && !$req->isPost();
+        if (!$req->isPost() && $loadForm) {
+            if (null !== ($appForm = $this->appFormService->findSchoolApplicationForm($school->id))) {
+                $this->view['form'] = [
+                    'values' => $appForm,
+                ];
+            }
+        }
         $labs = $this->labService->getLabsBySchoolId($school->id);
-
-        $res = $this->view->render($res, 'application_form/form.twig', [
+        $res  = $this->view->render($res, 'application_form/form.twig', [
             'lab_choices' => array_map(function ($lab) {
                 return ['value' => $lab['id'], 'label' => $lab['name']];
             }, $labs),

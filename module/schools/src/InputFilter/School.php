@@ -115,7 +115,7 @@ class School
         $eduadminId->setRequired(false)
             ->getFilterChain()
             ->attach(new Filter\ToInt());
-        
+
         $creator = new Input('creator');
         $creator->setRequired(true)
             ->getValidatorChain()
