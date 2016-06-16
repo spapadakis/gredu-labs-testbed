@@ -2,7 +2,7 @@
 
 /**
  * gredu_labs.
- * 
+ *
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
  *
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)

@@ -1,15 +1,19 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <link href="{{ base_url() }}/css/application_form/pdf.css" rel="stylesheet" type="text/css">
+        <meta charset="UTF-8">
+        <style type="text/css">
+            {{ style|raw }}
+        </style>
     </head>
     <body>
         <div class="header">
-            <img src="{{ base_url() }}/img/minedu_logo.jpg"> 
+            <img src="data:image/jpg;base64,{{ logo|raw }}">
             <div class="h1">
                 EduLabs<br>
                 <a href="{{ base_url() }}">{{ base_url() }}</a>
             </div>
-            
+
         </div>
         {% include 'application_form/result.twig' %}
     </body>

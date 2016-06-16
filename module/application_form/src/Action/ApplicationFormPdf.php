@@ -2,7 +2,7 @@
 
 /**
  * gredu_labs.
- * 
+ *
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
  *
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
@@ -47,12 +47,14 @@ class ApplicationFormPdf
         $html = $this->view->fetch('application_form/pdf.twig', [
             'school'  => $school,
             'appForm' => $appForm,
+            'logo'    => base64_encode(file_get_contents(__DIR__ . '/../../public/img/application_form/minedu_logo.jpg')),
+            'style'   => file_get_contents(__DIR__ . '/../../public/css/application_form/pdf.css'),
         ]);
         $pdf = new \Dompdf\Dompdf([
             'default_paper_size'   => 'A4',
             'default_font'         => 'DejaVu Sans',
             'isHtml5ParserEnabled' => true,
-            'is_remote_enabled'    => true,
+            'is_remote_enabled'    => false,
         ]);
         $pdf->loadHtml($html);
         $pdf->render();

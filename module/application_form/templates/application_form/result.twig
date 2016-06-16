@@ -2,7 +2,7 @@
     {% block title %}
         Επιτυχής Καταχώρηση <small>αίτησης για νέο εξοπλισμό</small>
     {% endblock %}
-</h1> 
+</h1>
 <p class="no-print">Η αίτηση για το σχολείο {{ school.name }} με <strong>Α/Α {{ appForm.id }}</strong>, καταχωρήθηκε επιτυχώς.</p>
 
 <h2>Στοιχεία αίτησης</h2>
@@ -46,7 +46,9 @@
             {% endfor %}
         </tbody>
         <tfoot>
-        <td colspan="4"></td>
+            <tr>
+                <td colspan="4"></td>
+            </tr>
         </tfoot>
     </table>
 </div>
