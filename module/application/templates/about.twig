@@ -2,7 +2,7 @@
 {% block content %}
     <div class="about">
         <div class="row">
-            <h1 class="col-xs-12 col-sm-12 col-md-9">Σχετικά με τη δράση</h1>
+            <h1 class="col-xs-12">Σχετικά με τη δράση</h1>
             <div class="col-xs-12">
                 <p>Στο πλαίσιο της προσπάθειας να διαμορφωθεί το σχολείο του 
                     αύριο, το Υπουργείο Παιδείας, Έρευνας και Θρησκευμάτων 
@@ -84,6 +84,9 @@
                     φόρουμ( <a href="{{ _forum_url }}">{{ _forum_url }}</a> ) μέσω 
                     του οποίου θα απαντώνται όλα τα ερωτήματα των σχολείων. 
             </div>
+        </div>
+        <div class="row">
+            {% include 'edulabs-perigrafi.twig' %}
         </div>
     </div>
 {% endblock %}
