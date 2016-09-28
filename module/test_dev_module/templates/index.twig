@@ -1,0 +1,42 @@
+{% extends '@application/index.twig' %}
+{# This will bypass any extentions made by other modules... #}
+{% block content %}
+    <div class="row in-numbers">
+        <div class="col-md-9">{{ parent() }}</div>
+        <div class="col-md-3">
+            <form method="get" action="{{ path_for('test-dev-hello') }}" id="test-dev-hello-form" class="form-horizontal">
+                <div class="panel panel-default panel-in-numbers">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Testdevmodule</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>{{ testdevmodule_msg }}</p>
+
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="input-group">
+                                    <input name="name" type="text" value="" class="form-control" placeholder="Το ονοματάκι σας;"  autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
+                        <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
+
+                    </div>
+                    <div class="panel-footer">
+                        <div class="form-group text-center">
+                            <button name="sayhello" type="submit" value="1" class="btn btn-primary">Ένα επώνυμο Γεια!</button>
+                        </div>
+                        <div class="text-right">
+                            <a href="{{ path_for('test-dev-hello') }}" title="Πείτε ένα Γεια">
+                                ή έστω ένα σκέτο Γεια!
+                                <i class="fa fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "layout.twig" %}
+{% block content %}
+    <h1>Γεια σου!</h1>
+    <p>{{ simple_message}}</p>
+
+    <a href="{{ path_for('index') }}" title="Αρχική" class="btn btn-default">
+        <i class="fa fa-home"></i>
+        Πίσω στην αρχική σελίδα
+    </a>
+{% endblock %}
