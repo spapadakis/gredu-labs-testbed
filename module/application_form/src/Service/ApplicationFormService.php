@@ -28,6 +28,7 @@ class ApplicationFormService implements ApplicationFormServiceInterface
             $item->lab_id          = $itemData['lab_id'];
             $item->itemcategory_id = $itemData['itemcategory_id'];
             $item->qty             = $itemData['qty'];
+            $item->qtyacquired     = $itemData['qtyacquired'];
             $item->reasons         = $itemData['reasons'];
             $items[]               = $item;
         }

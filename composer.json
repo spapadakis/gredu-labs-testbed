@@ -28,7 +28,7 @@
         "monolog/monolog": "^1.13",
         "slim/csrf": "^0.6.0",
         "slim/flash": "^0.1.0",
-        "slim/slim": "^3.0",
+        "slim/slim": "^3.5",
         "slim/twig-view": "^2.0",
         "zendframework/zend-authentication": "^2.0",
         "zendframework/zend-crypt": "^2.0",

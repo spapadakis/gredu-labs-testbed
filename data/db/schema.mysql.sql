@@ -51,6 +51,7 @@ CREATE TABLE `applicationformitem` (
   `reasons` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `applicationform_id` int(11) unsigned NOT NULL,
   `lab_id` int(11) unsigned NOT NULL,
+  `qtyacquired` int(11) unsigned DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `index_foreignkey_applicationformitem_itemcategory` (`itemcategory_id`),
   KEY `index_foreignkey_applicationformitem_applicationform` (`applicationform_id`),
@@ -158,6 +159,7 @@ DROP TABLE IF EXISTS `itemcategory`;
 CREATE TABLE `itemcategory` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `groupflag` int(11) unsigned DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
