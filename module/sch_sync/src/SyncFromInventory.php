@@ -77,6 +77,7 @@ class SyncFromInventory
     {
         $school = $this->schoolService->getSchool($school_id);
         try {
+            /* inventory service called once here. Returns $equipment object */
             $equipment = $this->inventoryService->getUnitEquipment($school['registry_no']);
         } catch (Exception $e) {
             $this->logger->error(sprintf('Problem retrieving assets from inventory for school %s', $school_id));
