@@ -1,0 +1,27 @@
+<?php return [
+    'inventory' => [
+        'base_uri' => '',
+        'category_map' => [
+            // form inventory => in database
+            'ACCESS POINT'        => 'ACCESS POINT',
+            'LAPTOP'              => 'LAPTOP',
+            'MODEM / ROUTER'      => 'MODEM / ROUTER',
+            'PATCH PANEL'         => 'PATCH PANEL',
+            'PRINTER'             => 'PRINTER',
+            'RACK'                => 'RACK',
+            'SCANNER'             => 'SCANNER',
+            'SERVER'              => 'SERVER',
+            'SWITCH/ HUB'         => 'SWITCH/ HUB',
+            'TABLET'              => 'TABLET',
+            'WEBCAM'              => 'WEBCAM',
+            'WORKSTATION'         => 'ΣΤΑΘΜΟΣ ΕΡΓΑΣΙΑΣ',
+            'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ'     => 'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ',
+            'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ' => 'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ',
+            'ΕΠΕΞΕΡΓΑΣΤΗΣ (CPU)'  => 'ΕΠΕΞΕΡΓΑΣΤΗΣ (CPU)',
+            'ΚΙΝΗΤΟ ΕΡΓΑΣΤΗΡΙΟ'   => 'ΚΙΝΗΤΟ ΕΡΓΑΣΤΗΡΙΟ',
+            'ΜΝΗΜΗ RAM'           => 'ΜΝΗΜΗ RAM',
+            'ΟΘΟΝΗ'               => 'ΟΘΟΝΗ',
+            'ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ'      => 'ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ',
+        ],
+    ],
+];

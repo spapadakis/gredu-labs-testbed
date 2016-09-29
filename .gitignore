@@ -3,4 +3,3 @@ nbproject
 *.sublime-workspace
 .phpintel
 vendor
-config/*
