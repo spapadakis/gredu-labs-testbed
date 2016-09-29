@@ -1,63 +1,54 @@
 <?php
-
-
+/**
+ * gredu_labs.
+ *
+ * @link https://github.com/eellak/gredu_labs for the canonical source repository
+ *
+ * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
+ * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
+ */
 namespace GrEduLabs\open_data\Action;
-
 use GrEduLabs\open_data\Service\ODAServiceInterface;
-use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
-
-class Index
-{
+use Slim\Container;
+class Index {
     protected $odaService;
-    
-    protected $c;
-
-    public function __construct(ODAServiceInterface $odaservice, Container $c) {
-        $this->odaService   = $odaservice;
-        $this->c = $c;
+    protected $ci;
+    public function __construct(
+    Container $ci, ODAServiceInterface $odaservice
+    ) {
+        $this->ci = $ci;
+        $this->odaService = $odaservice;
     }
-
-    public function __invoke(Request $req, Response $res, array $args = [])
-    {
-
+    public function __invoke(Request $req, Response $res, array $args = []) {
         $queryType = strtoupper($req->getQueryParam('queryType', ''));
         $outputFormat = strtoupper($req->getQueryParam('outputFormat', 'JSON'));
         $data = ['Wrong URL' => 'Something mistyped maybe'];
-        switch($queryType) {
-            case 'SCHOOLS' : 
+        switch ($queryType) {
+            case 'SCHOOLS' :
                 $data = $this->odaService->getSchools();
                 break;
-            
-            case 'LABS' : 
+            case 'LABS' :
                 $data = $this->odaService->getLabs();
                 break;
-            
-            case 'ASSETS' : 
+            case 'ASSETS' :
                 $data = $this->odaService->getAssets();
                 break;
-            
-            case 'APPFORMS' : 
+            case 'APPFORMS' :
                 $data = $this->odaService->getAppForms();
                 break;
-            
-            case 'APPFORMSITEMS' : 
+            case 'APPFORMSITEMS' :
                 $data = $this->odaService->getAppFormsItems();
                 break;
-            
-            case 'SOFTWARE' : 
+            case 'SOFTWARE' :
                 $data = $this->odaService->getSoftwareItems();
                 break;
-            
         }
-        
-        switch($outputFormat) {
-            case 'JSON' : 
+        switch ($outputFormat) {
+            case 'JSON' :
                 return $res->withJson($data);
-            
-            case 'XML' :
-                // we deal only with arrays...
+            case 'XML':
                 if (is_scalar($data) || is_object($data) || is_resource($data)) {
                     $data = [$data];
                 }
@@ -88,22 +79,13 @@ class Index
                     return $res->withStatus($status);
                 }
                 return $res;
-
                 break;
-            
-            case 'HTML' : 
-                // to do
-                //            return $res->withJson($outputFormat);
-                  
-                $this->c['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/../../templates');
-                $view = $this->c->get('view');
-                  
+            case 'HTML' :
+                $view = $this->ci->get('view');
+                $view->getEnvironment()->getLoader()->prependPath(__DIR__ . '/../../templates');
                 $view['data'] = $data;
-                return $this->c->view->render($res, 'api-html.twig');
+                return $view->render($res, 'open_data/api-html-generic.twig');
                 break;
-            
         }
-        
-
     }
 }

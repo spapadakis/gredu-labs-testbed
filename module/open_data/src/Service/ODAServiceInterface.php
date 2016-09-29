@@ -1,7 +1,5 @@
 <?php
-
 namespace GrEduLabs\open_data\Service;
-
 interface ODAServiceInterface
 {
     public function getSchools();

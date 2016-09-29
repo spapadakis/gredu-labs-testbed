@@ -1,12 +1,11 @@
 <?php
-
 namespace GrEduLabs\open_data\Service;
-
 use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
-
+/**
+ * TODO: modify LIMIT 100 after tests...
+ */
 class ODAService implements ODAServiceInterface {
-
     public function getSchools() {
         $sql = 'SELECT school.registry_no AS registry_no, '
                 . ' school.name AS school_name, '
@@ -22,12 +21,11 @@ class ODAService implements ODAServiceInterface {
                 . ' LEFT JOIN schooltype ON school.schooltype_id = schooltype.id '
                 . ' LEFT JOIN prefecture ON school.prefecture_id = prefecture.id '
                 . ' GROUP BY school.id '
-                . ' ORDER BY school_name';
+                . ' ORDER BY school_name' 
+                . ' LIMIT 100 ';
         $schools = R::getAll($sql);
-
         return $schools;
     }
-
     public function getLabs() {
         $sql = 'SELECT lab.id AS id, '
                 . ' school.registry_no AS school_registry_no, '
@@ -50,15 +48,12 @@ class ODAService implements ODAServiceInterface {
                 . ' LEFT JOIN teacher ON lab.responsible_id = teacher.id '
                 . ' LEFT JOIN branch ON branch.id = teacher.branch_id '
                 . ' GROUP BY lab.id '
-                . ' ORDER BY school_name ';
-
+                . ' ORDER BY school_name '
+                . ' LIMIT 100 ';
         $labs = R::getAll($sql);
-
         return $labs;
     }
-
     public function getAssets() {
-
         $sql = 'SELECT TRIM(itemcategory.name) AS category, '
                 . ' schoolasset.qty AS qty, '
                 . ' schoolasset.acquisition_year AS acquisition_year, '
@@ -73,15 +68,12 @@ class ODAService implements ODAServiceInterface {
                 . ' LEFT JOIN lab ON schoolasset.lab_id = lab.id '
                 . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
                 . ' GROUP BY schoolasset.id '
-                . ' ORDER BY lab.id';
-
+                . ' ORDER BY lab.id'
+                . ' LIMIT 100 ';
         $assets = R::getAll($sql);
-
         return $assets;
     }
-
     public function getAppForms() {
-
         $sql = 'SELECT applicationform.id AS id, '
                 . ' school.registry_no AS school_registry_no, '
                 . ' school.name AS school_name, '
@@ -90,26 +82,21 @@ class ODAService implements ODAServiceInterface {
                 . ' FROM applicationform '
                 . ' LEFT JOIN school ON applicationform.school_id = school.id '
                 . ' GROUP BY school.id '
-                . ' HAVING MAX(applicationform.submitted)';
-
+                . ' HAVING MAX(applicationform.submitted)'
+                . ' LIMIT 100 ';
         $appForms = R::getAll($sql);
-
         return $appForms;
     }
-
     public function getAppFormsItems() {
-
         $appFormIdsSql = 'SELECT applicationform.id '
                 . ' FROM applicationform '
                 . ' GROUP BY school_id '
-                . ' HAVING MAX(applicationform.submitted)';
-
+                . ' HAVING MAX(applicationform.submitted)'
+                                . ' LIMIT 100 ';
         $appFormIds = R::getCol($appFormIdsSql);
-
         if (empty($appFormIds)) {
             return [];
         }
-
         $in = implode(',', array_fill(0, count($appFormIds), '?'));
         $sql = 'SELECT applicationform.id AS id, '
                 . ' school.registry_no AS school_registry_no, '
@@ -128,14 +115,10 @@ class ODAService implements ODAServiceInterface {
                 . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                 . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
                 . ' WHERE applicationform.id IN(' . $in . ') ';
-
         $appFormsItems = R::getAll($sql, $appFormIds);
-
         return $appFormsItems;
     }
-
     public function getSoftwareItems() {
-
         $sql = 'SELECT softwarecategory.name AS name, '
                 . ' school.registry_no AS school_registry_no, '
                 . ' school.name AS school_name, '
@@ -149,19 +132,15 @@ class ODAService implements ODAServiceInterface {
                 . ' LEFT JOIN school ON software.school_id = school.id '
                 . ' LEFT JOIN lab ON software.lab_id = lab.id '
                 . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
-                . ' ORDER BY school_name ';
-
+                . ' ORDER BY school_name '
+                                . ' LIMIT 100 ';
         $softwareItems = R::getAll($sql);
-
         $softwareItems = array_map(function ($row) {
             $row['url'] = strtolower($row['url']);
             $row['url'] = str_replace('\\', '/', $row['url']);
             $row['url'] = urldecode($row['url']);
-
             return $row;
         }, $softwareItems);
-
         return $softwareItems;
     }
-
 }
