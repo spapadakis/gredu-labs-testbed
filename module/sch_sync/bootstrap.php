@@ -57,6 +57,7 @@ return function (App $app) {
             $settings = $c->get('settings');
             $categoryMap = isset($settings['inventory']['category_map'])
                 ? $settings['inventory']['category_map'] : [];
+            $currentVersion = $settings['application_form']['itemcategory']['currentversion'];
 
             return new \SchSync\SyncFromInventory(
                 $c->get(LabServiceInterface::class),
@@ -64,7 +65,8 @@ return function (App $app) {
                 $c->get('SchInventory\\Service'),
                 $c->get(SchoolServiceInterface::class),
                 $c->get('logger'),
-                $categoryMap
+                $categoryMap,
+                $currentVersion
            );
         };
 
