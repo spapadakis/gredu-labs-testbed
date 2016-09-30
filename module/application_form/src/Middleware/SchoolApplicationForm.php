@@ -47,11 +47,13 @@ class SchoolApplicationForm
                 $category = $item['itemcategory_id'];
                 if (!isset($aggr[$category])) {
                     $aggr[$category] = [
-                        'category' => $item['itemcategory'],
-                        'count'    => 0,
+                        'category'      => $item['itemcategory'],
+                        'count'         => 0,
+                        'countAcquired' => 0,
                     ];
                 }
                 $aggr[$category]['count'] += $item['qty'];
+                $aggr[$category]['countAcquired'] += $item['qtyacquired'];
 
                 return $aggr;
             }, []);

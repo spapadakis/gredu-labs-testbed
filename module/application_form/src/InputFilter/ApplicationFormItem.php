@@ -58,6 +58,18 @@ class ApplicationFormItem extends InputFilter
                 'min' => 0,
             ]));
 
+        $qtyacquired = new Input('qtyacquired');
+        $qtyacquired->setRequired(true)
+                ->getFilterChain()
+                ->attach(new Filter\ToInt());
+        $qtyacquired->getValidatorChain()
+                ->attach(new Validator\NotEmpty())
+                ->attach(new Validator\GreaterThan([
+                    'min' => 0,
+                    'inclusive' => true
+                        ]
+        ));
+
         $reasons = new Input('reasons');
         $reasons->setRequired(true)
             ->getFilterChain()
@@ -69,6 +81,7 @@ class ApplicationFormItem extends InputFilter
         $this->add($labId)
             ->add($itemCategoryId)
             ->add($qty)
+            ->add($qtyacquired)
             ->add($reasons);
     }
 }

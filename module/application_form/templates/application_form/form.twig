@@ -13,10 +13,10 @@
     </div>
 {% endmacro %}
 
-{% macro itemCount(name, label, value, index) %}
+{% macro itemCount(name, label, value, index, minvalue) %}
     <div class="form-group">
         <div class="col-xs-12 col-sm-12 col-md-9">
-            <input placeholder="{{ label|striptags }}" class="form-control input-sm" min="1"
+            <input placeholder="{{ label|striptags }}" class="form-control input-sm" min="{{ minvalue|default(1)}}"
                 type="number" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]" value="{{ value|default('')|raw }}">
         </div>
     </div>
@@ -111,7 +111,8 @@
                     <table class="table table-hover table-striped">
                         <thead>
                             <tr>
-                                <th>Πλήθος</th>
+                                <th>Πλήθος αιτούμενων</th>
+                                <th>Πλήθος υπαρχόντων</th>
                                 <th>Τύπος</th>
                                 <th>Χώρος</th>
                                 <th>Αιτιολογία χρήσης</th>
@@ -122,6 +123,7 @@
                             {% for itemIndex,item in form.values.items %}
                                 <tr>
                                     <td>{{ macros.itemCount('qty', 'Πλήθος', item.qty, loop.index0) }}</td>
+                                    <td>{{ macros.itemCount('qtyacquired', 'Πλήθος', item.qtyacquired, loop.index0, 0) }}</td>
                                     <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, item.itemcategory_id, loop.index0) }}</td>
                                     <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, item.lab_id, loop.index0 ) }}</td>
                                     <td>{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης', item.reasons, loop.index0) }}</td>
@@ -135,6 +137,7 @@
                             {% else %}
                                 <tr>
                                     <td>{{ macros.itemCount('qty', 'Πλήθος', '', 0) }}</td>
+                                    <td>{{ macros.itemCount('qtyacquired', 'Πλήθος', '', 0, 0) }}</td>
                                     <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, '', 0) }}</td>
                                     <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, '', 0 ) }}</td>
                                     <td>{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης', '', 0) }}</td>
@@ -183,6 +186,7 @@
     {% endif %}
     <script type="text/template" id="app-form-item-row-template">
         <td>{{ macros.itemCount('qty', 'Πλήθος') }}</td>
+        <td>{{ macros.itemCount('qtyacquired', 'Πλήθος', '', '', 0) }}</td>
         <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices) }}</td>
         <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices) }}</td>
         <td>{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης') }}</td>

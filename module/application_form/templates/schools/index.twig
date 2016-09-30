@@ -122,14 +122,16 @@
                                             <thead>
                                                 <tr>
                                                     <th>Είδος/Τύπος</th>
-                                                    <th>Ποσότητα</th>
+                                                    <th class="text-right">Αιτούμενη ποσότητα</th>
+                                                    <th class="text-right">Ποσότητα υπαρχόντων</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {% for item in appForm.items %}
                                                     <tr>
                                                         <th>{{ item.category }}</th>
-                                                        <td>{{ item.count }}<td>
+                                                        <td class="text-right">{{ item.count }}</td>
+                                                        <td class="text-right">{{ item.countAcquired }}</td>
                                                     </tr>
                                                 {% endfor %}
                                             </tbody>
