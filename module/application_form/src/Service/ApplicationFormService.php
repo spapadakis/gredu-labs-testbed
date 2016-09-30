@@ -58,6 +58,7 @@ class ApplicationFormService implements ApplicationFormServiceInterface
             return array_merge($itemBean->export(), [
                 'lab'          => $itemBean->lab->name,
                 'itemcategory' => $itemBean->itemcategory->name,
+                'version'      => $itemBean->itemcategory->groupflag,
             ]);
         }, $bean->ownApplicationformitemList);
 

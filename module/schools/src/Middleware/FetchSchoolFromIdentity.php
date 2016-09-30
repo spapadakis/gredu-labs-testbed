@@ -33,6 +33,9 @@ class FetchSchoolFromIdentity
             return $res->withStatus(403, 'No school');
         }
 
-        return $next($req->withAttribute('school', (object) $school->export()), $res);
+        return $next($req->withAttribute('school', (object) array_merge($school->export(), [
+            'eduadmin' => $school->eduadmin->name,
+            'regioneduadmin' => $school->eduadmin->regioneduadmin->name,
+        ])), $res);
     }
 }

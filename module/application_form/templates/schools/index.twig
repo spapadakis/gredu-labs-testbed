@@ -110,6 +110,10 @@
                                             <dd>{{ school.name }}</dd>
                                             <dt>Κωδικός Υπουργείου</dt>
                                             <dd>{{ school.registry_no }}<dd>
+                                            <dt>Διεύθυνση</dt>
+                                            <dd>{{ school.eduadmin }}<dd>
+                                            <dt>Περιφέρεια</dt>
+                                            <dd>{{ school.regioneduadmin }}<dd>
                                         </dl>
                                         <dl class="col-lg-12">
                                             <dt>Σχόλια/Παρατηρήσεις</dt>
@@ -122,14 +126,23 @@
                                             <thead>
                                                 <tr>
                                                     <th>Είδος/Τύπος</th>
-                                                    <th>Ποσότητα</th>
+                                                    <th class="text-right">Αιτούμενη ποσότητα</th>
+                                                    <th class="text-right">Ποσότητα υπαρχόντων που λειτουργούν</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {% for item in appForm.items %}
                                                     <tr>
-                                                        <th>{{ item.category }}</th>
-                                                        <td>{{ item.count }}<td>
+                                                        <th>{{ item.category }} 
+                                                            {% if item.available == "UNAVAILABLE" %}
+                                                                <span class="label label-danger">Δεν είναι διαθέσιμο στη νέα αίτηση</span>
+                                                            {% elseif item.available == "LATEST" %}
+                                                            {% elseif item.available == "MIGRATE" %}
+                                                                <span class="label label-info">Έχει αντικατασταθεί το είδος στη νέα αίτηση</span>
+                                                            {% endif %}
+                                                        </th>
+                                                        <td class="text-right">{{ item.count }}</td>
+                                                        <td class="text-right">{{ item.countAcquired }}</td>
                                                     </tr>
                                                 {% endfor %}
                                             </tbody>
