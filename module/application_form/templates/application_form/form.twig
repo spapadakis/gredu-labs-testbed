@@ -124,7 +124,16 @@
                                 <tr>
                                     <td>{{ macros.itemCount('qty', 'Πλήθος', item.qty, loop.index0) }}</td>
                                     <td>{{ macros.itemCount('qtyacquired', 'Πλήθος', item.qtyacquired, loop.index0, 0) }}</td>
-                                    <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, item.itemcategory_id, loop.index0) }}</td>
+                                    <td>
+                                        {{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, item.itemcategory_id, loop.index0) }}
+                                        {% if item.prev_form_load == true %}
+                                            {% if item.itemcategory_id_prev != -1 %}
+                                                <p class="text-info"><small>Το είδος {{ item.itemcategory }} έχει αντικατασταθεί στη νέα αίτηση.</small></p>
+                                            {% else %}
+                                                <p class="text-danger">Δεν είναι διαθέσιμο το είδος {{ item.itemcategory }} στη νέα αίτηση. Θα πρέπει να το καταργήσετε ή να επιλέξετε νέο είδος εξοπλισμού.</p>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
                                     <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, item.lab_id, loop.index0 ) }}</td>
                                     <td>{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης', item.reasons, loop.index0) }}</td>
                                     <td>

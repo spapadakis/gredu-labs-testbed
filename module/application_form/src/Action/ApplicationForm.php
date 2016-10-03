@@ -1,4 +1,5 @@
 <?php
+
 /**
  * gredu_labs.
  *
@@ -19,8 +20,8 @@ use Slim\Views\Twig;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\InputFilter\InputFilterInterface;
 
-class ApplicationForm
-{
+class ApplicationForm {
+
     /**
      * @var Twig
      */
@@ -55,6 +56,18 @@ class ApplicationForm
      * @var AuthenticationServiceInterface
      */
     protected $authService;
+    
+    /**
+     *
+     * @var int The version of the application form to handle
+     */
+    protected $version;
+    
+    /**
+     *
+     * @var type SLIM application container 
+     */
+    protected $container;
 
     /**
      *
@@ -70,56 +83,91 @@ class ApplicationForm
         InputFilterInterface $appFormInputFilter,
         AuthenticationServiceInterface $authService,
         $successUrl,
-        $version
+        $version,
+        $container
     ) {
-        $this->view               = $view;
-        $this->assetsService      = $assetsService;
-        $this->labService         = $labService;
-        $this->appFormService     = $appFormService;
+        $this->view = $view;
+        $this->assetsService = $assetsService;
+        $this->labService = $labService;
+        $this->appFormService = $appFormService;
         $this->appFormInputFilter = $appFormInputFilter;
         $this->authService        = $authService;
         $this->successUrl         = $successUrl;
         $this->version            = $version;
+        $this->container = $container;
     }
 
-    public function __invoke(Request $req, Response $res)
-    {
+    public function __invoke(Request $req, Response $res) {
         $school = $req->getAttribute('school');
 
         if ($req->isPost()) {
             $this->appFormInputFilter->setData(array_merge($req->getParams(), [
-                'school_id'   => $school->id,
-                'submitted_by'=> $this->authService->getIdentity()->mail,
+                'school_id' => $school->id,
+                'submitted_by' => $this->authService->getIdentity()->mail,
             ]));
             $isValid = $this->appFormInputFilter->isValid();
             if ($isValid) {
-                $data                                   = $this->appFormInputFilter->getValues();
-                $appForm                                = $this->appFormService->submit($data);
+                $data = $this->appFormInputFilter->getValues();
+                $appForm = $this->appFormService->submit($data);
                 $_SESSION['applicationForm']['appForm'] = $appForm;
-                $res                                    = $res->withRedirect($this->successUrl);
+                $res = $res->withRedirect($this->successUrl);
 
                 return $res;
             }
 
             $this->view['form'] = [
-                'is_valid'   => $isValid,
-                'values'     => $this->appFormInputFilter->getValues(),
+                'is_valid' => $isValid,
+                'values' => $this->appFormInputFilter->getValues(),
                 'raw_values' => $this->appFormInputFilter->getRawValues(),
-                'messages'   => $this->appFormInputFilter->getMessages(),
+                'messages' => $this->appFormInputFilter->getMessages(),
             ];
         }
 
-        $loadForm             = (bool) $req->getParam('load', false);
+        $loadForm = (bool) $req->getParam('load', false);
         $this->view['choose'] = !$loadForm && !$req->isPost();
         if (!$req->isPost() && $loadForm) {
+            // take care of new options in applications and migrate existing ones
             if (null !== ($appForm = $this->appFormService->findSchoolApplicationForm($school->id))) {
+//                $this->view['form'] = [
+//                    'values' => $appForm,
+//                ];
+                $this->container['logger']->info("Checking for migration");
+                /**
+                 * Do mapping of old items to new only if items do exit (old form) 
+                 * and the map is available at the app settings 
+                 * TODO CHECK VERSIONS!!!! 
+                 */
+                if (isset($appForm['items']) &&
+                        isset($this->container['settings']['application_form']['itemcategory']['map']['items'])) {
+                    $items_map = $this->container['settings']['application_form']['itemcategory']['map']['items'];
+                    $appForm['items'] = array_map(function ($item) use ($items_map) {
+                        $migrate_values = [];
+                        $this->container['logger']->info(var_export($item, true));
+                        $this->container['logger']->info(var_export($items_map[$item['itemcategory_id']], true));
+                        if (isset($items_map[$item['itemcategory_id']]) &&
+                                intval($items_map[$item['itemcategory_id']]) > 0) {
+                            $migrate_values = [
+                                'itemcategory_prev' => $item['itemcategory_id'],
+                                'itemcategory_id_prev' => $item['itemcategory_id'],
+                                'itemcategory_id' => intval($items_map[$item['itemcategory_id']]),
+                            ];
+                        } else {
+                            $migrate_values = [
+                                'itemcategory_prev' => '',
+                                'itemcategory_id_prev' => -1,
+                            ];
+                        }
+                        $migrate_values['prev_form_load'] = true;
+                        return array_merge($item, $migrate_values);
+                    }, $appForm['items']);
+                }
                 $this->view['form'] = [
                     'values' => $appForm,
                 ];
             }
         }
         $labs = $this->labService->getLabsBySchoolId($school->id);
-        $res  = $this->view->render($res, 'application_form/form.twig', [
+        $res = $this->view->render($res, 'application_form/form.twig', [
             'lab_choices' => array_map(function ($lab) {
                 return ['value' => $lab['id'], 'label' => $lab['name']];
             }, $labs),

@@ -129,7 +129,13 @@
                                             <tbody>
                                                 {% for item in appForm.items %}
                                                     <tr>
-                                                        <th>{{ item.category }}</th>
+                                                        <th>{{ item.category }} {{ item.available }} 
+                                                            {% if item.available == null %}
+                                                                <span class="label label-danger">Δεν είναι διαθέσιμο στη νέα αίτηση</span>
+                                                            {% else %}
+                                                                <span class="label label-info">Έχει αντικατασταθεί το είδος στη νέα αίτηση</span>
+                                                            {% endif %}
+                                                        </th>
                                                         <td class="text-right">{{ item.count }}</td>
                                                         <td class="text-right">{{ item.countAcquired }}</td>
                                                     </tr>

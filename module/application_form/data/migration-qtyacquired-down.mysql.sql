@@ -3,4 +3,5 @@ DROP COLUMN `qtyacquired` ;
 
 ALTER TABLE `itemcategory` 
 DROP COLUMN `groupflag` ;
+ALTER TABLE `itemcategory` 
 DROP COLUMN `sort` ;

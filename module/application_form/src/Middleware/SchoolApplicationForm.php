@@ -24,6 +24,7 @@ class SchoolApplicationForm
      * @var Twig
      */
     protected $view;
+    protected $container;
 
     /**
      *
@@ -31,10 +32,11 @@ class SchoolApplicationForm
      */
     protected $appFormService;
 
-    public function __construct(Twig $view, ApplicationFormServiceInterface $appFormService)
+    public function __construct(Twig $view, ApplicationFormServiceInterface $appFormService, $container)
     {
         $this->view           = $view;
         $this->appFormService = $appFormService;
+        $this->container = $container;
     }
 
     public function __invoke(Request $req, Response $res, callable $next)
@@ -51,6 +53,17 @@ class SchoolApplicationForm
                         'count'         => 0,
                         'countAcquired' => 0,
                     ];
+                    $this->container['logger']->info("Checking for migration..."); // TODO 
+                    // TODO CHECK VERSIONS!!!! 
+                    if (isset($this->container['settings']['application_form']['itemcategory']['map'])
+                        && isset($this->container['settings']['application_form']['itemcategory']['map']['items'][$item['itemcategory_id']])
+                        && intval($this->container['settings']['application_form']['itemcategory']['map']['items'][$item['itemcategory_id']]) > 0) {
+                        $aggr[$category]['category_id_new'] = $this->container['settings']['application_form']['itemcategory']['map']['items'][$item['itemcategory_id']];
+                        $aggr[$category]['available'] = true;
+                    } else {
+                        $aggr[$category]['category_id_new'] = null;
+                        $aggr[$category]['available'] = false;
+                    }
                 }
                 $aggr[$category]['count'] += $item['qty'];
                 $aggr[$category]['countAcquired'] += $item['qtyacquired'];

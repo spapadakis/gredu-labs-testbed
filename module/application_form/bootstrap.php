@@ -54,7 +54,8 @@ return function (Slim\App $app) {
                 $c->get(GrEduLabs\ApplicationForm\InputFilter\ApplicationForm::class),
                 $c->get('authentication_service'),
                 $c->get('router')->pathFor('application_form.submit_success'),
-                $currentVersion
+                $currentVersion,
+                $c
             );
         };
 
@@ -82,7 +83,8 @@ return function (Slim\App $app) {
         $container[GrEduLabs\ApplicationForm\Middleware\SchoolApplicationForm::class] = function ($c) {
             return new GrEduLabs\ApplicationForm\Middleware\SchoolApplicationForm(
                 $c->get('view'),
-                $c->get(GrEduLabs\ApplicationForm\Service\ApplicationFormServiceInterface::class)
+                $c->get(GrEduLabs\ApplicationForm\Service\ApplicationFormServiceInterface::class),
+                $c
             );
         };
     });
