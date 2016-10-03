@@ -69,7 +69,8 @@ class ApplicationForm
         ApplicationFormServiceInterface $appFormService,
         InputFilterInterface $appFormInputFilter,
         AuthenticationServiceInterface $authService,
-        $successUrl
+        $successUrl,
+        $version
     ) {
         $this->view               = $view;
         $this->assetsService      = $assetsService;
@@ -78,6 +79,7 @@ class ApplicationForm
         $this->appFormInputFilter = $appFormInputFilter;
         $this->authService        = $authService;
         $this->successUrl         = $successUrl;
+        $this->version            = $version;
     }
 
     public function __invoke(Request $req, Response $res)
@@ -123,7 +125,7 @@ class ApplicationForm
             }, $labs),
             'type_choices' => array_map(function ($category) {
                 return ['value' => $category['id'], 'label' => $category['name']];
-            }, $this->assetsService->getAllItemCategories()),
+            }, $this->assetsService->getAllItemCategories($this->version)),
         ]);
 
         return $res;

@@ -14,7 +14,7 @@ return [
         'module/authentication/bootstrap.php',
         'module/authorization/bootstrap.php',
         'module/sch_ldap/bootstrap.php',
-        'module/sch_sso/bootstrap.php',
+ //       'module/sch_sso/bootstrap.php',
         'module/sch_mm/bootstrap.php',
         'module/sch_inventory/bootstrap.php',
  //       'module/sch_sync/bootstrap.php',

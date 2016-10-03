@@ -58,12 +58,11 @@ class AssetService implements AssetServiceInterface, SchoolAssetsInterface
         ));
     } */
     
-    public function getAllItemCategories()
+    public function getAllItemCategories($version)
     {
-        // current version 1 = current group of items to fetch, groupflag must be 1
         return array_values(array_map(
             [$this, 'exportItemCategory'],
-            R::find('itemcategory', ' groupflag = 1 ORDER BY sort ASC ', []) 
+            R::find('itemcategory', ' groupflag = ' . $version . ' ORDER BY sort ASC ', []) 
         ));
     }
 

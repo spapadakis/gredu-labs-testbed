@@ -44,6 +44,8 @@ return function (Slim\App $app) {
         };
 
         $container[GrEduLabs\ApplicationForm\Action\ApplicationForm::class] = function ($c) {
+            $settings = $c->get('settings');
+            $currentVersion = $settings['application_form']['itemcategory']['currentversion'];
             return new GrEduLabs\ApplicationForm\Action\ApplicationForm(
                 $c->get('view'),
                 $c->get(GrEduLabs\Schools\Service\AssetServiceInterface::class),
@@ -51,7 +53,8 @@ return function (Slim\App $app) {
                 $c->get(GrEduLabs\ApplicationForm\Service\ApplicationFormServiceInterface::class),
                 $c->get(GrEduLabs\ApplicationForm\InputFilter\ApplicationForm::class),
                 $c->get('authentication_service'),
-                $c->get('router')->pathFor('application_form.submit_success')
+                $c->get('router')->pathFor('application_form.submit_success'),
+                $currentVersion
             );
         };
 
