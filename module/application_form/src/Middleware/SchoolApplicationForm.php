@@ -45,24 +45,49 @@ class SchoolApplicationForm
 
         $appForm = $this->appFormService->findSchoolApplicationForm($school->id);
         if ($appForm) {
-            $appForm['items'] = array_reduce($appForm['items'], function ($aggr, $item) {
+            $settings = $this->container->get('settings');
+            $currentVersion = $settings['application_form']['itemcategory']['currentversion'];
+            // get the existing (db) application form version
+            $items_version = $currentVersion;
+            if (isset($appForm['items']) && \count($appForm['items']) > 0) {
+                $items_version = array_values($appForm['items'])[0]['version'];
+            }
+
+            $this->container['logger']->info("DO THE MIGRATION CHECK TO VERSION [{$currentVersion}] FROM VERSION [{$items_version}]");
+
+            $appForm['items'] = array_reduce($appForm['items'], function ($aggr, $item) use ($currentVersion, $items_version) {
                 $category = $item['itemcategory_id'];
                 if (!isset($aggr[$category])) {
                     $aggr[$category] = [
                         'category'      => $item['itemcategory'],
                         'count'         => 0,
                         'countAcquired' => 0,
+                        'available'     => 'LATEST'
                     ];
-                    $this->container['logger']->info("Checking for migration..."); // TODO 
-                    // TODO CHECK VERSIONS!!!! 
-                    if (isset($this->container['settings']['application_form']['itemcategory']['map'])
-                        && isset($this->container['settings']['application_form']['itemcategory']['map']['items'][$item['itemcategory_id']])
-                        && intval($this->container['settings']['application_form']['itemcategory']['map']['items'][$item['itemcategory_id']]) > 0) {
-                        $aggr[$category]['category_id_new'] = $this->container['settings']['application_form']['itemcategory']['map']['items'][$item['itemcategory_id']];
-                        $aggr[$category]['available'] = true;
-                    } else {
-                        $aggr[$category]['category_id_new'] = null;
-                        $aggr[$category]['available'] = false;
+
+                    /**
+                     * Do mapping of old items to new only if items do exist (old form) 
+                     * and the map is available at the app settings.
+                     * TODO: Only one version migrations are supported. If the old items are
+                     * two or more versions older, they will not be handled.
+                     */
+                    if ($currentVersion != $items_version &&
+                        isset($this->container['settings']['application_form']['itemcategory']['map']) &&
+                        $this->container['settings']['application_form']['itemcategory']['map']['fromversion'] == $items_version &&
+                        $this->container['settings']['application_form']['itemcategory']['map']['toversion'] == $currentVersion &&
+                        isset($this->container['settings']['application_form']['itemcategory']['map']['items'])) {
+
+                        if (isset($this->container['settings']['application_form']['itemcategory']['map']['items'][$item['itemcategory_id']]) &&
+                            intval($this->container['settings']['application_form']['itemcategory']['map']['items'][$item['itemcategory_id']]) > 0) {
+                            $aggr[$category]['available'] = "MIGRATE";
+                        } else {
+                            $aggr[$category]['available'] = "UNAVAILABLE";
+                        }
+                    } elseif ($currentVersion != $items_version &&
+                        isset($this->container['settings']['application_form']['itemcategory']['map']) &&
+                        ($this->container['settings']['application_form']['itemcategory']['map']['fromversion'] != $items_version ||
+                        $this->container['settings']['application_form']['itemcategory']['map']['toversion'] != $currentVersion)) {
+                        $aggr[$category]['available'] = "UNAVAILABLE";
                     }
                 }
                 $aggr[$category]['count'] += $item['qty'];

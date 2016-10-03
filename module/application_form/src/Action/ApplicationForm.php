@@ -56,13 +56,13 @@ class ApplicationForm {
      * @var AuthenticationServiceInterface
      */
     protected $authService;
-    
+
     /**
      *
      * @var int The version of the application form to handle
      */
     protected $version;
-    
+
     /**
      *
      * @var type SLIM application container 
@@ -76,24 +76,16 @@ class ApplicationForm {
     protected $successUrl;
 
     public function __construct(
-        Twig $view,
-        AssetServiceInterface $assetsService,
-        LabServiceInterface $labService,
-        ApplicationFormServiceInterface $appFormService,
-        InputFilterInterface $appFormInputFilter,
-        AuthenticationServiceInterface $authService,
-        $successUrl,
-        $version,
-        $container
+    Twig $view, AssetServiceInterface $assetsService, LabServiceInterface $labService, ApplicationFormServiceInterface $appFormService, InputFilterInterface $appFormInputFilter, AuthenticationServiceInterface $authService, $successUrl, $version, $container
     ) {
         $this->view = $view;
         $this->assetsService = $assetsService;
         $this->labService = $labService;
         $this->appFormService = $appFormService;
         $this->appFormInputFilter = $appFormInputFilter;
-        $this->authService        = $authService;
-        $this->successUrl         = $successUrl;
-        $this->version            = $version;
+        $this->authService = $authService;
+        $this->successUrl = $successUrl;
+        $this->version = $version;
         $this->container = $container;
     }
 
@@ -128,22 +120,29 @@ class ApplicationForm {
         if (!$req->isPost() && $loadForm) {
             // take care of new options in applications and migrate existing ones
             if (null !== ($appForm = $this->appFormService->findSchoolApplicationForm($school->id))) {
-//                $this->view['form'] = [
-//                    'values' => $appForm,
-//                ];
-                $this->container['logger']->info("Checking for migration");
                 /**
-                 * Do mapping of old items to new only if items do exit (old form) 
-                 * and the map is available at the app settings 
-                 * TODO CHECK VERSIONS!!!! 
+                 * Do mapping of old items to new only if items do exist (old form) 
+                 * and the map is available at the app settings.
+                 * TODO: Only one version migrations are supported. If the old items are
+                 * two or more versions older, they will not be handled.
                  */
-                if (isset($appForm['items']) &&
+                // get the existing (db) application form version
+                $items_version = $this->version;
+                if (isset($appForm['items']) && \count($appForm['items']) > 0) {
+                    $items_version = array_values($appForm['items'])[0]['version'];
+                }
+
+                $this->container['logger']->info("DO THE MIGRATION CHECK TO VERSION [{$this->version}] FROM VERSION [{$items_version}]");
+                if ($this->version != $items_version &&
+                        isset($appForm['items']) &&
+                        isset($this->container['settings']['application_form']['itemcategory']['map']) &&
+                        $this->container['settings']['application_form']['itemcategory']['map']['fromversion'] == $items_version &&
+                        $this->container['settings']['application_form']['itemcategory']['map']['toversion'] == $this->version &&
                         isset($this->container['settings']['application_form']['itemcategory']['map']['items'])) {
+                    // if map exists for this version, use it
                     $items_map = $this->container['settings']['application_form']['itemcategory']['map']['items'];
                     $appForm['items'] = array_map(function ($item) use ($items_map) {
                         $migrate_values = [];
-                        $this->container['logger']->info(var_export($item, true));
-                        $this->container['logger']->info(var_export($items_map[$item['itemcategory_id']], true));
                         if (isset($items_map[$item['itemcategory_id']]) &&
                                 intval($items_map[$item['itemcategory_id']]) > 0) {
                             $migrate_values = [
@@ -160,7 +159,23 @@ class ApplicationForm {
                         $migrate_values['prev_form_load'] = true;
                         return array_merge($item, $migrate_values);
                     }, $appForm['items']);
+                } elseif ($this->version != $items_version &&
+                        isset($appForm['items']) &&
+                        isset($this->container['settings']['application_form']['itemcategory']['map']) &&
+                        ($this->container['settings']['application_form']['itemcategory']['map']['fromversion'] != $items_version ||
+                        $this->container['settings']['application_form']['itemcategory']['map']['toversion'] != $this->version)) {
+                    // if map does not exist for this version, notify user
+                    $items_map = $this->container['settings']['application_form']['itemcategory']['map']['items'];
+                    $appForm['items'] = array_map(function ($item) use ($items_map) {
+                        $migrate_values = [
+                            'itemcategory_prev' => '',
+                            'itemcategory_id_prev' => -2,
+                            'prev_form_load' => true
+                        ];
+                        return array_merge($item, $migrate_values);
+                    }, $appForm['items']);
                 }
+
                 $this->view['form'] = [
                     'values' => $appForm,
                 ];
@@ -169,13 +184,15 @@ class ApplicationForm {
         $labs = $this->labService->getLabsBySchoolId($school->id);
         $res = $this->view->render($res, 'application_form/form.twig', [
             'lab_choices' => array_map(function ($lab) {
-                return ['value' => $lab['id'], 'label' => $lab['name']];
-            }, $labs),
-            'type_choices' => array_map(function ($category) {
-                return ['value' => $category['id'], 'label' => $category['name']];
-            }, $this->assetsService->getAllItemCategories($this->version)),
-        ]);
+                        return ['value' => $lab['id'], 'label' => $lab['name']];
+                    }, $labs),
+                    'type_choices' => array_map(function ($category) {
+                        return ['value' => $category['id'], 'label' => $category['name']];
+                    }, $this->assetsService->getAllItemCategories($this->version)),
+                ]);
 
-        return $res;
-    }
-}
+                return $res;
+            }
+
+        }
+        

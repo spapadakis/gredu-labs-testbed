@@ -127,7 +127,9 @@
                                     <td>
                                         {{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, item.itemcategory_id, loop.index0) }}
                                         {% if item.prev_form_load == true %}
-                                            {% if item.itemcategory_id_prev != -1 %}
+                                            {% if item.itemcategory_id_prev == -2 %}
+                                                <p class="text-warning"><small>Τα είδη έχουν τροποποιηθεί. Παρακαλούμε επιλέξτε εκ νέου από τη λίστα το είδος {{ item.itemcategory }} εφόσον είναι διαθέσιμο.</small></p>
+                                            {% elseif item.itemcategory_id_prev == -1 %}
                                                 <p class="text-info"><small>Το είδος {{ item.itemcategory }} έχει αντικατασταθεί στη νέα αίτηση.</small></p>
                                             {% else %}
                                                 <p class="text-danger">Δεν είναι διαθέσιμο το είδος {{ item.itemcategory }} στη νέα αίτηση. Θα πρέπει να το καταργήσετε ή να επιλέξετε νέο είδος εξοπλισμού.</p>

@@ -129,10 +129,11 @@
                                             <tbody>
                                                 {% for item in appForm.items %}
                                                     <tr>
-                                                        <th>{{ item.category }} {{ item.available }} 
-                                                            {% if item.available == null %}
+                                                        <th>{{ item.category }}  {{ item.available }} 
+                                                            {% if item.available == "UNAVAILABLE" %}
                                                                 <span class="label label-danger">Δεν είναι διαθέσιμο στη νέα αίτηση</span>
-                                                            {% else %}
+                                                            {% elseif item.available == "LATEST" %}
+                                                            {% elseif item.available == "MIGRATE" %}
                                                                 <span class="label label-info">Έχει αντικατασταθεί το είδος στη νέα αίτηση</span>
                                                             {% endif %}
                                                         </th>
