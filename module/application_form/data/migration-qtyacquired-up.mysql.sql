@@ -35,3 +35,5 @@ INSERT INTO `itemcategory` (`id`,`name`,`groupflag`,`sort`) VALUES
 (123,'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ (INTERACTIVE SET)', 1,23);
 /*!40000 ALTER TABLE `itemcategory` ENABLE KEYS */;
 UNLOCK TABLES;
+
+ALTER TABLE `itemcategory` AUTO_INCREMENT = 200;
