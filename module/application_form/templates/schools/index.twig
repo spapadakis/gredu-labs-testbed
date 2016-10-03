@@ -129,7 +129,7 @@
                                             <tbody>
                                                 {% for item in appForm.items %}
                                                     <tr>
-                                                        <th>{{ item.category }}  {{ item.available }} 
+                                                        <th>{{ item.category }} 
                                                             {% if item.available == "UNAVAILABLE" %}
                                                                 <span class="label label-danger">Δεν είναι διαθέσιμο στη νέα αίτηση</span>
                                                             {% elseif item.available == "LATEST" %}
