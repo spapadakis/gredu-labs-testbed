@@ -33,6 +33,7 @@
         removeRow: function (evt) {
             if (this.$el.find('tbody tr').length > 1) {
                 $(evt.target).closest('tr').remove();
+                this.itemCount -= 1;
             }
             return this;
         }
