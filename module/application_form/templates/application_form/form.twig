@@ -64,6 +64,13 @@
     </div>
 {% endmacro %}
 
+{% macro infoBox(boxtype, msg) %}
+    <div class="alert alert-{{ boxtype }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Κλείσιμο"><span aria-hidden="true">&times;</span></button>
+        <p class="text-{{ boxtype }}">{{ msg | raw }}</p>
+    </div>
+{% endmacro %}
+
 {% block content %}
     {% import _self as macros %}
 
@@ -128,12 +135,13 @@
                                         {{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, item.itemcategory_id, loop.index0) }}
                                         {% if item.prev_form_load == true %}
                                             {% if item.itemcategory_id_prev == -2 %}
-                                                <p class="text-warning"><small>Τα είδη έχουν τροποποιηθεί. Παρακαλούμε επιλέξτε εκ νέου από τη λίστα το είδος {{ item.itemcategory }} εφόσον είναι διαθέσιμο.</small></p>
+                                                {{ macros.infoBox('warning', "<small>Τα είδη έχουν τροποποιηθεί. Παρακαλούμε επιλέξτε εκ νέου από τη λίστα το είδος #{ item.itemcategory } εφόσον είναι διαθέσιμο.</small>") }}
                                             {% elseif item.itemcategory_id_prev == -1 %}
-                                                <p class="text-info"><small>Το είδος {{ item.itemcategory }} έχει αντικατασταθεί στη νέα αίτηση.</small></p>
+                                                {{ macros.infoBox('info', "<small>Το είδος #{ item.itemcategory } έχει αντικατασταθεί στη νέα αίτηση.</small>") }}
                                             {% else %}
-                                                <p class="text-danger">Δεν είναι διαθέσιμο το είδος {{ item.itemcategory }} στη νέα αίτηση. Θα πρέπει να το καταργήσετε ή να επιλέξετε νέο είδος εξοπλισμού.</p>
+                                                {{ macros.infoBox('danger', "Δεν είναι διαθέσιμο το είδος #{ item.itemcategory } στη νέα αίτηση. Θα πρέπει να το καταργήσετε ή να επιλέξετε νέο είδος εξοπλισμού.") }}
                                             {% endif %}
+                                            </div>
                                         {% endif %}
                                     </td>
                                     <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, item.lab_id, loop.index0 ) }}</td>
