@@ -137,9 +137,9 @@
                                             {% if item.itemcategory_id_prev == -2 %}
                                                 {{ macros.infoBox('warning', "<small>Τα είδη έχουν τροποποιηθεί. Παρακαλούμε επιλέξτε εκ νέου από τη λίστα το είδος #{ item.itemcategory } εφόσον είναι διαθέσιμο.</small>") }}
                                             {% elseif item.itemcategory_id_prev == -1 %}
-                                                {{ macros.infoBox('info', "<small>Το είδος #{ item.itemcategory } έχει αντικατασταθεί στη νέα αίτηση.</small>") }}
-                                            {% else %}
                                                 {{ macros.infoBox('danger', "Δεν είναι διαθέσιμο το είδος #{ item.itemcategory } στη νέα αίτηση. Θα πρέπει να το καταργήσετε ή να επιλέξετε νέο είδος εξοπλισμού.") }}
+                                            {% else %}
+                                                {{ macros.infoBox('info', "<small>Το είδος #{ item.itemcategory } έχει αντικατασταθεί στη νέα αίτηση.</small>") }}
                                             {% endif %}
                                             </div>
                                         {% endif %}
