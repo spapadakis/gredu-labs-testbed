@@ -118,10 +118,10 @@
                     <table class="table table-hover table-striped table-condensed">
                         <thead>
                             <tr>
-                                <th class="col-xs-2">Πλήθος αιτούμενων</th>
-                                <th class="col-xs-2">Πλήθος υπαρχόντων</th>
+                                <th>Πλήθος αιτούμενων</th>
+                                <th>Πλήθος υπαρχόντων</th>
                                 <th class="col-xs-3">Τύπος</th>
-                                <th class="col-xs-2">Χώρος</th>
+                                <th class="col-xs-3">Χώρος</th>
                                 <th class="col-xs-3">Αιτιολογία χρήσης</th>
                                 <th></th>
                             </tr>
@@ -129,8 +129,8 @@
                         <tbody>
                             {% for itemIndex,item in form.values.items %}
                                 <tr>
-                                    <td class="col-xs-2">{{ macros.itemCount('qty', 'Πλήθος', item.qty, loop.index0) }}</td>
-                                    <td class="col-xs-2">{{ macros.itemCount('qtyacquired', 'Πλήθος', item.qtyacquired, loop.index0, 0) }}</td>
+                                    <td>{{ macros.itemCount('qty', 'Πλήθος', item.qty, loop.index0) }}</td>
+                                    <td>{{ macros.itemCount('qtyacquired', 'Πλήθος', item.qtyacquired, loop.index0, 0) }}</td>
                                     <td class="col-xs-3">
                                         {{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, item.itemcategory_id, loop.index0) }}
                                         {% if item.prev_form_load == true %}
@@ -144,7 +144,7 @@
                                             </div>
                                         {% endif %}
                                     </td>
-                                    <td class="col-xs-2">{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, item.lab_id, loop.index0 ) }}</td>
+                                    <td class="col-xs-3">{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, item.lab_id, loop.index0 ) }}</td>
                                     <td class="col-xs-3">{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης', item.reasons, loop.index0) }}</td>
                                     <td>
                                         {% if loop.index0 > 0 %}
@@ -155,10 +155,10 @@
                                 </tr>
                             {% else %}
                                 <tr>
-                                    <td class="col-xs-2">{{ macros.itemCount('qty', 'Πλήθος', '', 0) }}</td>
-                                    <td class="col-xs-2">{{ macros.itemCount('qtyacquired', 'Πλήθος', '', 0, 0) }}</td>
+                                    <td>{{ macros.itemCount('qty', 'Πλήθος', '', 0) }}</td>
+                                    <td>{{ macros.itemCount('qtyacquired', 'Πλήθος', '', 0, 0) }}</td>
                                     <td class="col-xs-3">{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, '', 0) }}</td>
-                                    <td class="col-xs-2">{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, '', 0 ) }}</td>
+                                    <td class="col-xs-3">{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, '', 0 ) }}</td>
                                     <td class="col-xs-3">{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης', '', 0) }}</td>
                                     <td></td>
                                 </tr>
