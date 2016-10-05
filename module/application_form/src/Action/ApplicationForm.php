@@ -101,7 +101,18 @@ class ApplicationForm {
         $school = $req->getAttribute('school');
 
         if ($req->isPost()) {
-            $this->appFormInputFilter->setData(array_merge($req->getParams(), [
+            $reqParams = $req->getParams();
+            $items = $reqParams['items'];
+            $itemsNew = array();
+            $itemsLength = count($items);
+            $j = 0;
+            foreach ($items as $item) {
+                $itemsNew[$j] = $item;
+                $j++;
+            }
+            $reqParams['items'] = $itemsNew;
+            var_export($reqParams);
+            $this->appFormInputFilter->setData(array_merge($reqParams, [
                 'school_id' => $school->id,
                 'submitted_by' => $this->authService->getIdentity()->mail,
             ]));
@@ -143,7 +154,8 @@ class ApplicationForm {
                     $appForm['items'] = array_map(function ($item) use ($items_map) {
                         $migrate_values = [];
                         $this->container['logger']->info(var_export($item, true));
-                        $this->container['logger']->info(var_export($items_map[$item['itemcategory_id']], true));
+ 
+//                        $this->container['logger']->info(var_export($items_map[$item['itemcategory_id']], true));
                         if (isset($items_map[$item['itemcategory_id']]) &&
                                 intval($items_map[$item['itemcategory_id']]) > 0) {
                             $migrate_values = [

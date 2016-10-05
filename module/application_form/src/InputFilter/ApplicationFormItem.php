@@ -39,7 +39,6 @@ class ApplicationFormItem extends InputFilter
                 'callback' => function ($value) use ($assetsService) {
                     try {
                         $type = $assetsService->getItemCategoryById($value);
-
                         return $type && $type['id'] == $value;
                     } catch (Exception $ex) {
                         return false;
