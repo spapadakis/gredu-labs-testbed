@@ -102,16 +102,7 @@ class ApplicationForm {
 
         if ($req->isPost()) {
             $reqParams = $req->getParams();
-            $items = $reqParams['items'];
-            $itemsNew = array();
-            $itemsLength = count($items);
-            $j = 0;
-            foreach ($items as $item) {
-                $itemsNew[$j] = $item;
-                $j++;
-            }
-            $reqParams['items'] = $itemsNew;
-            var_export($reqParams);
+            array_splice($reqParams['items'], 0, 0);
             $this->appFormInputFilter->setData(array_merge($reqParams, [
                 'school_id' => $school->id,
                 'submitted_by' => $this->authService->getIdentity()->mail,
