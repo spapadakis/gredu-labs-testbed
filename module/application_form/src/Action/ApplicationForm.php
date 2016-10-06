@@ -93,7 +93,9 @@ class ApplicationForm {
         $school = $req->getAttribute('school');
 
         if ($req->isPost()) {
-            $this->appFormInputFilter->setData(array_merge($req->getParams(), [
+            $reqParams = $req->getParams();
+            array_splice($reqParams['items'], 0, 0);
+            $this->appFormInputFilter->setData(array_merge($reqParams, [
                 'school_id' => $school->id,
                 'submitted_by' => $this->authService->getIdentity()->mail,
             ]));
