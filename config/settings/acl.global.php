@@ -39,6 +39,8 @@ return [
                 ['/in_numbers', ['guest', 'user'], ['get']],
                 ['/export/csv/edulabs_{type}.csv', ['guest', 'user'], ['get']],
                 ['/open-data', ['guest', 'user'], ['get']],
+                ['/upload', ['user'], ['post']],
+                ['/file-upload', ['user'], ['get']],
             ],
         ],
     ],

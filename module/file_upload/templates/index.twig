@@ -1,0 +1,10 @@
+{% extends "layout.twig" %}
+{% block content %}
+    
+<h1>Αποστολή Αρχείου</h1>
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+            <label>Επιλέξτε αρχείο:</label>
+            <input type="file" name="newfile">
+            <button type="submit">Αποστολή</button>
+        </form>
+{% endblock %}

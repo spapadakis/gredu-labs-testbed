@@ -65,6 +65,14 @@ return [
                 'external' => true,
                 'target'   => '_blank',
             ],
+            'upload' => [
+                'label' => 'test upload',
+                'route' => 'file_upload',
+            ],
+            'file-upload' => [
+                'label' => 'test file upload',
+                'route' => 'file_upload_view',
+            ],
 
         ],
     ],
