@@ -4,37 +4,19 @@ use Slim\App;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use GrEduLabs\open_data\Action;
-use GrEduLabs\open_data\Service;
+
+/**
+ * gredu_labs.
+ *
+ * @link https://github.com/eellak/gredu_labs for the canonical source repository
+ *
+ * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
+ * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
+ */
 
 return function (App $app) {
     $container = $app->getContainer();
-    $events = $container['events'];
-
-    $events('on', 'app.autoload', function ($autoloader) {
-        $autoloader->addPsr4('GrEduLabs\\open_data\\', __DIR__ . '/src/');
-    });
-
-    $events('on', 'app.services', function ($container) {
-
-        // actions
-
-        $container[Action\Index::class] = function ($c) {
-            return new Action\Index(
-                    $c, $c->get(Service\ODAServiceInterface::class)
-            );
-        };
-
-        // services
-
-        $container['odaservice'] = function ($c) {
-            return $c->get(Service\ODAServiceInterface::class);
-        };
-
-        $container[Service\ODAServiceInterface::class] = function ($c) {
-            return new Service\ODAService();
-        };
-    });
+    $events    = $container['events'];
 
     $events('on', 'app.bootstrap', function (App $app, Container $c) {
 
@@ -44,10 +26,5 @@ return function (App $app) {
 
             return $view->render($res, 'open_data/index.twig');
         })->setName('open_data');
-
-      $app->get('/open-data/api', Action\Index::class
-     )->setName('open_data_api');
-
- 
     });
 };
