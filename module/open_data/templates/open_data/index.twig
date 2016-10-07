@@ -12,7 +12,8 @@
     <table class="table">
         <thead>
             <tr>
-                <th colspan="2">Λίστα αρχείων</th>
+                <th>Δεδομένα</th>
+                <th>Μεταφόρτωση αρχείου</th>
             <tr>
         </thead>
         <tbody>
@@ -21,16 +22,16 @@
                 <td>
                     <a href="{{ path_for('export.csv', {type: 'schools'}) }}">
                         <i class="fa fa-download"></i>
-                        Μεταφόρτωση αρχείου .csv
+                        Αρχείο .csv
                     </a>
                 </td>
-            </tr>
+                           </tr>
             <tr>
                 <td>Χώροι μονάδων που καταγράφηκαν από τη δράση</td>
                 <td>
                     <a href="{{ path_for('export.csv', {type: 'labs'}) }}">
                         <i class="fa fa-download"></i>
-                        Μεταφόρτωση αρχείου .csv
+                        Αρχείο .csv
                     </a>
                 </td>
             </tr>
@@ -39,7 +40,7 @@
                 <td>
                     <a href="{{ path_for('export.csv', {type: 'assets'}) }}">
                         <i class="fa fa-download"></i>
-                        Μεταφόρτωση αρχείου .csv
+                        Αρχείο .csv
                     </a>
                 </td>
             </tr>
@@ -48,7 +49,7 @@
                 <td>
                     <a href="{{ path_for('export.csv', {type: 'software'}) }}">
                         <i class="fa fa-download"></i>
-                        Μεταφόρτωση αρχείου .csv
+                        Αρχείο .csv
                     </a>
                 </td>
             </tr>
@@ -57,19 +58,33 @@
                 <td>
                     <a href="{{ path_for('export.csv', {type: 'appforms'}) }}">
                         <i class="fa fa-download"></i>
-                        Μεταφόρτωση αρχείου .csv
+                        Αρχείο .csv
                     </a>
                 </td>
+ 
             </tr>
             <tr>
                 <td>Εξοπλισμός που αιτήθηκαν οι μονάδες</td>
                 <td>
                     <a href="{{ path_for('export.csv', {type: 'appforms_items'}) }}">
                         <i class="fa fa-download"></i>
-                        Μεταφόρτωση αρχείου .csv
+                        Αρχείο .csv
                     </a>
                 </td>
             </tr>
+
+        <tr>
+                <td>Εξοπλισμός που αιτήθηκαν οι μονάδες με τις νέες αιτήσεις</td>
+                <td>
+                    <a href="{{ path_for('export.csv', {type: 'newapplication'}) }}">
+                        <i class="fa fa-download"></i>
+                        Αρχείο .csv
+                    </a>
+                </td>
+            </tr>
+
+
+
         </tbody>
         <tfoot>
             <tr><th colspan="2"></th><tr>
