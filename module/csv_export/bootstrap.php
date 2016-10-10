@@ -68,6 +68,19 @@ return function (App $app) {
                         'Σχόλια - Παρατηρήσεις',
                     ],
                 ],
+                 'software' => [
+                    'data_callback' => 'csv_export_software',
+                    'headers' => [
+                        'Τύπος',
+                        'Κωδικός σχολείου',
+                        'Ονομασία σχολείου',
+                        'ID χώρου',
+                        'Τύπος χώρου',
+                        'Ονομασία',
+                        'Κατασκευαστής',
+                        'URL',
+                    ],
+                ],
                 'appforms' => [
                     'data_callback' => 'csv_export_appforms',
                     'headers' => [
@@ -78,6 +91,19 @@ return function (App $app) {
                         'Σχόλια - Παρατηρήσεις',
                     ],
                 ],
+             
+ 				'appnewforms' => [
+                    'data_callback' => 'csv_export_appnewforms',
+                    'headers' => [
+                        'ID',
+                        'Κωδικός σχολείου',
+                        'Ονομασία σχολείου',
+                        'Ημερομηνία υποβολής',
+                        'Σχόλια - Παρατηρήσεις',
+                    ],
+                ],
+             
+
                 'appforms_items' => [
                     'data_callback' => 'csv_export_appforms_items',
                     'headers' => [
@@ -93,19 +119,6 @@ return function (App $app) {
                         'Αιτιολογία χρήσης',
                     ],
                 ],
-                'software' => [
-                    'data_callback' => 'csv_export_software',
-                    'headers' => [
-                        'Τύπος',
-                        'Κωδικός σχολείου',
-                        'Ονομασία σχολείου',
-                        'ID χώρου',
-                        'Τύπος χώρου',
-                        'Ονομασία',
-                        'Κατασκευαστής',
-                        'URL',
-                    ],
-                ],
                 'newapplication' => [
                     'data_callback' => 'csv_export_newapplication',
                     'headers' => [
@@ -115,6 +128,7 @@ return function (App $app) {
                         'Είδος',
                         'Πλήθος Υπαρχόντων που λειτουργούν',
                         'Πλήθος Αιτουμένων',
+                        'Αιτιολογία χρήσης',
                     ],
                 ],
             ];
@@ -235,68 +249,10 @@ return function (App $app) {
             };
         };
 
-        $c['csv_export_appforms'] = function ($c) {
+  
 
-            return function () {
-                $sql = 'SELECT applicationform.id AS id, '
-                        . ' school.registry_no AS school_registry_no, '
-                        . ' school.name AS school_name, '
-                        . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
-                        . ' TRIM(applicationform.comments) AS comments '
-                        . ' FROM applicationform '
-                        . ' LEFT JOIN school ON applicationform.school_id = school.id '
-                        . ' GROUP BY school.id '
-                        . ' HAVING MAX(applicationform.submitted)';
 
-                $appForms = R::getAll($sql);
-
-                return $appForms;
-            };
-        };
-
-        $c['csv_export_appforms_items'] = function ($c) {
-
-            return function () {
-
-                $appFormIdsSql = 'SELECT id FROM applicationform WHERE (submitted) IN( SELECT MAX(submitted) FROM applicationform GROUP BY school_id)';
-
-                //$appFormIdsSql = 'SELECT applicationform.id '
-                //   . ' FROM applicationform '
-                //   . ' GROUP BY school_id '
-                //  . ' HAVING MAX(applicationform.submitted)';
-
-                $appFormIds = R::getCol($appFormIdsSql);
-
-                if (empty($appFormIds)) {
-                    return [];
-                }
-
-                $in = implode(',', array_fill(0, count($appFormIds), '?'));
-                $sql = 'SELECT applicationform.id AS id, '
-                        . ' school.registry_no AS school_registry_no, '
-                        . ' school.name AS school_name, '
-                        . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
-                        . ' lab.id AS lab_id, '
-                        . ' TRIM(labtype.name) AS lab_type, '
-                        . ' IF(lab.is_new = 1, "ΝΑΙ", "ΟΧΙ") AS is_new, '
-                        . ' TRIM(itemcategory.name) AS category, '
-                        . ' applicationformitem.qty AS qty, '
-                        . ' TRIM(applicationformitem.reasons) AS reasons '
-                        . ' FROM applicationformitem '
-                        . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
-                        . ' LEFT JOIN school ON applicationform.school_id = school.id '
-                        . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
-                        . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
-                        . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
-                        . ' WHERE applicationform.id IN(' . $in . ') ';
-
-                $appForms = R::getAll($sql, $appFormIds);
-
-                return $appForms;
-            };
-        };
-
-        $c['csv_export_software'] = function ($c) {
+   $c['csv_export_software'] = function ($c) {
 
             return function () {
                 $sql = 'SELECT softwarecategory.name AS name, '
@@ -329,6 +285,174 @@ return function (App $app) {
         };
 
 
+
+
+
+
+
+
+
+        $c['csv_export_appforms'] = function ($c) {
+
+            //return function () {
+        	 return function () use ($c) {
+				$settings = $c->get('settings');
+                $version = $settings['application_form']['itemcategory']['currentversion'];
+
+                $appFormIdsSql = 'SELECT id FROM applicationform WHERE (submitted)IN (SELECT MAX( submitted )FROM applicationform '
+                				. ' LEFT JOIN applicationformitem ON applicationformitem.applicationform_id = applicationform.id '
+								. ' LEFT JOIN school ON applicationform.school_id = school.id'
+								. ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id'
+								. ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id'
+								. ' LEFT JOIN labtype ON lab.labtype_id = labtype.id'
+								. ' WHERE itemcategory.groupflag NOT IN(' . $version . ')'
+								. ' GROUP BY school.id)';
+
+
+
+                $appFormIds = R::getCol($appFormIdsSql);
+
+                if (empty($appFormIds)) {
+                    return [];
+                }
+
+                $in = implode(',', array_fill(0, count($appFormIds), '?'));
+
+
+				 $sql = 'SELECT applicationform.id AS id, '
+                       . ' school.registry_no AS school_registry_no, '
+                        . ' school.name AS school_name, '
+                        . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
+                        . ' TRIM(applicationform.comments) AS comments' 
+                        . ' FROM applicationformitem '
+                        . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
+                        . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                        . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
+                        . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
+                        . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
+                        . ' WHERE applicationform.id IN(' . $in . ')'
+                          . ' GROUP BY school.id ';
+
+                $appForms = R::getAll($sql, $appFormIds);
+
+                return $appForms;
+
+
+              //  $sql = 'SELECT applicationform.id AS id, '
+              //          . ' school.registry_no AS school_registry_no, '
+              //          . ' school.name AS school_name, '
+               //         . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
+               //         . ' TRIM(applicationform.comments) AS comments '
+               //         . ' FROM applicationform '
+                //        . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                //        . ' GROUP BY school.id '
+                //        . ' HAVING MAX(applicationform.submitted)';
+
+//                $appForms = R::getAll($sql);
+
+  //              return $appForms;
+            };
+        };
+
+
+        $c['csv_export_appnewforms'] = function ($c) {
+
+       return function () use ($c) {
+
+
+                $appFormIdsSql = 'SELECT id FROM applicationform WHERE (submitted) IN( SELECT MAX(submitted) FROM applicationform GROUP BY school_id)';
+
+                $appFormIds = R::getCol($appFormIdsSql);
+
+
+                if (empty($appFormIds)) {
+                    return [];
+                }
+                $in = implode(',', array_fill(0, count($appFormIds), '?'));
+
+
+                $settings = $c->get('settings');
+                $version = $settings['application_form']['itemcategory']['currentversion'];
+
+                $sql = 'SELECT applicationform.id AS id, '
+                       . ' school.registry_no AS school_registry_no, '
+                        . ' school.name AS school_name, '
+                        . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
+                        . ' TRIM(applicationform.comments) AS comments' 
+                        . ' FROM applicationformitem '
+                        . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
+                        . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                        . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
+                        . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
+                        . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
+                        . ' WHERE applicationform.id IN(' . $in . ')'
+                        . ' AND itemcategory.groupflag IN(' . $version . ')'
+                        . ' GROUP BY school.id ';
+
+                $appForms = R::getAll($sql, $appFormIds);
+
+                return $appForms;
+            };
+        };
+
+
+
+        $c['csv_export_appforms_items'] = function ($c) {
+
+            return function () use ($c){
+
+            	$settings = $c->get('settings');
+                $version = $settings['application_form']['itemcategory']['currentversion'];
+
+                $appFormIdsSql = 'SELECT id FROM applicationform WHERE (submitted)IN (SELECT MAX( submitted )FROM applicationform '
+                				. ' LEFT JOIN applicationformitem ON applicationformitem.applicationform_id = applicationform.id '
+								. ' LEFT JOIN school ON applicationform.school_id = school.id'
+								. ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id'
+								. ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id'
+								. ' LEFT JOIN labtype ON lab.labtype_id = labtype.id'
+								. ' WHERE itemcategory.groupflag NOT IN(' . $version . ')'
+								. ' GROUP BY school.id)';
+
+
+
+
+              //  $appFormIdsSql = 'SELECT applicationform.id '
+              //     . ' FROM applicationform '
+              //     . ' GROUP BY school_id '
+              //    . ' HAVING MAX(applicationform.submitted)';
+
+                $appFormIds = R::getCol($appFormIdsSql);
+
+                if (empty($appFormIds)) {
+                    return [];
+                }
+
+                $in = implode(',', array_fill(0, count($appFormIds), '?'));
+                $sql = 'SELECT applicationform.id AS id, '
+                        . ' school.registry_no AS school_registry_no, '
+                        . ' school.name AS school_name, '
+                        . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
+                        . ' lab.id AS lab_id, '
+                        . ' TRIM(labtype.name) AS lab_type, '
+                        . ' IF(lab.is_new = 1, "ΝΑΙ", "ΟΧΙ") AS is_new, '
+                        . ' TRIM(itemcategory.name) AS category, '
+                        . ' applicationformitem.qty AS qty, '
+                        . ' TRIM(applicationformitem.reasons) AS reasons '
+                        . ' FROM applicationformitem '
+                        . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
+                        . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                        . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
+                        . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
+                        . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
+                        . ' WHERE applicationform.id IN(' . $in . ') ';
+
+                $appForms = R::getAll($sql, $appFormIds);
+
+                return $appForms;
+            };
+        };
+
+     
         $c['csv_export_newapplication'] = function ($c) {
 
             return function () use ($c) {
@@ -345,8 +469,6 @@ return function (App $app) {
                 $in = implode(',', array_fill(0, count($appFormIds), '?'));
 
 
-                //	$version = container['settings']['application_form']['itemcategory']['currentversion'];
-                //	echo "lalalala".$version . "lalalala";
                 $settings = $c->get('settings');
                 $version = $settings['application_form']['itemcategory']['currentversion'];
 
