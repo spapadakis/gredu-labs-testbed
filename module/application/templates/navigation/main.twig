@@ -27,6 +27,9 @@
             {% for page in nav('main') %}
                 {{ macros.li(page)}}
             {% endfor %}
+            {% for page in nav('admin') %}
+                {{ macros.li(page)}}
+            {% endfor %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
             {% for page in nav('authentication') %}
