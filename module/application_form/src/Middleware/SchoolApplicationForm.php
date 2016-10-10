@@ -53,8 +53,6 @@ class SchoolApplicationForm
                 $items_version = array_values($appForm['items'])[0]['version'];
             }
 
-            $this->container['logger']->info("DO THE MIGRATION CHECK TO VERSION [{$currentVersion}] FROM VERSION [{$items_version}]");
-
             $appForm['items'] = array_reduce($appForm['items'], function ($aggr, $item) use ($currentVersion, $items_version) {
                 $category = $item['itemcategory_id'];
                 if (!isset($aggr[$category])) {

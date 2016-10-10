@@ -134,7 +134,6 @@ class ApplicationForm {
                     $items_version = array_values($appForm['items'])[0]['version'];
                 }
 
-                $this->container['logger']->info("DO THE MIGRATION CHECK TO VERSION [{$this->version}] FROM VERSION [{$items_version}]");
                 if ($this->version != $items_version &&
                         isset($appForm['items']) &&
                         isset($this->container['settings']['application_form']['itemcategory']['map']) &&
