@@ -1,0 +1,19 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div id="adminarea">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Σελίδα διαχειριστή</h4>
+            </div>
+            <div class="panel-body">
+                <p>Διαθέσιμες διαχειριστικές λειτουργίες</p>
+            </div>
+            <div class="panel-footer text-center">
+                <a class="btn btn-sm btn-default" href="{{ path_for('index') }}"><span class="fa fa-home"></span> Αρχική</a>
+                <a class="btn btn-sm btn-primary" href="{{ path_for('admin') }}"><span class="fa fa-user-secret"></span> Διαχειριστής</a>
+                <a class="btn btn-sm btn-default" href="{{ path_for('user.logout') }}"><span class="fa fa-lock"></span> Αποσύνδεση</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
