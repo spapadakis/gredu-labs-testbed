@@ -40,16 +40,14 @@ class EnableDBLogin {
                 if (in_array($routeName, $enableRouteNames) ||
                         in_array($routePattern, $enableRoutePatterns)) {
                     $_SESSION['enableDLogin'] = true;
-                    $this->_c['logger']->info("SET : \$_SESSION['enableDLogin']");
+                    $this->_c['logger']->info("SET enableDLogin via route=[" . var_export($routeName, true) . '], path=[' . var_export($routePattern, true) . ']');
                 }
 
                 if (in_array($routeName, $disableRouteNames) ||
                         in_array($routePattern, $disableRoutePatterns)) {
                     unset($_SESSION['enableDLogin']);
-                    $this->_c['logger']->info("UNSET : \$_SESSION['enableDLogin']");
+                    $this->_c['logger']->info("UNSET enableDLogin via route=[" . var_export($routeName, true) . '], path=[' . var_export($routePattern, true) . ']');
                 }
-
-                $this->_c['logger']->info("CHECK: \$_SESSION['enableDLogin'] = [" . var_export($_SESSION['enableDLogin'], true) . ']');
             }
         }
         return $next($req, $res);
