@@ -9,30 +9,27 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 
-namespace GrEduLabs\Admin\Action;
+namespace GrEduLabs\EnableDBLogin\Action;
 
+use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Slim\Views\Twig;
 
 class Index {
 
-    /**
-     * @var Twig
-     */
-    protected $view;
+    protected $_c;
 
     /**
      * Constructor.
      *
      * @param Twig $view
      */
-    public function __construct(Twig $view) {
-        $this->view = $view;
+    public function __construct(Container $c) {
+        $this->_c = $c;
     }
 
     public function __invoke(Request $req, Response $res) {
-        return $view->view->render($res, 'admin/index.twig');
+        return $res->withRedirect($this->_c['router']->pathFor('index'));
     }
 
 }
