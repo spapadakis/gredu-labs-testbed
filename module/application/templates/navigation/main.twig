@@ -1,5 +1,5 @@
 {% macro li(page) %}
-    
+
     <li role="presentation" class="{% if page.active %}active {% endif %}{{ page.class|default('') }}">
         <a href="{{ page.href }}" {% if page.id %}id="{{ page.id }}"{% endif %} title="{{ page.label|striptags|e }}"
            {% if page.target %}target="{{ page.target }}"{% endif %}>
@@ -24,14 +24,24 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-            {% for page in nav('main') %}
-                {{ macros.li(page)}}
-            {% endfor %}
+                {% for page in nav('main') %}
+                    {{ macros.li(page)}}
+                {% endfor %}
+                {% if not nav('admin') is empty %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="fa fa-user-secret"></span> Διαχειριστής <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            {% for page in nav('admin') %}
+                                {{ macros.li(page)}}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
-            {% for page in nav('authentication') %}
-                {{ macros.li(page)}}
-            {% endfor %}
+                {% for page in nav('authentication') %}
+                    {{ macros.li(page)}}
+                {% endfor %}
             </ul>
         </div>
     </div>
