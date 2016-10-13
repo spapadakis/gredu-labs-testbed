@@ -51,10 +51,21 @@ class ApplicationFormService implements ApplicationFormServiceInterface
         return $this->exportApplicationForm($appForm);
     }
 
-    private function exportApplicationForm(OODBBean $bean)
+    /**
+     * 
+     * @param OODBBean $bean the application form bean
+     * @param boolean $with_school_info if true, the name, eduadmin and regionadmin properties of the school are provided with the exported bean info
+     * @return array
+     */
+    private function exportApplicationForm(OODBBean $bean, $with_school_info = false)
     {
         $appForm          = $bean->export();
-        $appForm['items'] = array_map(function ($itemBean) {
+        if ($with_school_info === true) {
+            $appForm['school'] = $bean->school->name;
+            $appForm['eduadmin'] = $bean->school->eduadmin->name;
+            $appForm['regioneduadmin'] = $bean->school->eduadmin->regioneduadmin->name;
+        }
+        $appForm['items'] = array_map(function ($itemBean) use ($with_school) {
             return array_merge($itemBean->export(), [
                 'lab'          => $itemBean->lab->name,
                 'itemcategory' => $itemBean->itemcategory->name,
@@ -64,4 +75,23 @@ class ApplicationFormService implements ApplicationFormServiceInterface
 
         return $appForm;
     }
+
+    /**
+     * Get all the approved applications
+     * 
+     * @return array The exported bean info from retrieved data
+     */
+    public function findApprovedSchoolApplicationForms()
+    {
+        $appForms = R::findAll('applicationform', ' approved=1');
+//        $appForms = R::findAll('applicationform', ' id in (2614,6775,2533,466,508,2894,5216,322,2901,2413,2476,4002,4205,3720,5404,6374,4172,6320)');
+
+        return array_map(function ($c) {
+                return $this->exportApplicationForm($c, true);
+            },
+//            [$this, 'exportApplicationForm'],
+            $appForms
+        );
+    }
+
 }
