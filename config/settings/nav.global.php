@@ -55,6 +55,10 @@ return [
                 'label' => 'Ανοικτά δεδομένα',
                 'route' => 'open_data',
             ],
+            'approved-applications' => [
+                'label' => 'Αιτήσεις που εγκρίθηκαν',
+                'route' => 'application_form.approved',
+            ],
             'about' => [
                 'label' => 'Σχετικά με τη δράση',
                 'route' => 'about',

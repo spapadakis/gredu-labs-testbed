@@ -1,0 +1,41 @@
+{% extends "layout.twig" %}
+{% block content %}
+    <div id="approved_applications">
+        <h1>Αιτήσεις που εγκρίθηκαν</h1>
+        <p>Ακολουθεί κατάλογος των αιτήσεων οι οποίες εγκρίθηκαν στην πρώτη φάση διεξαγωγής του προγράμματος</p>
+        {% if approved_forms %}
+            <div class="table-responsive">
+                <table class="table table-condensed table-hover">
+                    <caption>Συνολικά {{ approved_forms | length }} εγκεκριμένες αιτήσεις.</caption>
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th class="text-center">Α/Α αίτησης</th>
+                            <th class="text-center">Ημερ. υποβολής</th>
+                            <th>Σχολείο</th>
+                            <th>Είδη στην αίτηση</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in approved_forms %}
+                            <tr>
+                                <td class="text-center col-xs-1">{{ loop.index }}</td>
+                                <td class="text-center col-xs-1">{{ form.id }}</td>
+                                <td class="text-center col-xs-1">{{ form.submitted|date('d/m/Y') }}</td>
+                                <td class="col-xs-4"><strong>{{ form.school }}</strong> <span class="text-muted"><br/>{{ form.eduadmin }}<br/>{{ form.regioneduadmin }}</span></td>
+                                <td class="col-xs-5">
+                                    {% for item in form.items %}
+                                        {{ item.itemcategory }} <span class="badge">{{ item.qty }}</span>{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">Δεν υπάρχουν διαθέσιμα στοιχεία</div>
+        {% endif %} 
+    </div>
+{% endblock %}
+
