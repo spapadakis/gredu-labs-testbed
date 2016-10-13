@@ -48,6 +48,7 @@ CREATE TABLE `applicationformitem` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `itemcategory_id` int(11) unsigned NOT NULL,
   `qty` int(11) unsigned NOT NULL,
+  `qtyacquired` int(11) unsigned NOT NULL DEFAULT 0,
   `reasons` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `applicationform_id` int(11) unsigned NOT NULL,
   `lab_id` int(11) unsigned NOT NULL,
@@ -158,9 +159,11 @@ DROP TABLE IF EXISTS `itemcategory`;
 CREATE TABLE `itemcategory` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `groupflag` int(11) unsigned DEFAULT 0,
+  `sort` int(11) unsigned DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -169,7 +172,54 @@ CREATE TABLE `itemcategory` (
 
 LOCK TABLES `itemcategory` WRITE;
 /*!40000 ALTER TABLE `itemcategory` DISABLE KEYS */;
-INSERT INTO `itemcategory` VALUES (8,'ACCESS POINT'),(26,'ΦΟΡΗΤΟΣ Η/Υ (LAPTOP)'),(6,'MODEM / ROUTER '),(5,'PATCH PANEL'),(14,'ΕΚΤΥΠΩΤΗΣ (PRINTER)'),(3,'ΚΡΙΩΜΑ (RACK)'),(13,'ΣΑΡΩΤΗΣ (SCANNER)'),(24,'SERVER'),(2,'SWITCH/ HUB'),(23,'TABLET'),(11,'WEBCAM'),(22,'ΣΤΑΘΜΟΣ ΕΡΓΑΣΙΑΣ'),(41,'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ'),(40,'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ'),(38,'ΕΠΕΞΕΡΓΑΣΤΗΣ (CPU)'),(34,'ΚΙΝΗΤΟ ΕΡΓΑΣΤΗΡΙΟ'),(32,'ΜΝΗΜΗ RAM'),(30,'ΟΘΟΝΗ'),(29,'ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ'),(42,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΕΚΤΥΠΩΤΗΣ'),(43,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΣΑΡΩΤΗΣ'),(44,'ΣΕΤ ΡΟΜΠΟΤΙΚΗΣ - ΑΙΣΘΗΤΗΡΩΝ'),(45,'ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ');
+INSERT INTO `itemcategory` (`id`,`name`,`groupflag`,`sort`) VALUES 
+(8,'ACCESS POINT',0,8),
+(26,'ΦΟΡΗΤΟΣ Η/Υ (LAPTOP)',0,26),
+(6,'MODEM / ROUTER ',0,6),
+(5,'PATCH PANEL',0,5),
+(14,'ΕΚΤΥΠΩΤΗΣ (PRINTER)',0,14),
+(3,'ΚΡΙΩΜΑ (RACK)',0,3),
+(13,'ΣΑΡΩΤΗΣ (SCANNER)',0,13),
+(24,'SERVER',0,24),
+(2,'SWITCH/ HUB',0,2),
+(23,'TABLET',0,23),
+(11,'WEBCAM',0,11),
+(22,'ΣΤΑΘΜΟΣ ΕΡΓΑΣΙΑΣ',0,22),
+(41,'ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ',0,41),
+(40,'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ',0,40),
+(38,'ΕΠΕΞΕΡΓΑΣΤΗΣ (CPU)',0,38),
+(34,'ΚΙΝΗΤΟ ΕΡΓΑΣΤΗΡΙΟ',0,34),
+(32,'ΜΝΗΜΗ RAM',0,32),
+(30,'ΟΘΟΝΗ',0,30),
+(29,'ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ',0,29),
+(42,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΕΚΤΥΠΩΤΗΣ',0,42),
+(43,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΣΑΡΩΤΗΣ',0,43),
+(44,'ΣΕΤ ΡΟΜΠΟΤΙΚΗΣ - ΑΙΣΘΗΤΗΡΩΝ',0,44),
+(45,'ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ',0,45);
+INSERT INTO `itemcategory` (`id`,`name`,`groupflag`,`sort`) VALUES 
+(101,'ΣΤΑΘΕΡΟΣ ΗΛΕΚΤΡΟΝΙΚΟΣ ΥΠΟΛΟΓΙΣΤΗΣ (DESKTOP)', 1,1),
+(102,'ΦΟΡΗΤΟΣ ΗΛΕΚΤΡΟΝΙΚΟΣ ΥΠΟΛΟΓΙΣΤΗΣ (LAPTOP)', 1,2),
+(103,'ΕΠΙΤΡΑΠΕΖΙΟΣ ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ (SHORT THROW PROJECTOR)', 1,3),
+(104,'ΕΠΙΤΟΙΧΟΣ ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ (ULTRA SHORT THROW WIFI PROJECTOR)', 1,4),
+(105,'ΕΓΧΡΩΜΟΣ ΕΚΤΥΠΩΤΗΣ Α4', 1,5),
+(106,'ΑΣΠΡΟΜΑΥΡΟΣ ΕΚΤΥΠΩΤΗΣ LASER Α4', 1,6),
+(107,'ΔΙΑΔΙΚΤΥΑΚΗ ΚΑΜΕΡΑ (WEB CAMERA)', 1,7),
+(108,'ΕΞΩΤΕΡΙΚΟΣ ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ', 1,8),
+(109,'ΑΣΠΡΟΜΑΥΡΟ ΠΟΛΥΜΗΧΑΝΗΜΑ Α4', 1,9),
+(110,'ΑΣΠΡΟΜΑΥΡΟ ΠΟΛΥΜΗΧΑΝΗΜΑ Α3', 1,10),
+(111,'ΑΣΥΡΜΑΤΟ ΣΗΜΕΙΟ ΠΡΟΣΒΑΣΗΣ (ACCESS POINT)', 1,11),
+(112,'ΕΞΥΠΗΡΕΤΗΤΗΣ (HIGH-END WORKSTATION FOR SERVER FUNCTION)', 1,12),
+(113,'ΥΠΟΛΟΓΙΣΤΙΚΗ ΜΟΝΑΔΑ ΧΑΜΗΛΟΥ ΟΓΚΟΥ/ΚΑΤΑΝΑΛΩΣΗΣ (SINGLE BOARD COMPUTER)', 1,13),
+(114,'ΣΤΑΘΕΡΟΣ ΗΛΕΚΤΡΟΝΙΚΟΣ ΥΠΟΛΟΓΙΣΤΗΣ CLIENT (FAT CLIENT)', 1,14),
+(115,'ΑΚΟΥΣΤΙΚΑ (HEADSET)', 1,15),
+(116,'ΜΕΤΑΓΩΓΕΑΣ (SWITCH)', 1,16),
+(117,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΕΚΤΥΠΩΤΗΣ (3D PRINTER)', 1,17),
+(118,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΣΑΡΩΤΗΣ (3D SCANNER)', 1,18),
+(119,'ΣΕΤ ΡΟΜΠΟΤΙΚΗΣ ΝΗΠΙΑΓΩΓΕΙΟΥ', 1,19),
+(120,'ΣΕΤ ΡΟΜΠΟΤΙΚΗΣ ΔΗΜΟΤΙΚΟΥ', 1,20),
+(121,'ΣΕΤ ΡΟΜΠΟΤΙΚΗΣ ΓΥΜΝΑΣΙΟΥ', 1,21),
+(122,'ΣΕΤ ΡΟΜΠΟΤΙΚΗΣ ΛΥΚΕΙΟΥ', 1,22),
+(123,'ΔΙΑΔΡΑΣΤΙΚΟ ΣΥΣΤΗΜΑ (INTERACTIVE SET)', 1,23);
 /*!40000 ALTER TABLE `itemcategory` ENABLE KEYS */;
 UNLOCK TABLES;
 

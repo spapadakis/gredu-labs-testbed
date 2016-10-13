@@ -28,6 +28,7 @@ class ApplicationFormService implements ApplicationFormServiceInterface
             $item->lab_id          = $itemData['lab_id'];
             $item->itemcategory_id = $itemData['itemcategory_id'];
             $item->qty             = $itemData['qty'];
+            $item->qtyacquired     = $itemData['qtyacquired'];
             $item->reasons         = $itemData['reasons'];
             $items[]               = $item;
         }
@@ -57,6 +58,7 @@ class ApplicationFormService implements ApplicationFormServiceInterface
             return array_merge($itemBean->export(), [
                 'lab'          => $itemBean->lab->name,
                 'itemcategory' => $itemBean->itemcategory->name,
+                'version'      => $itemBean->itemcategory->groupflag,
             ]);
         }, $bean->ownApplicationformitemList);
 

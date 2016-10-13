@@ -63,7 +63,8 @@ class SyncFromInventory
         InventoryService $inventoryService,
         SchoolServiceInterface $schoolService,
         LoggerInterface $logger,
-        array $categoryMap = []
+        array $categoryMap = [],
+        $version
     ) {
         $this->labService       = $labService;
         $this->assetService     = $assetService;
@@ -71,12 +72,14 @@ class SyncFromInventory
         $this->schoolService    = $schoolService;
         $this->logger           = $logger;
         $this->categoryMap      = $categoryMap;
+        $this->version          = $version;
     }
 
     public function __invoke($school_id)
     {
         $school = $this->schoolService->getSchool($school_id);
         try {
+            /* inventory service called once here. Returns $equipment object */
             $equipment = $this->inventoryService->getUnitEquipment($school['registry_no']);
         } catch (Exception $e) {
             $this->logger->error(sprintf('Problem retrieving assets from inventory for school %s', $school_id));
@@ -112,7 +115,7 @@ class SyncFromInventory
 
     private function getAssetTypes()
     {
-        return array_reduce($this->assetService->getAllItemCategories(), function ($map, $type) {
+        return array_reduce($this->assetService->getAllItemCategories($this->version), function ($map, $type) {
             $map[trim($type['name'])] = $type['id'];
 
             return $map;

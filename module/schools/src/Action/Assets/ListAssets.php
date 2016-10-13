@@ -47,12 +47,14 @@ class ListAssets
         Twig $view,
         AssetServiceInterface $assetsService,
         SchoolAssetsInterface $schoolAssetsService,
-        LabServiceInterface $labService
+        LabServiceInterface $labService,
+        $version
     ) {
         $this->view                = $view;
         $this->assetsService       = $assetsService;
         $this->schoolAssetsService = $schoolAssetsService;
         $this->labService          = $labService;
+        $this->version             = $version;
     }
 
     public function __invoke(Request $req, Response $res, array $args = [])
@@ -62,7 +64,7 @@ class ListAssets
             return $res->withStatus(403, 'No school');
         }
         $assets         = $this->schoolAssetsService->getAssetsForSchool($school->id);
-        $itemCategories = $this->assetsService->getAllItemCategories();
+        $itemCategories = $this->assetsService->getAllItemCategories($this->version);
         $labs           = $this->labService->getLabsBySchoolId($school->id);
 
         return $this->view->render($res, 'schools/assets.twig', [

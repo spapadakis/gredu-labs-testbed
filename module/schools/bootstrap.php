@@ -91,11 +91,14 @@ return function (Slim\App $app) {
         };
 
         $container[Action\Assets\ListAssets::class] = function ($c) {
+            $settings = $c->get('settings');
+            $currentVersion = $settings['application_form']['itemcategory']['currentversion'];
             return new Action\Assets\ListAssets(
                 $c->get('view'),
                 $c->get(Service\AssetServiceInterface::class),
                 $c->get(Service\SchoolAssetsInterface::class),
-                $c->get(Service\LabServiceInterface::class)
+                $c->get(Service\LabServiceInterface::class),
+                $currentVersion
             );
         };
 

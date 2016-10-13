@@ -13,7 +13,7 @@ interface AssetServiceInterface
 {
     public function createItemCategory($name);
     public function changeItemCategoryName($id, $name);
-    public function getAllItemCategories();
+    public function getAllItemCategories($version);
     public function findItemCategoryByName($name);
     public function getItemCategoryById($id);
 
