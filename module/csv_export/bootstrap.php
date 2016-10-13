@@ -131,6 +131,14 @@ return function (App $app) {
                         'Αιτιολογία χρήσης',
                     ],
                 ],
+                 'sch_approved' => [
+                    'data_callback' => 'csv_export_sch_approved',
+	                    'headers' => [
+                        'ID',
+                        'Κωδικός σχολείου',
+                        'Ονομασία σχολείου',
+                    ],
+                ]
             ];
         };
 
@@ -494,6 +502,26 @@ return function (App $app) {
                 return $appForms;
             };
         };
+
+
+		 $c['csv_export_sch_approved'] = function ($c) {
+
+            return function () {
+		         $sql = 'SELECT applicationform.id AS id, '
+                        . ' school.registry_no AS school_registry_no, '
+                        . ' school.name AS school_name '
+                        . ' FROM applicationform'
+                        . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                		. '	WHERE applicationform.approved = 1';	
+
+                $sch_appr = R::getAll($sql);
+
+                return $sch_appr;
+            };
+        };
+
+
+
     });
 
     $events('on', 'app.bootstrap', function (App $app, Container $c) {
