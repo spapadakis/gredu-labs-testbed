@@ -1,0 +1,100 @@
+/**
+ * gredu_labs.
+ * 
+ * @link https://github.com/eellak/gredu_labs for the canonical source repository
+ *
+ * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
+ * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
+ */
+
+* {
+    font-family: 'DejaVu Sans', Arial;
+    font-size: 80%;
+}
+
+.header {
+    height: 150px;
+}
+
+.header img {
+    float: left;
+    width: 30%;
+    overflow: hidden;
+    clear: left;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 10px;
+}
+
+.header .h1 {
+    font-size: 200%;
+    text-align: right;
+    padding: 0;
+}
+.header.h1 a {
+    text-align: center;
+    text-decoration: none;
+    color: #555;
+}
+
+dl {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+dt,
+dd {
+  line-height: 1.42857143;
+}
+dt {
+    font-weight: bold;
+    float: left;
+    width: 30%;
+    overflow: hidden;
+    clear: left;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+th {
+  text-align: left;
+}
+table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+table > thead > tr > th,
+table > tbody > tr > th,
+table > tfoot > tr > th,
+table > thead > tr > td,
+table > tbody > tr > td,
+table > tfoot > tr > td {
+  padding: 8px;
+  line-height: 1.42857143;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+table > thead > tr > th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #ddd;
+}
+table > caption + thead > tr:first-child > th,
+table > colgroup + thead > tr:first-child > th,
+table > thead:first-child > tr:first-child > th,
+table > caption + thead > tr:first-child > td,
+table > colgroup + thead > tr:first-child > td,
+table > thead:first-child > tr:first-child > td {
+  border-top: 0;
+}
+table > tbody + tbody {
+  border-top: 2px solid #ddd;
+}
+table table {
+  background-color: #fff;
+}
+
+table tbody > tr:nth-of-type(odd) {
+  background-color: #f9f9f9;
+}

@@ -1,0 +1,81 @@
+{% extends "layout.twig" %}
+
+{% macro itemCount(name, label, value, index, minvalue) %}
+    <div class="form-group">
+        <div class="col-xs-12 col-sm-12 col-md-9">
+            <input placeholder="{{ label|striptags }}" class="form-control input-sm" min="{{ minvalue|default(1)}}"
+                type="number" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]" value="{{ value|default('')|raw }}">
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro infoBox(boxtype, msg) %}
+    <div class="alert alert-{{ boxtype }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Κλείσιμο"><span aria-hidden="true">&times;</span></button>
+        <p class="text-{{ boxtype }}">{{ msg | raw }}</p>
+    </div>
+{% endmacro %}
+
+{% block content %}
+    {% import _self as macros %}
+
+<div id="receive-equip">
+    <h1>
+    {% block title %}
+        Παραλαβή <small>νέου εξοπλισμού</small>
+    {% endblock %}
+    </h1>
+    <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}"
+          data-messages="{{ form.messages|default({})|json_encode }}">
+        <div class="form-group">
+            <p>
+                Σε αυτή την καρτέλα θα καταχωρήσετε τον αριθμό των τεμαχίων που
+                παραλάβατε από κάθε είδος που περιλάμβανε η αίτησή σας. Επίσης,
+                πρέπει να υπογράψετε, να σαρώσετε και να επισυνάψετε το σαρωμένο
+                δελτίο παραλαβής. Τέλος, επιλέξτε "Υποβολή" για να αποστείλετε
+                οριστικά τη φόρμα παραλαβής.
+            </p>
+        </div>
+
+        <div class="table-responsive">
+            <fieldset>
+                <legend>Νέος εξοπλισμός</legend>
+                <div id="items-list">
+                    <table class="table table-hover table-striped table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="col-xs-4">Πλήθος αιτηθέντων</th>
+                                <th class="col-xs-4">Πλήθος παραληφθέντων</th>
+                                <th class="col-xs-4">Τύπος</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for itemIndex,item in form.values.items %}
+                                <tr>
+                                    <td class="col-xs-4">item.qty</td>
+                                    <td class="col-xs-4">{{ macros.itemCount('qtyreceived', 'Πλήθος', item.qtyreceived, loop.index0, 0) }}</td>
+                                    <td class="col-xs-4">{{ item.itemcategory }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        </div>
+        <hr>
+        <div class="form-group text-center">
+            <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
+        </div>
+        <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
+        <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
+    </form>
+</div>
+{% endblock %}
+
+{% block inlinejs %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"></script>
+    <script src="{{ base_url() }}/js/receive_equip/index.js"></script>
+{% endblock %}

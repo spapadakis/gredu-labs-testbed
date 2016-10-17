@@ -22,11 +22,15 @@ CREATE TABLE `applicationform` (
   `comments` text COLLATE utf8mb4_unicode_ci,
   `submitted` int(11) unsigned NOT NULL,
   `submitted_by` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `received_ts` timestamp NULL,
+  `received_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_foreignkey_applicationform_school` (`school_id`),
   CONSTRAINT `c_fk_applicationform_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+CREATE INDEX `index_applicationform_submitted` ON `applicationform`(`submitted`);
+CREATE INDEX `index_applicationform_received_ts` ON `applicationform`(`received_ts`);
 
 --
 -- Dumping data for table `applicationform`
@@ -49,6 +53,7 @@ CREATE TABLE `applicationformitem` (
   `itemcategory_id` int(11) unsigned NOT NULL,
   `qty` int(11) unsigned NOT NULL,
   `qtyacquired` int(11) unsigned DEFAULT 0,
+  `qtyreceived` int(11) unsigned DEFAULT 0,
   `reasons` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `applicationform_id` int(11) unsigned NOT NULL,
   `lab_id` int(11) unsigned NOT NULL,
@@ -61,7 +66,6 @@ CREATE TABLE `applicationformitem` (
   CONSTRAINT `c_fk_applicationformitem_lab_id` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Dumping data for table `applicationformitem`
 --

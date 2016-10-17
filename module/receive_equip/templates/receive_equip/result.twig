@@ -1,0 +1,48 @@
+<h1 class="no-print">
+    {% block title %}
+        Επιτυχής Καταχώρηση <small>φόρμας παραλαβής νέου εξοπλισμού</small>
+    {% endblock %}
+</h1>
+<p class="no-print">Η φόρμα παραλαβής για το σχολείο {{ school.name }} με <strong>Α/Α {{ receiveEquip.id }}</strong>, καταχωρήθηκε επιτυχώς.</p>
+
+<h2>Παραλαβή Εξοπλισμού</h2>
+<div class="row">
+    <dl class="col-sm-12 col-md-6">
+        <dt>A/A εγκεκριμένης αίτησης</dt>
+        <dd>{{ .id }}</dd>
+        <dt>Ημερ. υποβολής</dt>
+        <dd>{{ receiveEquip.submitted|date('d/m/Y') }}<dd>
+    </dl>
+    <dl class="col-sm-12 col-md-6">
+        <dt>Σχολείο</dt>
+        <dd>{{ school.name }}</dd>
+        <dt>Κωδικός Υπουργείου</dt>
+        <dd>{{ school.registry_no }}<dd>
+    </dl>
+</div>
+<h3>Εξοπλισμός που παραλήφθηκε</h3>
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Πλήθος αιτηθέντων</th>
+                <th>Πλήθος παραληφθέντων</th>
+                <th>Τύπος</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in receiveEquip.items %}
+                <tr>
+                    <td>{{ item.qty }}</td>
+                    <td>{{ item.qtyacquired }}</td>
+                    <td>{{ item.itemcategory }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5"></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

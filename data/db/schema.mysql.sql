@@ -22,12 +22,15 @@ CREATE TABLE `applicationform` (
   `comments` text COLLATE utf8mb4_unicode_ci,
   `submitted` int(11) unsigned NOT NULL,
   `submitted_by` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `received_ts` timestamp NULL,
+  `received_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_foreignkey_applicationform_school` (`school_id`),
   CONSTRAINT `c_fk_applicationform_school_id` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
+CREATE INDEX `index_applicationform_submitted` ON `applicationform`(`submitted`);
+CREATE INDEX `index_applicationform_received_ts` ON `applicationform`(`received_ts`);
 --
 -- Dumping data for table `applicationform`
 --
@@ -49,6 +52,7 @@ CREATE TABLE `applicationformitem` (
   `itemcategory_id` int(11) unsigned NOT NULL,
   `qty` int(11) unsigned NOT NULL,
   `qtyacquired` int(11) unsigned NOT NULL DEFAULT 0,
+  `qtyreceived` int(11) unsigned DEFAULT 0,
   `reasons` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `applicationform_id` int(11) unsigned NOT NULL,
   `lab_id` int(11) unsigned NOT NULL,
@@ -172,7 +176,7 @@ CREATE TABLE `itemcategory` (
 
 LOCK TABLES `itemcategory` WRITE;
 /*!40000 ALTER TABLE `itemcategory` DISABLE KEYS */;
-INSERT INTO `itemcategory` (`id`,`name`,`groupflag`,`sort`) VALUES 
+INSERT INTO `itemcategory` (`id`,`name`,`groupflag`,`sort`) VALUES
 (8,'ACCESS POINT',0,8),
 (26,'ΦΟΡΗΤΟΣ Η/Υ (LAPTOP)',0,26),
 (6,'MODEM / ROUTER ',0,6),
@@ -196,7 +200,7 @@ INSERT INTO `itemcategory` (`id`,`name`,`groupflag`,`sort`) VALUES
 (43,'ΤΡΙΣΔΙΑΣΤΑΤΟΣ ΣΑΡΩΤΗΣ',0,43),
 (44,'ΣΕΤ ΡΟΜΠΟΤΙΚΗΣ - ΑΙΣΘΗΤΗΡΩΝ',0,44),
 (45,'ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ',0,45);
-INSERT INTO `itemcategory` (`id`,`name`,`groupflag`,`sort`) VALUES 
+INSERT INTO `itemcategory` (`id`,`name`,`groupflag`,`sort`) VALUES
 (101,'ΣΤΑΘΕΡΟΣ ΗΛΕΚΤΡΟΝΙΚΟΣ ΥΠΟΛΟΓΙΣΤΗΣ (DESKTOP)', 1,1),
 (102,'ΦΟΡΗΤΟΣ ΗΛΕΚΤΡΟΝΙΚΟΣ ΥΠΟΛΟΓΙΣΤΗΣ (LAPTOP)', 1,2),
 (103,'ΕΠΙΤΡΑΠΕΖΙΟΣ ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ (SHORT THROW PROJECTOR)', 1,3),
@@ -280,7 +284,7 @@ CREATE TABLE `lab_lesson` (
   UNIQUE KEY `UQ_82ac3a020f1d21984f224331fbd99880f89b2e71` (`lab_id`,`lesson_id`),
   KEY `index_foreignkey_lab_lesson_lesson` (`lesson_id`),
   KEY `index_foreignkey_lab_lesson_lab` (`lab_id`),
-  CONSTRAINT `c_fk_lab_lesson_lesson_id` FOREIGN KEY (`lesson_id`) REFERENCES `lesson` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,  
+  CONSTRAINT `c_fk_lab_lesson_lesson_id` FOREIGN KEY (`lesson_id`) REFERENCES `lesson` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `c_fk_lab_lesson_lab_id` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
