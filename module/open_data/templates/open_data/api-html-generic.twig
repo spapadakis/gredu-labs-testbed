@@ -1,0 +1,27 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h1>Αποτελέσματα <span class="badge">{{ data | length }}</span></h1>
+
+    <div class="table-responsive">  
+        <table class="table table-striped">
+            <tr data-serial-number="-1">
+                {% for key2, value2 in data[0] %}
+                    <th>{{ key2 }}</th>
+                {% endfor %}
+            </tr>
+
+            {% for key, value in data %}
+                <tr data-serial-number="{{ key }}">
+                    {% for key2, value2 in value %}
+                        <td>{{ value2 }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="well">
+        <a class="btn btn-sm btn-primary" href="{{ path_for('open_data') }}">Επιστροφή στα Ανοικτά Δεδομένα</a>
+    </div>
+{% endblock %}
