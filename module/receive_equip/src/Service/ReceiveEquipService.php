@@ -43,15 +43,15 @@ class ReceiveEquipService implements ReceiveEquipServiceInterface
 
     public function findSchoolReceiveEquip($schoolId)
     {
-        $appForm = R::findOne('applicationform', ' school_id = ? ORDER BY id DESC', [$schoolId]);
-        if (null === $appForm) {
+        $receiveEquip = R::findOne('applicationform', ' school_id = ? ORDER BY id DESC', [$schoolId]);
+        if (null === $receiveEquip) {
             return;
         }
 
-        return $this->exportApplicationForm($appForm);
+        return $this->exportReceiveEquip($receiveEquip);
     }
 
-    private function exportApplicationForm(OODBBean $bean)
+    private function exportReceiveEquip(OODBBean $bean)
     {
         $receiveEquip          = $bean->export();
         $receiveEquip['items'] = array_map(function ($itemBean) {
@@ -59,7 +59,7 @@ class ReceiveEquipService implements ReceiveEquipServiceInterface
                 'itemcategory' => $itemBean->itemcategory->name,
                 'version'      => $itemBean->itemcategory->groupflag,
             ]);
-        }, $bean->ownReceiveequipitemList);
+        }, $bean->ownApplicationformitemList);
 
         return $receiveEquip;
     }

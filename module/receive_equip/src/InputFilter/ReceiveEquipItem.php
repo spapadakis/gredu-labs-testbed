@@ -16,9 +16,7 @@ use Zend\Validator;
 
 class ReceiveEquipItem extends InputFilter
 {
-    public function __construct(
-        AssetServiceInterface $assetsService
-    ) {
+    public function __construct() {
         $qtyreceived = new Input('qty');
         $qtyreceived->setRequired(true)
             ->getFilterChain()
@@ -28,9 +26,8 @@ class ReceiveEquipItem extends InputFilter
             ->attach(new Validator\GreaterThan([
                 'min' => 0,
                 'inclusive' => true
-            ]));
-        ));
-
+            ])
+          );
         $this->add($qtyreceived);
     }
 }

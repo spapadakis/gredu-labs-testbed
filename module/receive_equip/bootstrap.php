@@ -32,7 +32,6 @@ return function (Slim\App $app) {
 
         $container[GrEduLabs\ReceiveEquip\InputFilter\ReceiveEquipItem::class] = function ($c) {
             return new GrEduLabs\ReceiveEquip\InputFilter\ReceiveEquipItem(
-                $c->get(GrEduLabs\Schools\Service\AssetServiceInterface::class)
             );
         };
 
@@ -50,7 +49,6 @@ return function (Slim\App $app) {
                 $c->get(GrEduLabs\ReceiveEquip\InputFilter\ReceiveEquip::class),
                 $c->get('authentication_service'),
                 $c->get('router')->pathFor('receive_equip.submit_success'),
-                $currentVersion,
                 $c
             );
         };

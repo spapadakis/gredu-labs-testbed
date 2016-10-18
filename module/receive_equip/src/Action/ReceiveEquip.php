@@ -28,12 +28,6 @@ class ReceiveEquip {
 
     /**
      *
-     * @var AssetServiceInterface
-     */
-    protected $assetsService;
-
-    /**
-     *
      * @var ReceiveEquipServiceInterface
      */
     protected $receiveEquipService;
@@ -52,12 +46,6 @@ class ReceiveEquip {
 
     /**
      *
-     * @var int The version of the receive equipment form to handle
-     */
-    protected $version;
-
-    /**
-     *
      * @var type SLIM application container
      */
     protected $container;
@@ -69,24 +57,25 @@ class ReceiveEquip {
     protected $successUrl;
 
     public function __construct(
-    Twig $view, AssetServiceInterface $assetsService, ReceiveEquipServiceInterface $receiveEquipService, InputFilterInterface $receiveEquipInputFilter, AuthenticationServiceInterface $authService, $successUrl, $version, $container
+    Twig $view, ReceiveEquipServiceInterface $receiveEquipService, InputFilterInterface $receiveEquipInputFilter, AuthenticationServiceInterface $authService, $successUrl, $container
     ) {
         $this->view = $view;
-        $this->assetsService = $assetsService;
         $this->receiveEquipService = $receiveEquipService;
         $this->receiveEquipInputFilter = $receiveEquipInputFilter;
         $this->authService = $authService;
         $this->successUrl = $successUrl;
-        $this->version = $version;
         $this->container = $container;
     }
 
     public function __invoke(Request $req, Response $res) {
+
         $school = $req->getAttribute('school');
 
         if ($req->isPost()) {
+
             $reqParams = $req->getParams();
             array_splice($reqParams['items'], 0, 0);
+
             $this->receiveEquipInputFilter->setData(array_merge($reqParams, [
                 'school_id' => $school->id,
                 'submitted_by' => $this->authService->getIdentity()->mail,
@@ -109,15 +98,22 @@ class ReceiveEquip {
             ];
         }
 
-        $loadForm = (bool) $req->getParam('load', false);
-        $this->view['choose'] = !$loadForm && !$req->isPost();
-        if (!$req->isPost() && $loadForm) {
+//        $loadForm = (bool) $req->getParam('load', false);
+
+//        $this->view['choose'] = !$loadForm && !$req->isPost();
+//        if (!$req->isPost() && $loadForm) {
+
+        if (!$req->isPost()) {
             if (null !== ($receiveEquip = $this->receiveEquipService->findSchoolReceiveEquip($school->id))) {
                 $this->view['form'] = [
                     'values' => $receiveEquip,
                 ];
             }
         }
+
+        $res = $this->view->render($res, 'receive_equip/form.twig', [
+
+                ]);
             return $res;
           }
 
