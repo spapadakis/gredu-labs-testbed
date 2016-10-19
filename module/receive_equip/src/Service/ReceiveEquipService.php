@@ -10,35 +10,48 @@
 
 namespace GrEduLabs\ReceiveEquip\Service;
 
+use InvalidArgumentException;
 use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
 
 class ReceiveEquipService implements ReceiveEquipServiceInterface
 {
+
+public function __construct($logger) {
+  $this->logger = $logger;
+}
+
     public function submit(array $data)
     {
-        $receiveEquip                      = R::dispense('receiveEquip');
-        $receiveEquip->school_id           = $data['school_id'];
-        $receiveEquip->comments            = $data['comments'];
-        $receiveEquip->submitted           = time();
-        $receiveEquip->submitted_by        = $data['submitted_by'];
-        $items                        = [];
-        foreach ($data['items'] as $itemData) {
-            $item                  = R::dispense('applicationformitem');
-            $item->lab_id          = $itemData['lab_id'];
-            $item->itemcategory_id = $itemData['itemcategory_id'];
-            $item->qty             = $itemData['qty'];
-            $item->qtyacquired     = $itemData['qtyacquired'];
-            $item->reasons         = $itemData['reasons'];
-            $items[]               = $item;
-        }
-        if (!empty($items)) {
-            $appForm->ownApplicationformitemList = $items;
-        }
+      $this->logger->info(sprintf(
+          'application id = %s',
+          $data['id']
+      ));
+        $receiveEquip = $this->findById($data['id']);
 
-        R::store($appForm);
+        $receiveEquip->received_by      = $data['submitted_by'];
+        $receiveEquip->received_ts      = date('Y-m-d G:i:s');;
 
-        return $this->exportApplicationForm($appForm);
+        $items[] = $receiveEquip->ownApplicationformitemList;
+        $dataItems = $data['items'];
+        $dataItemsLength = count($dataItems);
+        foreach ($items as $item) {
+          for ($i=0; $i<$dataItemsLength; $i++) {
+            $this->logger->info(sprintf('dataitems[i] = %s, item = %s', implode(" , ", $dataItems)));
+            if ($item['id'] === (int) $dataItems[$i]['id' . $i]) {
+
+
+
+              $item['qtyreceived'] = (int) $dataItems[$i]['qtyreceived'];
+              break;
+            }
+          }
+        }
+        $receiveEquip->ownApplicationformitemList = $items;
+
+        R::store($receiveEquip);
+
+        return $this->exportReceiveEquip($receiveEquip);
     }
 
     public function findSchoolReceiveEquip($schoolId)
@@ -49,6 +62,15 @@ class ReceiveEquipService implements ReceiveEquipServiceInterface
         }
 
         return $this->exportReceiveEquip($receiveEquip);
+    }
+
+    public function findById($id)
+    {
+        $receiveEquip = R::findOne('applicationform', ' id = ? ', [(int)$id]);
+        if (!$receiveEquip) {
+            throw new InvalidArgumentException('Application Form not found. Cannot proceed to receive');
+        }
+        return $receiveEquip;
     }
 
     private function exportReceiveEquip(OODBBean $bean)
@@ -63,4 +85,5 @@ class ReceiveEquipService implements ReceiveEquipServiceInterface
 
         return $receiveEquip;
     }
+
 }

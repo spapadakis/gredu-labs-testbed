@@ -51,6 +51,7 @@
                         </thead>
                         <tbody>
                             {% for itemIndex,item in form.values.items %}
+                            <input type="hidden" name="id{{ loop.index0 }}" value="{{ item.id }}">
                                 <tr>
                                     <td class="col-xs-8">{{ item.itemcategory }}</td>
                                     <td class="col-xs-4 text-center">{{ item.qty }}</td>
@@ -66,6 +67,7 @@
         <div class="form-group text-center">
             <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
         </div>
+        <input type="hidden" name="id" value="{{ form.values.id }}">
         <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
         <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
     </form>

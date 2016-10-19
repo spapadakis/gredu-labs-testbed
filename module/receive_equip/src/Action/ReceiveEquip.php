@@ -83,6 +83,9 @@ class ReceiveEquip {
             $isValid = $this->receiveEquipInputFilter->isValid();
             if ($isValid) {
                 $data = $this->receiveEquipInputFilter->getValues();
+/*                $this->container['logger']->info(sprintf(
+                    'application data = %s',
+                    $data[school_id])); */
                 $receiveEquip = $this->receiveEquipService->submit($data);
                 $_SESSION['receiveEquipForm']['receiveEquip'] = $receiveEquip;
                 $res = $res->withRedirect($this->successUrl);

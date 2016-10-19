@@ -17,7 +17,7 @@ use Zend\Validator;
 class ReceiveEquipItem extends InputFilter
 {
     public function __construct() {
-        $qtyreceived = new Input('qty');
+        $qtyreceived = new Input('qtyreceived');
         $qtyreceived->setRequired(true)
             ->getFilterChain()
             ->attach(new Filter\ToInt());

@@ -24,18 +24,19 @@ class ReceiveEquip extends InputFilter
         SchoolServiceInterface $schoolService,
         CollectionInputFilter $itemsInputFilter
     ) {
+        $id = new Input('id');
+        $id->setRequired(true)
+          ->getFilterChain()
+          ->attach(new Filter\ToInt());
+        $id->getValidatorChain()
+          ->attach(new Validator\NotEmpty());
+      
         $schoolId = new Input('school_id');
         $schoolId->setRequired(true)
             ->getFilterChain()
             ->attach(new Filter\ToInt());
         $schoolId->getValidatorChain()
             ->attach(new Validator\NotEmpty());
-
-        $comments = new Input('comments');
-        $comments->setRequired(false)
-            ->getFilterChain()
-            ->attach(new Filter\StripTags())
-            ->attach(new Filter\StringTrim());
 
         $submittedBy = new Input('submitted_by');
         $submittedBy->setRequired(true)
@@ -45,8 +46,8 @@ class ReceiveEquip extends InputFilter
                 'useDomainCheck' => false,
             ]));
 
-        $this->add($schoolId)
-            ->add($comments)
+        $this->add($id)
+            ->add($schoolId)
             ->add($submittedBy)
             ->add($itemsInputFilter, 'items');
     }

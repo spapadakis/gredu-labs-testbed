@@ -19,7 +19,7 @@ return function (Slim\App $app) {
     $events('on', 'app.services', function ($container) {
 
         $container[GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface::class] = function ($c) {
-            return new GrEduLabs\ReceiveEquip\Service\ReceiveEquipService();
+            return new GrEduLabs\ReceiveEquip\Service\ReceiveEquipService($c['logger']);
         };
 
         $container[GrEduLabs\ReceiveEquip\InputFilter\ReceiveEquip::class] = function ($c) {
