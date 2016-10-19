@@ -12,7 +12,7 @@ namespace GrEduLabs\OpenData\Action;
 /**
  * @inheritdoc
  */
-class AppNewForm extends ApiAction
+class AllSchools extends PagedApiAction
 {
     
 }

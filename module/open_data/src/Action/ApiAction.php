@@ -15,6 +15,12 @@ use Slim\Http\Response;
 use GrEduLabs\OpenData\Service\DataProviderInterface;
 use GrEduLabs\OpenData\Service\RedBeanQueryPagedDataProvider;
 
+/**
+ * Base class implementaing the api action. 
+ * A dataprovider object is used to retrieve data.
+ * 
+ * @see GrEduLabs\OpenData\Service\DataProviderInterface
+ */
 class ApiAction
 {
 
@@ -29,7 +35,7 @@ class ApiAction
     protected $container;
 
     /**
-     * @var boolean Respond witha 404 instead of 200 if data from dataprovider is an empty array.
+     * @var boolean Respond with a 404 instead of 200 if data from dataprovider is an empty array.
      */
     protected $empty_data_404;
 
@@ -53,12 +59,6 @@ class ApiAction
     public function __invoke(Request $req, Response $res, array $args = [])
     {
         /**
-         * Get any params from request 
-         */
-        // $outputFormat = strtoupper($req->getQueryParam('outputFormat', 'JSON'));
-        $outputFormat = 'JSON';
-
-        /**
          * Get data from dataprovider. 
          * If data is null, respond with a 500 status.
          * If data is empty, respond with a 404 when $empty_data_404 is true. 
@@ -78,7 +78,7 @@ class ApiAction
             $status = (($this->empty_data_404 === true) ? 404 : 200);
         }
 
-        return $this->respond($res, $outputFormat, $this->prepareResponseData($status, $data), $status);
+        return $this->respond($res, 'JSON', $this->prepareResponseData($status, $data), $status);
     }
 
     /**
@@ -116,6 +116,7 @@ class ApiAction
     }
 
     /**
+     * Send the final response. Only Json format is currently supported. 
      * 
      * @param string $outputFormat i.e. JSON
      * @param array $response_data typically an array to send ot data to the client

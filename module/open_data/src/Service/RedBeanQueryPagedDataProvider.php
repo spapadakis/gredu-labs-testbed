@@ -47,9 +47,22 @@ class RedBeanQueryPagedDataProvider implements DataProviderInterface
     protected $_data;
 
     /**
+     * @var array|null An array containing data labels.
+     * If this is not set, the keys of the result dataset will be used.
+     * @see setLabels()
+     */
+    protected $_labels;
+
+    /**
      * @var int hold the total number of results without paging
      */
     protected $_data_count_all;
+
+    /**
+     * @var callback Possible data post handling can be achieved by setting a callback function 
+     * @see setDataPostHandleCallback()
+     */
+    protected $_data_handle_callback;
 
     /**
      * Provide for default values. 
@@ -60,7 +73,32 @@ class RedBeanQueryPagedDataProvider implements DataProviderInterface
         $this->_page = 1;
         $this->_query = '';
         $this->_data = [];
+        $this->_labels = null;
         $this->_data_count_all = 0;
+        $this->_data_handle_callback = null;
+    }
+
+    /**
+     * Possible data post handling can be achieved by setting a closure. 
+     * The closure must accept one argument, the array of data and
+     * should return the modified array of data.
+     * 
+     * For example
+     * ```php
+     * function ($data) {
+     *      return array_map(function ($row) {
+     *          $row['url'] = strtolower($row['url']);
+     *          $row['url'] = str_replace('\\', '/', $row['url']);
+     *          $row['url'] = urldecode($row['url']);
+     *          return $row;
+     *      }, $data);
+     * }
+     * ```
+     * @param \Closure $callback
+     */
+    public function setDataPostHandleCallback(\Closure $callback)
+    {
+        $this->_data_handle_callback = $callback;
     }
 
     /**
@@ -148,7 +186,21 @@ class RedBeanQueryPagedDataProvider implements DataProviderInterface
         $this->_data = R::getAll($this->_query . $this->getDatalimitSql(), $this->_query_params);
         $rows = R::getCell('SELECT FOUND_ROWS()');
         $this->_data_count_all = intval($rows);
+
+        if (is_callable($callback = $this->_data_handle_callback)) {
+            $this->_data = $callback($this->_data);
+        }
         return $this->_data;
+    }
+
+    /**
+     * Set the labels for the result data set. 
+     *
+     * @param array $labels
+     */
+    public function setLabels(array $labels)
+    {
+        $this->_labels = $labels;
     }
 
     /**
@@ -156,7 +208,9 @@ class RedBeanQueryPagedDataProvider implements DataProviderInterface
      */
     public function getLabels()
     {
-        if (isset($this->_data)) {
+        if (isset($this->_labels)) {
+            return $this->_labels;
+        } elseif (is_array($this->_data) && count($this->_data) > 0) {
             return array_keys($this->_data[0]);
         } else {
             return [];

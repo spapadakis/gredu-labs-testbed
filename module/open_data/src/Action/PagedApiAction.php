@@ -18,7 +18,7 @@ use GrEduLabs\OpenData\InputFilter\PagerInputFilter;
 /**
  * @inheritdoc
  */
-class SchoolTest extends ApiAction
+class PagedApiAction extends ApiAction
 {
 
     /**

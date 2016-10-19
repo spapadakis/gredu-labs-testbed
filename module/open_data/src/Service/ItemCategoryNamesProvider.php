@@ -9,34 +9,26 @@
  */
 namespace GrEduLabs\OpenData\Service;
 
-//use RedBeanPHP\R;
-use Slim\Container;
+use RedBeanPHP\R;
 
 /**
- *
+ * Sample data provider to get all item categories 
  * 
  */
-class AppNewFormProvider implements DataProviderInterface
+class ItemCategoryNamesProvider implements DataProviderInterface
 {
 
     private $_data;
-    private $_container;
-
-    public function __construct(Container $container)
-    {
-        $this->_container = $container;
-        $this->_data = null;
-    }
 
     /**
      * @inheritdoc
      */
     public function getData()
     {
-        // use existing data collection methods
-        if ($this->_container->has('csv_export_appnewforms')) {
-            $this->_data = call_user_func($this->_container['csv_export_appnewforms'], $this->_container);
-        }
+        $sql = 'SELECT id, name, groupflag '
+            . ' FROM itemcategory '
+            . ' ORDER BY groupflag, sort ';
+        $this->_data = R::getAll($sql);
 
         return $this->_data;
     }
@@ -57,13 +49,10 @@ class AppNewFormProvider implements DataProviderInterface
      */
     public function getLabels()
     {
-        // return R::inspect('school'); // return table columns 
         return [
-            'id',
-            'school_registry_no',
-            'school_name',
-            'submitted',
-            'comments',
+            'id' => 'Αναγνωριστικό ID',
+            'name' => 'Ονομασία',
+            'groupflag' => 'Ομάδα',
         ];
     }
 }

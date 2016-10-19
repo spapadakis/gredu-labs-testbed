@@ -12,7 +12,7 @@ namespace GrEduLabs\OpenData\Action;
 /**
  * @inheritdoc
  */
-class School extends ApiAction
+class ItemCategoryNames extends ApiAction
 {
     
 }

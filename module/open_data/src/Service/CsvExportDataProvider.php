@@ -80,7 +80,13 @@ class CsvExportDataProvider implements DataProviderInterface
     {
         // use existing data collection methods
         if ($this->_data_callback !== null) {
-            return $this->_container['csv_export_config'][$this->_csv_export_type]['headers'];
+            $values = $this->_container['csv_export_config'][$this->_csv_export_type]['headers'];
+            if (is_array($this->_data) && count($this->_data) > 0) {
+                $keys = array_keys($this->_data[0]);
+            } else {
+                $keys = & $values;
+            }
+            return array_combine($keys, $values);
         } else {
             return [];
         }

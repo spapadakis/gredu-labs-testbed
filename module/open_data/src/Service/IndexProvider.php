@@ -43,27 +43,14 @@ class IndexProvider implements DataProviderInterface
         $routes = array_reduce($router->getRoutes(), function ($routes, $route) {
             $pattern = $route->getPattern();
             if (strpos($pattern, '/open-data/api') !== false) {
+                $path_parts = explode("/", $pattern);
                 $routes[] = [
-                    'label' => strtr($pattern, '/', ' '),
-                    'path' => $pattern
+                    'label' => end($path_parts),
+                    'path' => $pattern,
                 ];
             }
             return $routes;
         }, []);
-//        $this->data = [
-//            [
-//                'label' => 'Index',
-//                'path' => '/open_data/api',
-//            ],
-//            [
-//                'label' => 'Τεκμηρίωση',
-//                'path' => $this->api_doc_url
-//            ],
-//            [
-//                'label' => 'Διαθέσιμα σχολεία',
-//                'path' => '/open_data/api/schools',
-//            ],
-//        ];
         $this->data = $routes;
     }
 
@@ -88,8 +75,9 @@ class IndexProvider implements DataProviderInterface
      */
     public function getLabels()
     {
-        return array_map(function ($c) {
-            return $c['label'];
-        }, $this->data);
+        return [
+            'label' => 'Ονομασία',
+            'path' => 'Σχετικό path για κλήση',
+        ];
     }
 }
