@@ -13,5 +13,5 @@ return [
     'displayErrorDetails'               => false,
     'forum_url'                         => '/#forum',
     'egkyklios_file'                    => '/#file',
-    'index_content'                     => '08042016_message',
+    
 ];
