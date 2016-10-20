@@ -59,6 +59,10 @@ return [
                 'label' => 'Σχετικά με τη δράση',
                 'route' => 'about',
             ],
+            'university_form' => [
+                'label' => 'Ιδρύματα Τριτοβάθμιας',
+                'route' => 'university-form',
+            ],
             'forum' => [
                 'label'    => 'Φόρουμ βοήθειας',
                 'href'     => '/#forum',
