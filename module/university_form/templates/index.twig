@@ -1,0 +1,54 @@
+{% extends "layout.twig" %}
+
+{% import "schools/form.twig" as macros %}
+
+ {% block content %}
+                <div id="school-info">
+                    <p>
+                        Φόρμα εκδήλωση ενδιαφέροντος....
+                        <br>
+                        Σε αυτή την καρτέλα ........
+                    </p>
+                </div>
+                 
+
+
+             {% block schoolContent %}
+        <form class="form-horizontal" data-url="{{ path_for('school.software') }}">
+                    <div class="modal-body">
+                        {{ macros.input('idrima', 'Iδρυμα', '', 'text', {'required': ''}) }}
+                        {{ macros.input('sxolh', 'Σχολή', '', 'text', {'required': ''}) }}
+                        {{ macros.input('tmhma', 'Τμήμα', '', 'text', {'required': ''}) }}
+                        {{ macros.input('person', 'Υπεύθυνος Επικοινωνίας', '', 'text', {'required': ''}) }}
+                        {{ macros.input('telef', 'Τηλέφωνο', '', 'text', {'required': ''}) }}
+                        {{ macros.input('email', 'Email', '', 'text', {'required': ''}) }}
+                        <input type="hidden" name="id" value="">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+                    </div>
+        </form>
+
+
+         <script type="text/template" id="teacher-row">
+            <td class="idrima"><%= univ.idrima %></td>
+            <td class="sxolh"><%= univ.sxolh %></td>
+            <td class="tmhma"><%= univ.tmhma %></td>
+            <td class="person"><%= univ.person %></td>
+            <td class="telef"><%= univ.telef %></td>
+            <td class="email">
+            <a href="mailto:<%= univ.email %>"><%= univ.email %></a>
+            </td>
+        </script>
+ 
+    {% endblock %}
+
+
+{% block inlinejs %}
+    {{ parent() }}
+    <script src="{{ base_url }}/js/university_form/univ.js"></script>
+{% endblock %}
+
+
+{% endblock %}
