@@ -12,14 +12,14 @@
 namespace GrEduLabs\ReceiveEquip\Action;
 
 use GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface;
-use GrEduLabs\Schools\Service\AssetServiceInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\InputFilter\InputFilterInterface;
 
-class ReceiveEquip {
+class ReceiveEquip
+{
 
     /**
      * @var Twig
@@ -59,52 +59,43 @@ class ReceiveEquip {
     public function __construct(
     Twig $view, ReceiveEquipServiceInterface $receiveEquipService, InputFilterInterface $receiveEquipInputFilter, AuthenticationServiceInterface $authService, $successUrl, $container
     ) {
-        $this->view = $view;
-        $this->receiveEquipService = $receiveEquipService;
+        $this->view                    = $view;
+        $this->receiveEquipService     = $receiveEquipService;
         $this->receiveEquipInputFilter = $receiveEquipInputFilter;
-        $this->authService = $authService;
-        $this->successUrl = $successUrl;
-        $this->container = $container;
+        $this->authService             = $authService;
+        $this->successUrl              = $successUrl;
+        $this->container               = $container;
     }
 
-    public function __invoke(Request $req, Response $res) {
-
+    public function __invoke(Request $req, Response $res)
+    {
         $school = $req->getAttribute('school');
 
         if ($req->isPost()) {
-
             $reqParams = $req->getParams();
             array_splice($reqParams['items'], 0, 0);
 
             $this->receiveEquipInputFilter->setData(array_merge($reqParams, [
-                'school_id' => $school->id,
+                'school_id'    => $school->id,
                 'submitted_by' => $this->authService->getIdentity()->mail,
             ]));
             $isValid = $this->receiveEquipInputFilter->isValid();
             if ($isValid) {
                 $data = $this->receiveEquipInputFilter->getValues();
-/*                $this->container['logger']->info(sprintf(
-                    'application data = %s',
-                    $data[school_id])); */
-                $receiveEquip = $this->receiveEquipService->submit($data);
+                $receiveEquip                                 = $this->receiveEquipService->submit($data);
                 $_SESSION['receiveEquipForm']['receiveEquip'] = $receiveEquip;
-                $res = $res->withRedirect($this->successUrl);
+                $res                                          = $res->withRedirect($this->successUrl);
 
                 return $res;
             }
 
             $this->view['form'] = [
-                'is_valid' => $isValid,
-                'values' => $this->receiveEquipInputFilter->getValues(),
+                'is_valid'   => $isValid,
+                'values'     => $this->receiveEquipInputFilter->getValues(),
                 'raw_values' => $this->receiveEquipInputFilter->getRawValues(),
-                'messages' => $this->receiveEquipInputFilter->getMessages(),
+                'messages'   => $this->receiveEquipInputFilter->getMessages(),
             ];
         }
-
-//        $loadForm = (bool) $req->getParam('load', false);
-
-//        $this->view['choose'] = !$loadForm && !$req->isPost();
-//        if (!$req->isPost() && $loadForm) {
 
         if (!$req->isPost()) {
             if (null !== ($receiveEquip = $this->receiveEquipService->findSchoolReceiveEquip($school->id))) {
@@ -117,7 +108,7 @@ class ReceiveEquip {
         $res = $this->view->render($res, 'receive_equip/form.twig', [
 
                 ]);
-            return $res;
-          }
 
+        return $res;
+    }
 }

@@ -52,7 +52,7 @@ return [
                 'route' => 'application_form',
             ],
             'receive-equip' => [
-                'label' => 'Παραλαβή Εξοπλισμού',
+                'label' => 'Παραλαβή εξοπλισμού',
                 'route' => 'receive_equip',
             ],
             'open-data' => [

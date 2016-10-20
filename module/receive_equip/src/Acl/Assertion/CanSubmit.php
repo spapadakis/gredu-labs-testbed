@@ -35,7 +35,7 @@ class CanSubmit implements AssertionInterface
         AuthenticationServiceInterface $authService,
         ReceiveEquipServiceInterface $receiveEquipService
     ) {
-        $this->authService    = $authService;
+        $this->authService         = $authService;
         $this->receiveEquipService = $receiveEquipService;
     }
 

@@ -1,10 +1,10 @@
 {% extends "layout.twig" %}
 
-{% macro itemCount(name, label, value, index, minvalue) %}
+{% macro itemCount(name, label, value, index, minvalue, type) %}
     <div class="form-group">
         <div class="col-xs-12 col-sm-12 col-md-9">
             <input placeholder="{{ label|striptags }}" class="form-control input-sm" min="{{ minvalue|default(1)}}"
-                type="number" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]" value="{{ value|default('')|raw }}">
+                type="{{ type|default('number') }}" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]" value="{{ value|default('')|raw }}">
         </div>
     </div>
 {% endmacro %}
@@ -51,7 +51,7 @@
                         </thead>
                         <tbody>
                             {% for itemIndex,item in form.values.items %}
-                            <input type="hidden" name="id{{ loop.index0 }}" value="{{ item.id }}">
+                            {{ macros.itemCount('id', 'id', item.id, loop.index0, 0, 'hidden') }}
                                 <tr>
                                     <td class="col-xs-8">{{ item.itemcategory }}</td>
                                     <td class="col-xs-4 text-center">{{ item.qty }}</td>

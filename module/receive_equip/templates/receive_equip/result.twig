@@ -9,7 +9,7 @@
 <div class="row">
     <dl class="col-sm-12 col-md-6">
         <dt>A/A εγκεκριμένης αίτησης</dt>
-        <dd>{{ .id }}</dd>
+        <dd>{{ receiveEquip.id }}</dd>
         <dt>Ημερ. υποβολής</dt>
         <dd>{{ receiveEquip.submitted|date('d/m/Y') }}<dd>
     </dl>
@@ -25,17 +25,17 @@
     <table class="table table-striped table-hover">
         <thead>
             <tr>
+                <th>Τύπος</th>
                 <th>Πλήθος αιτηθέντων</th>
                 <th>Πλήθος παραληφθέντων</th>
-                <th>Τύπος</th>
             </tr>
         </thead>
         <tbody>
             {% for item in receiveEquip.items %}
                 <tr>
-                    <td>{{ item.qty }}</td>
-                    <td>{{ item.qtyacquired }}</td>
                     <td>{{ item.itemcategory }}</td>
+                    <td>{{ item.qty }}</td>
+                    <td>{{ item.qtyreceived }}</td>
                 </tr>
             {% endfor %}
         </tbody>

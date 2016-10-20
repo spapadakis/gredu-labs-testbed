@@ -15,4 +15,6 @@ interface ReceiveEquipServiceInterface
     public function submit(array $data);
 
     public function findSchoolReceiveEquip($schoolId);
+
+    public function findById($id);
 }

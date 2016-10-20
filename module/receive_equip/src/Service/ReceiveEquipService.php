@@ -32,16 +32,12 @@ public function __construct($logger) {
         $receiveEquip->received_by      = $data['submitted_by'];
         $receiveEquip->received_ts      = date('Y-m-d G:i:s');;
 
-        $items[] = $receiveEquip->ownApplicationformitemList;
+        $items = $receiveEquip->ownApplicationformitemList;
         $dataItems = $data['items'];
         $dataItemsLength = count($dataItems);
         foreach ($items as $item) {
           for ($i=0; $i<$dataItemsLength; $i++) {
-            $this->logger->info(sprintf('dataitems[i] = %s, item = %s', implode(" , ", $dataItems)));
-            if ($item['id'] === (int) $dataItems[$i]['id' . $i]) {
-
-
-
+            if ((int) $item['id'] === (int) $dataItems[$i]['id']) {
               $item['qtyreceived'] = (int) $dataItems[$i]['qtyreceived'];
               break;
             }
@@ -56,6 +52,7 @@ public function __construct($logger) {
 
     public function findSchoolReceiveEquip($schoolId)
     {
+      /*** to do get only the approved application form ***/ 
         $receiveEquip = R::findOne('applicationform', ' school_id = ? ORDER BY id DESC', [$schoolId]);
         if (null === $receiveEquip) {
             return;
@@ -85,5 +82,4 @@ public function __construct($logger) {
 
         return $receiveEquip;
     }
-
 }

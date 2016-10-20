@@ -16,7 +16,15 @@ use Zend\Validator;
 
 class ReceiveEquipItem extends InputFilter
 {
-    public function __construct() {
+    public function __construct()
+    {
+        $itemId = new Input('id');
+        $itemId->setRequired(true)
+          ->getFilterChain()
+          ->attach(new Filter\ToInt());
+        $this->add($itemId);
+
+
         $qtyreceived = new Input('qtyreceived');
         $qtyreceived->setRequired(true)
             ->getFilterChain()
@@ -24,8 +32,8 @@ class ReceiveEquipItem extends InputFilter
         $qtyreceived->getValidatorChain()
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\GreaterThan([
-                'min' => 0,
-                'inclusive' => true
+                'min'       => 0,
+                'inclusive' => true,
             ])
           );
         $this->add($qtyreceived);

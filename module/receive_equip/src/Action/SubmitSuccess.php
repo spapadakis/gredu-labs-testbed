@@ -30,15 +30,15 @@ class SubmitSuccess
     {
         $school = $req->getAttribute('school');
 
-        if (!isset($_SESSION['receiveEquip']['receiveEquip'])) {
+        if (!isset($_SESSION['receiveEquipForm']['receiveEquip'])) {
             $res = $res->withRedirect($this->formUrl);
 
             return $res;
         }
-        $receiveEquip = $_SESSION['receiveEquip']['receiveEquip'];
+        $receiveEquip = $_SESSION['receiveEquipForm']['receiveEquip'];
 
-        $_SESSION['receiveEquip']['receiveEquip'] = null;
-        unset($_SESSION['receiveEquip']['receiveEquip']);
+        $_SESSION['receiveEquipForm']['receiveEquip'] = null;
+        unset($_SESSION['receiveEquipForm']['receiveEquip']);
 
         return $this->view->render($res, 'receive_equip/submit_success.twig', [
             'school'  => $school,
