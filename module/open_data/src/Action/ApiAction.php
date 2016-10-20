@@ -98,7 +98,7 @@ class ApiAction
     protected function prepareResponseData(int $status, $data = null)
     {
         $is_success = ($status === 200);
-        $has_data = isset($data);
+        $has_data = $is_success && isset($data);
         $has_paging = $this->dataProvider instanceof RedBeanQueryPagedDataProvider && $has_data;
 
         $response_data = [

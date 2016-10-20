@@ -18,11 +18,6 @@ use GrEduLabs\OpenData\Service;
 return function (App $app) {
     $container = $app->getContainer();
     $events = $container['events'];
-//    $data_retrieve_query_types = [
-//        'schools', 'labs', 'assets', 'software',
-//        'appforms', 'appnewforms',
-//        'appforms_items', 'newapplication'
-//    ];
 
     $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('GrEduLabs\\OpenData\\', __DIR__ . '/src/');

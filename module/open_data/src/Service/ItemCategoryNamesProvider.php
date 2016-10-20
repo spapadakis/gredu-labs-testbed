@@ -18,7 +18,39 @@ use RedBeanPHP\R;
 class ItemCategoryNamesProvider implements DataProviderInterface
 {
 
+    /**
+     * @var type array|null Data retrieved 
+     */
     private $_data;
+
+    /**
+     * @var string|null Holds any filter associated with the groupflag property
+     */
+    private $_group_filter;
+
+    public function __construct()
+    {
+        $this->_data = null;
+        $this->_group_filter = null;
+    }
+
+    /**
+     * Used to filter data by specific groupflag.
+     * 
+     * @param int|null $groupflag The group glag to filter 
+     */
+    public function filterGroupflag(int $groupflag = null)
+    {
+        $this->_group_filter = $groupflag;
+    }
+
+    /**
+     * Reset any filter data for the groupflag. 
+     */
+    public function unfilterGroupflag(int $groupflag)
+    {
+        $this->_group_filter = null;
+    }
 
     /**
      * @inheritdoc
@@ -27,8 +59,9 @@ class ItemCategoryNamesProvider implements DataProviderInterface
     {
         $sql = 'SELECT id, name, groupflag '
             . ' FROM itemcategory '
+            . (isset($this->_group_filter) ? ' WHERE groupflag = :groupflag ' : '')
             . ' ORDER BY groupflag, sort ';
-        $this->_data = R::getAll($sql);
+        $this->_data = R::getAll($sql, isset($this->_group_filter) ? [':groupflag' => $this->_group_filter] : []);
 
         return $this->_data;
     }
