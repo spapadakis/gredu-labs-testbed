@@ -323,6 +323,8 @@ return function (App $app) {
         $acl['guards']['routes'] = array_merge($acl['guards']['routes'], [
             ['/open-data/api', ['guest', 'user'], ['get']],
             ['/open-data/api/index', ['guest', 'user'], ['get']],
+            ['/open-data/api/prefectures', ['guest', 'user'], ['get']],
+            ['/open-data/api/prefecture/{name}', ['guest', 'user'], ['get']],
             ['/open-data/api/itemcategorynames', ['guest', 'user'], ['get']],
             ['/open-data/api/allschools', ['guest', 'user'], ['get']],
         ]);
@@ -330,6 +332,7 @@ return function (App $app) {
             $acl['guards']['routes'][] = ["/open-data/api/raw_{$data_retrieve_query_type}", ['guest', 'user'], ['get']];
             $acl['guards']['routes'][] = ["/open-data/api/{$data_retrieve_query_type}", ['guest', 'user'], ['get']];
         }
+        $acl['guards']['routes'][] = ["/open-data/api/schools/prefecture/{prefecture}", ['guest', 'user'], ['get']];
         $container['settings']->set('acl', $acl);
     });
 
@@ -345,6 +348,16 @@ return function (App $app) {
         $container[GrEduLabs\OpenData\Action\Index::class] = function ($c) {
             return new GrEduLabs\OpenData\Action\Index(
                 $c, $c->get(GrEduLabs\OpenData\Service\IndexProvider::class), true
+            );
+        };
+
+        // fully fledged /prefectures{/<name>} ??
+        $container[GrEduLabs\OpenData\Service\PrefecturesProvider::class] = function ($c) {
+            return new GrEduLabs\OpenData\Service\PrefecturesProvider();
+        };
+        $container[GrEduLabs\OpenData\Action\Prefectures::class] = function ($c) {
+            return new GrEduLabs\OpenData\Action\Prefectures(
+                $c, $c->get(GrEduLabs\OpenData\Service\PrefecturesProvider::class), true
             );
         };
 
@@ -415,6 +428,19 @@ return function (App $app) {
                 );
             };
         }
+
+        // fully fledged /schools{/<prefecture>} ??
+        $container[GrEduLabs\OpenData\Action\SchoolsOfPrefecture::class . "_provider"] = function ($c) use ($specs) {
+            $dataProvider = new GrEduLabs\OpenData\Service\RedBeanFilteredQueryPagedDataProvider();
+            $dataProvider->setLabels($specs['schools']['headers']);
+            $dataProvider->setQuery($specs['schools']['query']);
+            return $dataProvider;
+        };
+        $container[GrEduLabs\OpenData\Action\SchoolsOfPrefecture::class] = function ($c) {
+            return new GrEduLabs\OpenData\Action\SchoolsOfPrefecture(
+                $c, $c->get(GrEduLabs\OpenData\Action\SchoolsOfPrefecture::class . "_provider"), true
+            );
+        };
     });
 
     $events('on', 'app.bootstrap', function (App $app, Container $c) {
@@ -438,6 +464,12 @@ return function (App $app) {
                 ->setName('open_data.api');
             $this->get('/index', Action\Index::class)
                 ->setName('open_data.api.index');
+            $this->get('/prefectures', Action\Prefectures::class)
+                ->setName('open_data.api.prefectures');
+            $this->get('/prefecture/{name}', Action\Prefectures::class)
+                ->setName('open_data.api.prefecture');
+            $this->get('/schools/prefecture/{prefecture}', Action\SchoolsOfPrefecture::class)
+                ->setName('open_data.api.schools.prefecture');
             $this->get('/itemcategorynames', Action\ItemCategoryNames::class)
                 ->setName('open_data.api.itemcategorynames');
             $this->get('/allschools', Action\AllSchools::class)
