@@ -64,17 +64,7 @@ class Login
     {
         if ($req->isPost()) {
             $adapter = $this->authService->getAdapter();
-            
-            
 
-/* $bcrypt = new Bcrypt([
-    'salt' => 'local1local2local',
-    'cost' => 14,
-]);
-
-$securePass = $bcrypt->create(trim("panilithios")); */
-            
-            
             if ($adapter instanceof ValidatableAdapterInterface) {
                 $adapter->setIdentity($req->getParam('identity'));
                 $adapter->setCredential($req->getParam('credential'));
@@ -84,11 +74,6 @@ $securePass = $bcrypt->create(trim("panilithios")); */
 
             if (!$result->isValid()) {
                 $this->flash->addMessage('danger', reset($result->getMessages()));
-/*                
-                $this->flash->addMessage('danger', $req->getParam('identity'));
-                $this->flash->addMessage('danger', $req->getParam('credential'));
-                $this->flash->addMessage('danger', $securePass); */
-
                 return $res->withRedirect($req->getUri());
             }
 
