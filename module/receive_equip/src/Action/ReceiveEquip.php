@@ -81,7 +81,20 @@ class ReceiveEquip
             ]));
             $isValid = $this->receiveEquipInputFilter->isValid();
             if ($isValid) {
-                $data = $this->receiveEquipInputFilter->getValues();
+                $files = $req->getUploadedFiles();
+                if (empty($files['newfile'])) {
+                    throw new Exception('Expected a newfile');
+                }
+
+                $newfile = $files['newfile'];
+
+                if ($newfile->getError() === UPLOAD_ERR_OK) {
+                    $uploadFileName = $newfile->getClientFilename();
+                    $newfile->moveTo($this->container['settings']['application_form']['file_upload_path'] . $uploadFileName);
+                }
+
+
+                $data                                         = $this->receiveEquipInputFilter->getValues();
                 $receiveEquip                                 = $this->receiveEquipService->submit($data);
                 $_SESSION['receiveEquipForm']['receiveEquip'] = $receiveEquip;
                 $res                                          = $res->withRedirect($this->successUrl);
@@ -104,8 +117,7 @@ class ReceiveEquip
                     'exists' => true,
                     'values' => $receiveEquip,
                 ];
-            }
-            else {
+            } else {
                 $this->view['form'] = [
                     'school' => $school,
                     'exists' => false,
