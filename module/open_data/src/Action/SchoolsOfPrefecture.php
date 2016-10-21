@@ -14,6 +14,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use GrEduLabs\OpenData\Service\DataProviderInterface;
 use GrEduLabs\OpenData\InputFilter\PrefectureNameInputFilter;
+use GrEduLabs\OpenData\InputFilter\EducationLevelNameInputFilter;
 
 /**
  * @inheritdoc
@@ -22,14 +23,20 @@ class SchoolsOfPrefecture extends PagedApiAction
 {
 
     /**
-     * @var InputFilter 
+     * @var InputFilter for prefecture name 
      */
     private $_prefecturesInputFilter;
+
+    /**
+     * @var InputFilter for education level label
+     */
+    private $_educationLevelInputFilter;
 
     public function __construct(Container $container, DataProviderInterface $dataProvider, $empty_data_404 = false)
     {
         parent::__construct($container, $dataProvider, $empty_data_404);
         $this->_prefecturesInputFilter = new PrefectureNameInputFilter();
+        $this->_educationLevelInputFilter = new EducationLevelNameInputFilter();
     }
 
     public function __invoke(Request $req, Response $res, array $args = [])
@@ -37,11 +44,16 @@ class SchoolsOfPrefecture extends PagedApiAction
         $this->_prefecturesInputFilter->setData([
             'name' => (isset($args['prefecture']) ? $args['prefecture'] : null)
         ]);
-        if ($this->_prefecturesInputFilter->isValid()) {
+        $this->_educationLevelInputFilter->setData([
+            'name' => (isset($args['education_level']) ? $args['education_level'] : null)
+        ]);
+        if ($this->_prefecturesInputFilter->isValid() &&
+            $this->_educationLevelInputFilter->isValid()) {
             $this->dataProvider->queryFilter('prefecture.name', $this->_prefecturesInputFilter->getValue('name'));
+            $this->dataProvider->queryFilter('educationlevel.name', $this->_educationLevelInputFilter->getValue('name'));
             return parent::__invoke($req, $res, $args);
         } else {
-            $messages = $this->_prefecturesInputFilter->getMessages();
+            $messages = array_merge($this->_prefecturesInputFilter->getMessages(), $this->_educationLevelInputFilter->getMessages());
             $responseData = $this->prepareResponseData(400, [
                 'errors' => array_reduce(array_keys($messages), function ($m, $k) use ($messages) {
                         $m[$k] = array_values($messages[$k]);
