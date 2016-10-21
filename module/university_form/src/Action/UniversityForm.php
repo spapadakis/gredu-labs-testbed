@@ -7,37 +7,82 @@
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
-
 namespace GrEduLabs\UniversityForm\Action;
-
-use Exception;
-use GrEduLabs\UniversityForm\Service\UniversityFormInterface;
+use GrEduLabs\UniversityForm\Service\UniversityFormServiceInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-
+use Slim\Views\Twig;
+use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\InputFilter\InputFilterInterface;
 class UniversityForm
 {
-    private $service;
-
-    public function __construct(UniversityFormServiceInterface $service)
-    {
-        $this->view = $view;
-        $this->service = $service;
+    /**
+     * @var Twig
+     */
+    protected $view;
+    /**
+     *
+     * @var UniversityFormServiceInterface
+     */
+    protected $UniversityFormService;
+    /**
+     *
+     * @var InputFilterInterface
+     */
+    protected $UniversityFormInputFilter;
+    /**
+     *
+     * @var AuthenticationServiceInterface
+     */
+    protected $authService;
+    /**
+     *
+     * @var type SLIM application container
+     */
+    protected $container;
+    /**
+     *
+     * @var string
+     */
+    protected $successUrl;
+    public function __construct(
+    Twig $view, UniversityFormServiceInterface $UniversityFormService, InputFilterInterface $UniversityFormInputFilter, AuthenticationServiceInterface $authService, $successUrl, $container
+    ) {
+        $this->view                    = $view;
+        $this->UniversityFormService   = $UniversityFormService;
+        $this->UniversityFormInputFilter = $UniversityFormInputFilter;
+        $this->authService             = $authService;
+        $this->successUrl              = $successUrl;
+        $this->container               = $container;
     }
-
-    public function __invoke(Request $req, Response $res, array $args = [])
+    public function __invoke(Request $req, Response $res)
     {
-
-        $id                  = $params['id'];
-        $params['id'] = $univ->id;
-        try {
-                $univ  = $this->service->createuniv($params);
-                $res  = $res->withStatus(201);
-                $res = $res->withJson($univ);
-        } catch (Exception $ex) {
-            $res = $res->withStatus(500, $ex->getMessage());
+        $school = $req->getAttribute('school');
+        if ($req->isPost()) {
+            $reqParams = $req->getParams();
+            array_splice($reqParams['items'], 0, 0);
+            $this->UniversityFormInputFilter->setData(array_merge($reqParams, [
+                'school_id'    => $school->id,
+                'submitted_by' => $this->authService->getIdentity()->mail,
+            ]));
+            $isValid = $this->UniversityFormInputFilter->isValid();
+            if ($isValid) {
+                $data = $this->UniversityFormInputFilter->getValues();
+                $UniversityForm                                 = $this->UniversityFormService->submit($data);
+                $_SESSION['UniversityFormForm']['UniversityForm'] = $UniversityForm;
+                $res                                          = $res->withRedirect($this->successUrl);
+                return $res;
+            }
+            $this->view['form'] = [
+                'is_valid'   => $isValid,
+                'values'     => $this->UniversityFormInputFilter->getValues(),
+                'raw_values' => $this->UniversityFormInputFilter->getRawValues(),
+                'messages'   => $this->UniversityFormInputFilter->getMessages(),
+            ];
         }
-
+     
+        $res = $this->view->render($res, 'university_form/form.twig', [
+                ]);
         return $res;
     }
 }

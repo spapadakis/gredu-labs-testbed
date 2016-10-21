@@ -61,7 +61,7 @@ return [
             ],
             'university_form' => [
                 'label' => 'Ιδρύματα Τριτοβάθμιας',
-                'route' => 'university-form',
+                'route' => 'university_form',
             ],
             'forum' => [
                 'label'    => 'Φόρουμ βοήθειας',
