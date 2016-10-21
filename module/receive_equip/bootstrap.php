@@ -85,8 +85,6 @@ return function (Slim\App $app) {
 
     $events('on', 'app.bootstrap', function ($app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
-        $container['router']->getNamedRoute('school')
-                ->add(GrEduLabs\ReceiveEquip\Middleware\SchoolReceiveEquip::class);
 
         $app->group('/receive-equip', function () {
             $this->map(['get', 'post'], '', GrEduLabs\ReceiveEquip\Action\ReceiveEquip::class)

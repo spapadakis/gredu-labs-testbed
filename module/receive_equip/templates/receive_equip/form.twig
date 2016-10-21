@@ -37,9 +37,47 @@
             </p>
         </div>
 
+        <div class="col-md-12" style="margin-top: 20px;">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Στοιχεία εγκεκριμένης αίτησης</h4>
+                </div>
+                <div class="panel-body">
+                    {% if form.exists %}
+                        <div class="row">
+                            <dl class="col-sm-12 col-md-6">
+                                <dt>A/A εγκεκριμένης αίτησης</dt>
+                                <dd>{{ form.values.id }}</dd>
+                                <dt>Ημερ. υποβολής</dt>
+                                <dd>{{ form.values.submitted|date('d/m/Y') }}<dd>
+                                <dt>Ημερ. παραλαβής</dt>
+                                <dd>{{ form.values.received_ts|date('d/m/Y') }}<dd>
+                            </dl>
+                            <dl class="col-sm-12 col-md-6">
+                                <dt>Σχολείο</dt>
+                                <dd>{{ form.school.name }}</dd>
+                                <dt>Κωδικός Υπουργείου</dt>
+                                <dd>{{ form.school.registry_no }}<dd>
+                                <dt>Διεύθυνση</dt>
+                                <dd>{{ form.school.eduadmin }}<dd>
+                                <dt>Περιφέρεια</dt>
+                                <dd>{{ form.school.regioneduadmin }}<dd>
+                            </dl>
+                            <dl class="col-lg-12">
+                                <dt>Σχόλια/Παρατηρήσεις</dt>
+                                <dd>{{ form.values.comments|e }}</dd>
+                            </dl>
+                        </div>
+                    {% else %}
+                        <p>Δεν υπάρχει εγκεκριμένη αίτηση για το σχολείο σας.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+
+        {% if form.exists %}
         <div class="table-responsive">
             <fieldset>
-                <legend>Νέος εξοπλισμός</legend>
                 <div id="items-list">
                     <table class="table table-hover table-striped table-condensed">
                         <thead>
@@ -55,7 +93,11 @@
                                 <tr>
                                     <td class="col-xs-8">{{ item.itemcategory }}</td>
                                     <td class="col-xs-4 text-center">{{ item.qty }}</td>
+                                    {% if form.values.received_ts is empty %}
                                     <td class="col-xs-4">{{ macros.itemCount('qtyreceived', 'Πλήθος', item.qtyreceived, loop.index0, 0) }}</td>
+                                    {% else %}
+                                    <td class="col-xs-4 text-center">{{ item.qtyreceived }}</td>
+                                    {% endif %}
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -64,12 +106,16 @@
             </fieldset>
         </div>
         <hr>
+        {% if form.values.received_ts is empty %}
         <div class="form-group text-center">
             <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
         </div>
+        {% endif %}
         <input type="hidden" name="id" value="{{ form.values.id }}">
+        {% endif %}
         <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
         <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
+      </div>
     </form>
 </div>
 {% endblock %}

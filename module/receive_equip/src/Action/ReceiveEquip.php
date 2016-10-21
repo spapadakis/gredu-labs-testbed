@@ -100,7 +100,16 @@ class ReceiveEquip
         if (!$req->isPost()) {
             if (null !== ($receiveEquip = $this->receiveEquipService->findSchoolReceiveEquip($school->id))) {
                 $this->view['form'] = [
+                    'school' => $school,
+                    'exists' => true,
                     'values' => $receiveEquip,
+                ];
+            }
+            else {
+                $this->view['form'] = [
+                    'school' => $school,
+                    'exists' => false,
+                    'values' => null,
                 ];
             }
         }

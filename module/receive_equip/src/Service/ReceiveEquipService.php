@@ -52,10 +52,10 @@ public function __construct($logger) {
 
     public function findSchoolReceiveEquip($schoolId)
     {
-      /*** to do get only the approved application form ***/ 
-        $receiveEquip = R::findOne('applicationform', ' school_id = ? ORDER BY id DESC', [$schoolId]);
+        $receiveEquip = R::findOne('applicationform', ' school_id = ? AND approved = 1 ORDER BY id DESC', [$schoolId]);
+//        $receiveEquip = R::findOne('applicationform', ' id = ? ', [6128]);
         if (null === $receiveEquip) {
-            return;
+            return null;
         }
 
         return $this->exportReceiveEquip($receiveEquip);

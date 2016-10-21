@@ -3,7 +3,7 @@
         Επιτυχής Καταχώρηση <small>φόρμας παραλαβής νέου εξοπλισμού</small>
     {% endblock %}
 </h1>
-<p class="no-print">Η φόρμα παραλαβής για το σχολείο {{ school.name }} με <strong>Α/Α {{ receiveEquip.id }}</strong>, καταχωρήθηκε επιτυχώς.</p>
+<p class="no-print">Η φόρμα παραλαβής για το σχολείο {{ school.name }} με <strong>Α/Α αίτησης {{ receiveEquip.id }}</strong>, καταχωρήθηκε επιτυχώς.</p>
 
 <h2>Παραλαβή Εξοπλισμού</h2>
 <div class="row">
@@ -12,12 +12,18 @@
         <dd>{{ receiveEquip.id }}</dd>
         <dt>Ημερ. υποβολής</dt>
         <dd>{{ receiveEquip.submitted|date('d/m/Y') }}<dd>
+        <dt>Ημερ. παραλαβής</dt>
+        <dd>{{ receiveEquip.received_ts|date('d/m/Y') }}<dd>
     </dl>
     <dl class="col-sm-12 col-md-6">
         <dt>Σχολείο</dt>
         <dd>{{ school.name }}</dd>
         <dt>Κωδικός Υπουργείου</dt>
         <dd>{{ school.registry_no }}<dd>
+        <dt>Διεύθυνση</dt>
+        <dd>{{ school.eduadmin }}<dd>
+        <dt>Περιφέρεια</dt>
+        <dd>{{ school.regioneduadmin }}<dd>
     </dl>
 </div>
 <h3>Εξοπλισμός που παραλήφθηκε</h3>
