@@ -21,16 +21,17 @@ public function __construct($logger) {
   $this->logger = $logger;
 }
 
-    public function submit(array $data)
+    public function submit(array $data, $receivedDocumentFileName)
     {
-      $this->logger->info(sprintf(
+/*      $this->logger->info(sprintf(
           'application id = %s',
           $data['id']
-      ));
+      )); */
         $receiveEquip = $this->findById($data['id']);
 
         $receiveEquip->received_by      = $data['submitted_by'];
-        $receiveEquip->received_ts      = date('Y-m-d G:i:s');;
+        $receiveEquip->received_ts      = date('Y-m-d G:i:s');
+        $receiveEquip->received_document = $receivedDocumentFileName;
 
         $items = $receiveEquip->ownApplicationformitemList;
         $dataItems = $data['items'];
@@ -53,7 +54,6 @@ public function __construct($logger) {
     public function findSchoolReceiveEquip($schoolId)
     {
         $receiveEquip = R::findOne('applicationform', ' school_id = ? AND approved = 1 ORDER BY id DESC', [$schoolId]);
-//        $receiveEquip = R::findOne('applicationform', ' id = ? ', [6128]);
         if (null === $receiveEquip) {
             return null;
         }

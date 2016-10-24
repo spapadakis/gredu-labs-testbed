@@ -25,6 +25,7 @@
         Παραλαβή <small>νέου εξοπλισμού</small>
     {% endblock %}
     </h1>
+
     <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}"
           data-messages="{{ form.messages|default({})|json_encode }}" enctype="multipart/form-data">
         <div class="form-group">
@@ -107,10 +108,11 @@
         </div>
         <hr>
         {% if form.values.received_ts is empty %}
+
         <div class="form-group text-center">
             <h1>Αποστολή Αρχείου</h1>
             <label>Επιλέξτε αρχείο:</label>
-            <input type="file" name="newfile">
+            <input type="file" name="received_document">
         </div>
         <div class="form-group text-center">
             <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>

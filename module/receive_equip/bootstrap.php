@@ -49,6 +49,7 @@ return function (Slim\App $app) {
                 $c->get(GrEduLabs\ReceiveEquip\InputFilter\ReceiveEquip::class),
                 $c->get('authentication_service'),
                 $c->get('router')->pathFor('receive_equip.submit_success'),
+                $c['flash'],
                 $c
             );
         };

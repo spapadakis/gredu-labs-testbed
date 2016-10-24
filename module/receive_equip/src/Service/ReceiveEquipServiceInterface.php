@@ -12,7 +12,7 @@ namespace GrEduLabs\ReceiveEquip\Service;
 
 interface ReceiveEquipServiceInterface
 {
-    public function submit(array $data);
+    public function submit(array $data, $receivedDocumentFileName);
 
     public function findSchoolReceiveEquip($schoolId);
 
