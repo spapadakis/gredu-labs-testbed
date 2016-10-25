@@ -84,12 +84,10 @@ class ApplicationFormService implements ApplicationFormServiceInterface
     public function findApprovedSchoolApplicationForms()
     {
         $appForms = R::findAll('applicationform', ' approved=1');
-//        $appForms = R::findAll('applicationform', ' id in (2614,6775,2533,466,508,2894,5216,322,2901,2413,2476,4002,4205,3720,5404,6374,4172,6320)');
 
         return array_map(function ($c) {
                 return $this->exportApplicationForm($c, true);
             },
-//            [$this, 'exportApplicationForm'],
             $appForms
         );
     }
