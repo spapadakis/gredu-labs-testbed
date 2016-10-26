@@ -83,7 +83,14 @@ class ApplicationFormService implements ApplicationFormServiceInterface
      */
     public function findApprovedSchoolApplicationForms()
     {
-        $appForms = R::findAll('applicationform', ' approved=1');
+        $selectedAppForms = R::getAll('SELECT applicationform.* '
+            . 'FROM applicationform '
+            . 'JOIN school ON applicationform.school_id=school.id '
+            . 'JOIN eduadmin ON school.eduadmin_id=eduadmin.id '
+            . 'JOIN regioneduadmin ON eduadmin.regioneduadmin_id=regioneduadmin.id '
+            . 'WHERE applicationform.approved=1 '
+            . 'ORDER BY regioneduadmin.name, eduadmin.name, school.name');
+        $appForms = R::convertToBeans('applicationform', $selectedAppForms);
 
         return array_map(function ($c) {
                 return $this->exportApplicationForm($c, true);
