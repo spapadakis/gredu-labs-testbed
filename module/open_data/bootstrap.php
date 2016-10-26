@@ -155,7 +155,7 @@ return function (App $app) {
                         'url' => 'URL',
                     ],
                 ],
-                'appforms' => [
+                'applications' => [
                     'query' => 'SELECT applicationform.id AS id, '
                     . ' school.registry_no AS school_registry_no, '
                     . ' school.name AS school_name, '
@@ -164,6 +164,8 @@ return function (App $app) {
                     . ' FROM applicationformitem '
                     . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
                     . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                    . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                    . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                     . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                     . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                     . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -193,7 +195,7 @@ return function (App $app) {
                     ];
                 },
                 ],
-                'appnewforms' => [
+                'new_applications' => [
                     'query' =>
                     'SELECT applicationform.id AS id, '
                     . ' school.registry_no AS school_registry_no, '
@@ -203,6 +205,8 @@ return function (App $app) {
                     . ' FROM applicationformitem '
                     . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
                     . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                    . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                    . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                     . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                     . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                     . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -226,7 +230,7 @@ return function (App $app) {
                     ];
                 },
                 ],
-                'appforms_items' => [
+                'application_items' => [
                     'query' =>
                     'SELECT applicationform.id AS id, '
                     . ' school.registry_no AS school_registry_no, '
@@ -241,6 +245,8 @@ return function (App $app) {
                     . ' FROM applicationformitem '
                     . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
                     . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                    . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                    . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                     . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                     . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                     . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -275,7 +281,7 @@ return function (App $app) {
                     ];
                 },
                 ],
-                'newapplication' => [
+                'new_application_items' => [
                     'query' => 'SELECT applicationform.id AS id, '
                     . ' school.registry_no AS school_registry_no, '
                     . ' school.name AS school_name, '
@@ -286,6 +292,8 @@ return function (App $app) {
                     . ' FROM applicationformitem '
                     . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
                     . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                    . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                    . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                     . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                     . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                     . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -310,6 +318,30 @@ return function (App $app) {
                     ];
                 },
                 ],
+                'approved' => [
+//                    'query' => 'SELECT applicationform.id AS id, '
+//                    . ' school.registry_no AS school_registry_no, '
+//                    . ' school.name AS school_name '
+//                    . ' FROM applicationform'
+//                    . ' LEFT JOIN school ON applicationform.school_id = school.id '
+//                    . '	WHERE applicationform.approved = 1',
+                    'query' => 'SELECT school.registry_no AS school_registry_no, '
+                    . 'school.name AS school_name,'
+                    . 'regioneduadmin.name AS regionedu_name,'
+                    . 'eduadmin.name AS eduadmin_name '
+                    . 'FROM applicationform '
+                    . 'JOIN school ON applicationform.school_id=school.id '
+                    . 'JOIN eduadmin ON school.eduadmin_id=eduadmin.id '
+                    . 'JOIN regioneduadmin ON eduadmin.regioneduadmin_id=regioneduadmin.id '
+                    . 'WHERE applicationform.approved=1 '
+                    . 'ORDER BY regioneduadmin.name, eduadmin.name, school.name',
+                    'headers' => [
+                        'school_registry_no' => 'Κωδικός σχολείου',
+                        'school_name' => 'Ονομασία σχολείου',
+                        'regionedu_name' => 'Περιφέρεια',
+                        'eduadmin_name' => 'Διεύθυνση',
+                    ],
+                ]
             ];
         };
     });
@@ -332,8 +364,22 @@ return function (App $app) {
             $acl['guards']['routes'][] = ["/open-data/api/raw_{$data_retrieve_query_type}", ['guest', 'user'], ['get']];
             $acl['guards']['routes'][] = ["/open-data/api/{$data_retrieve_query_type}", ['guest', 'user'], ['get']];
         }
-        $acl['guards']['routes'][] = ["/open-data/api/schools/prefecture/{prefecture}", ['guest', 'user'], ['get']];
-        $acl['guards']['routes'][] = ["/open-data/api/schools/education_level/{education_level}", ['guest', 'user'], ['get']];
+        $acl['guards']['routes'] = array_merge($acl['guards']['routes'], [
+            ["/open-data/api/schools/prefecture/{prefecture}", ['guest', 'user'], ['get']],
+            ["/open-data/api/schools/education_level/{education_level}", ['guest', 'user'], ['get']],
+            ["/open-data/api/schools/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/schools/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/applications/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/applications/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/application_items/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/application_items/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/new_applications/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/new_applications/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/new_application_items/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/new_application_items/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/approved/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/approved/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+        ]);
         $container['settings']->set('acl', $acl);
     });
 
@@ -405,10 +451,6 @@ return function (App $app) {
         // unified paged interface for all previously existing csv exports of open data
         foreach ($data_retrieve_query_types as $data_retrieve_query_type) {
             $spec = $specs[$data_retrieve_query_type];
-            // query
-            // params_callback
-            // data_post_handle_callback
-            // headers
             $container["{$data_retrieve_query_type}_provider"] = function ($c) use ($spec, $container) {
                 $dataProvider = new GrEduLabs\OpenData\Service\RedBeanQueryPagedDataProvider();
                 $dataProvider->setPagesize(20);
@@ -442,6 +484,32 @@ return function (App $app) {
                 $c, $c->get(GrEduLabs\OpenData\Action\SchoolsOfPrefecture::class . "_provider"), true
             );
         };
+
+        foreach (['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved'] as $spec_key) {
+            $container[GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_{$spec_key}_provider"] = function ($c) use ($specs, $spec_key) {
+                $spec = $specs[$spec_key];
+                $dataProvider = new GrEduLabs\OpenData\Service\RedBeanFilteredQueryPagedDataProvider();
+                $dataProvider->setLabels($spec['headers']);
+                $dataProvider->setQuery($spec['query'], isset($spec['params_callback']) ? $spec['params_callback']($c) : []);
+                return $dataProvider;
+            };
+            $container["{$spec_key}_filtered_action"] = function ($c) use ($spec_key) {
+                return new GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction(
+                    $c, $c->get(GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_{$spec_key}_provider"), true
+                );
+            };
+        }
+//        $container[GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_approved_provider"] = function ($c) use ($specs) {
+//            $dataProvider = new GrEduLabs\OpenData\Service\RedBeanFilteredQueryPagedDataProvider();
+//            $dataProvider->setLabels($specs['approved']['headers']);
+//            $dataProvider->setQuery($specs['approved']['query']);
+//            return $dataProvider;
+//        };
+//        $container['approved_filtered_action'] = function ($c) {
+//            return new GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction(
+//                $c, $c->get(GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_approved_provider"), true
+//            );
+//        };
     });
 
     $events('on', 'app.bootstrap', function (App $app, Container $c) {
@@ -469,10 +537,6 @@ return function (App $app) {
                 ->setName('open_data.api.prefectures');
             $this->get('/prefecture/{name}', Action\Prefectures::class)
                 ->setName('open_data.api.prefecture');
-            $this->get('/schools/prefecture/{prefecture}', Action\SchoolsOfPrefecture::class)
-                ->setName('open_data.api.schools.prefecture');
-            $this->get('/schools/education_level/{education_level}', Action\SchoolsOfPrefecture::class)
-                ->setName('open_data.api.schools.education_level');
             $this->get('/itemcategorynames', Action\ItemCategoryNames::class)
                 ->setName('open_data.api.itemcategorynames');
             $this->get('/allschools', Action\AllSchools::class)
@@ -485,6 +549,35 @@ return function (App $app) {
                 $this->get("/{$data_retrieve_query_type}", "{$data_retrieve_query_type}_action")
                     ->setName("open_data.api.{$data_retrieve_query_type}");
             }
+            $this->get('/schools/prefecture/{prefecture}', Action\SchoolsOfPrefecture::class)
+                ->setName('open_data.api.schools.prefecture');
+            $this->get('/schools/education_level/{education_level}', Action\SchoolsOfPrefecture::class)
+                ->setName('open_data.api.schools.education_level');
+
+            $this->get('/schools/eduadmin/{eduadmin}', 'schools_filtered_action')
+                ->setName('open_data.api.schools.eduadmin');
+            $this->get('/schools/regioneduadmin/{regioneduadmin}', 'schools_filtered_action')
+                ->setName('open_data.api.schools.regioneduadmin');
+            $this->get('/approved/eduadmin/{eduadmin}', 'approved_filtered_action')
+                ->setName('open_data.api.approved.eduadmin');
+            $this->get('/approved/regioneduadmin/{regioneduadmin}', 'approved_filtered_action')
+                ->setName('open_data.api.approved.regioneduadmin');
+            $this->get('/applications/eduadmin/{eduadmin}', 'applications_filtered_action')
+                ->setName('open_data.api.applications.eduadmin');
+            $this->get('/applications/regioneduadmin/{regioneduadmin}', 'applications_filtered_action')
+                ->setName('open_data.api.applications.regioneduadmin');
+            $this->get('/application_items/eduadmin/{eduadmin}', 'application_items_filtered_action')
+                ->setName('open_data.api.application_items.eduadmin');
+            $this->get('/application_items/regioneduadmin/{regioneduadmin}', 'application_items_filtered_action')
+                ->setName('open_data.api.application_items.regioneduadmin');
+            $this->get('/new_applications/eduadmin/{eduadmin}', 'new_applications_filtered_action')
+                ->setName('open_data.api.new_applications.eduadmin');
+            $this->get('/new_applications/regioneduadmin/{regioneduadmin}', 'new_applications_filtered_action')
+                ->setName('open_data.api.new_applications.regioneduadmin');
+            $this->get('/new_application_items/eduadmin/{eduadmin}', 'new_application_items_filtered_action')
+                ->setName('open_data.api.new_application_items.eduadmin');
+            $this->get('/new_application_items/regioneduadmin/{regioneduadmin}', 'new_application_items_filtered_action')
+                ->setName('open_data.api.new_application_items.regioneduadmin');
         });
     });
 };

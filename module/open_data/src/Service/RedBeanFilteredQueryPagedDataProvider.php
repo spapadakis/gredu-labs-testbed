@@ -10,7 +10,6 @@
 namespace GrEduLabs\OpenData\Service;
 
 use GrEduLabs\OpenData\Service\RedBeanQueryPagedDataProvider;
-use RedBeanPHP\R;
 
 /**
  * Provide basic filtering capabilities over the standard paged redbean provider.
@@ -22,7 +21,7 @@ class RedBeanFilteredQueryPagedDataProvider extends RedBeanQueryPagedDataProvide
 
     /**
      * @var array An array containing filter information in the form of 
-     * `"column_name" => "filter_value"` pairs. 
+     * `"column_name" => ['value' => "filter_value", 'op' => $op]` associations. 
      * @see queryFilter()
      */
     protected $_filters;
@@ -45,10 +44,18 @@ class RedBeanFilteredQueryPagedDataProvider extends RedBeanQueryPagedDataProvide
      * @param string|null $column_name the name of the column to apply filter for.
      * If the value is null, the filter for the column will be ignored.
      * @param type $value
+     * @param string $op either '=' or 'LIKE' for partial match; anything else
+     * computes to '='
      */
-    public function queryFilter(string $column_name, $value = null)
+    public function queryFilter(string $column_name, $value = null, $op = '=')
     {
-        $this->_filters[$column_name] = $value;
+        if (!in_array(($op = trim(strtoupper($op))), ['=', 'LIKE'])) {
+            $op = '=';
+        }
+        $this->_filters[$column_name] = [
+            'value' => $value,
+            'op' => $op
+        ];
     }
 
     /**
@@ -85,7 +92,7 @@ class RedBeanFilteredQueryPagedDataProvider extends RedBeanQueryPagedDataProvide
             $filters = $this->_filters;
             $filters_sql = array_map(function ($key) use ($filters) {
                 $sname = preg_replace('/[^a-z0-9]/', '', $key);
-                return (isset($filters[$key]) ? " {$key} = :value_{$sname}" : null);
+                return (isset($filters[$key]['value']) ? " {$key} {$filters[$key]['op']} :value_{$sname} " : null);
             }, array_keys($filters));
         }
 
@@ -104,9 +111,17 @@ class RedBeanFilteredQueryPagedDataProvider extends RedBeanQueryPagedDataProvide
         if ($this->hasQueryFilters()) {
             $filters = $this->_filters;
             $filters_params = array_reduce(array_keys($filters), function ($params, $key) use ($filters) {
-                if (isset($filters[$key])) {
+                if (isset($filters[$key]['value'])) {
                     $sname = preg_replace('/[^a-z0-9]/', '', $key);
-                    $params[":value_{$sname}"] = $filters[$key];
+                    switch ($filters[$key]['op']) {
+                        case 'LIKE':
+                            $params[":value_{$sname}"] = '%' . $filters[$key]['value'] . '%';
+                            break;
+                        case '=':
+                        default:
+                            $params[":value_{$sname}"] = $filters[$key]['value'];
+                            break;
+                    }
                 }
                 return $params;
             }, []);
