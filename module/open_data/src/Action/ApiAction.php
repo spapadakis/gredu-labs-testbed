@@ -95,9 +95,9 @@ class ApiAction
      * - page Data current page 
      * - pages Data number of pages available 
      */
-    protected function prepareResponseData(int $status, $data = null)
+    protected function prepareResponseData($status, $data = null)
     {
-        $is_success = ($status === 200);
+        $is_success = ($status == 200);
         $has_data = $is_success && isset($data);
         $has_paging = $this->dataProvider instanceof RedBeanQueryPagedDataProvider && $has_data;
 
@@ -123,7 +123,7 @@ class ApiAction
      * @param int $status HTTP status code 
      * @return mixed response object
      */
-    protected function respond(Response $res, string $outputFormat, array $response_data, int $status)
+    protected function respond(Response $res, $outputFormat, array $response_data, $status)
     {
         switch ($outputFormat) {
             case 'JSON':

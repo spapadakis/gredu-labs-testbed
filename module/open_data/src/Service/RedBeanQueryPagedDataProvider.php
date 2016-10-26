@@ -115,7 +115,7 @@ class RedBeanQueryPagedDataProvider implements DataProviderInterface
      * @param int $pagesize the desired page size
      * @return int the current page size
      */
-    public function setPagesize(int $pagesize)
+    public function setPagesize($pagesize)
     {
         $this->_pagesize = $pagesize;
         return $this->getPagesize();
@@ -143,7 +143,7 @@ class RedBeanQueryPagedDataProvider implements DataProviderInterface
      * @param int $page the page requested
      * @return int the current page number 
      */
-    public function setPage(int $page)
+    public function setPage($page)
     {
         $this->_page = $page;
         return $this->getPage();
@@ -168,7 +168,7 @@ class RedBeanQueryPagedDataProvider implements DataProviderInterface
      * @param string $query
      * @param array $params bind params to query
      */
-    public function setQuery(string $query, array $params = [])
+    public function setQuery($query, array $params = [])
     {
         // add SQL_CALC_FOUND_ROWS to query 
         $mod_query = str_ireplace('START_OF_QUERYSELECT ', 'SELECT SQL_CALC_FOUND_ROWS ', "START_OF_QUERY" . trim($query));

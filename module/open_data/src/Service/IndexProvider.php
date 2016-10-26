@@ -33,7 +33,7 @@ class IndexProvider implements DataProviderInterface
      */
     protected $data;
 
-    public function __construct(string $api_doc_url, Router $router)
+    public function __construct($api_doc_url, Router $router)
     {
         $this->api_doc_url = $api_doc_url;
 

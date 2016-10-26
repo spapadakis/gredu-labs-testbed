@@ -47,7 +47,7 @@ class RedBeanFilteredQueryPagedDataProvider extends RedBeanQueryPagedDataProvide
      * @param string $op either '=' or 'LIKE' for partial match; anything else
      * computes to '='
      */
-    public function queryFilter(string $column_name, $value = null, $op = '=')
+    public function queryFilter($column_name, $value = null, $op = '=')
     {
         if (!in_array(($op = trim(strtoupper($op))), ['=', 'LIKE'])) {
             $op = '=';
