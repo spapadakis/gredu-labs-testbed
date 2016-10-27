@@ -31,4 +31,4 @@ FROM approvedapplications
 
 DROP TABLE approved_ids;
 
-DROP TABLE approvedapplications
+DROP TABLE approvedapplications;
