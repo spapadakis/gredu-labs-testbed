@@ -109,14 +109,20 @@
         <hr>
         {% if form.values.received_ts is empty %}
 
-        <div class="form-group text-center">
-            <h1>Αποστολή Αρχείου</h1>
-            <label>Επιλέξτε αρχείο:</label>
+        <div class="form-group">
+            <h3>Αποστολή Δελτίου Παραλαβής</h3>
             <input type="file" name="received_document">
         </div>
         <div class="form-group text-center">
             <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
         </div>
+        {% else %}
+        <div class="row no-print">
+            <div class="col-xs-12 text-center">
+                <a href="{{ path_for('receive_equip.report') }}" class="btn btn-lg btn-primary btn-print">Εκτύπωση</a>
+            </div>
+        </div>
+        <br>
         {% endif %}
         <input type="hidden" name="id" value="{{ form.values.id }}">
         {% endif %}
