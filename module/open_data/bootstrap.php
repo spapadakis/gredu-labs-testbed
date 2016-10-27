@@ -565,7 +565,9 @@ return function (App $app) {
             $this->get('/prefecture/{name}', Action\Prefectures::class)
                 ->setName('open_data.api.prefecture');
 
-            // TODO remove
+            $this->get('/itemcategorynames', Action\ItemCategoryNames::class)
+                ->setName('open_data.api.itemcategorynames');
+
             $this->get('/allschools', Action\AllSchools::class)
                 ->setName('open_data.api.allschools');
 
