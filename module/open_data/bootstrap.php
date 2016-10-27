@@ -319,12 +319,6 @@ return function (App $app) {
                 },
                 ],
                 'approved' => [
-//                    'query' => 'SELECT applicationform.id AS id, '
-//                    . ' school.registry_no AS school_registry_no, '
-//                    . ' school.name AS school_name '
-//                    . ' FROM applicationform'
-//                    . ' LEFT JOIN school ON applicationform.school_id = school.id '
-//                    . '	WHERE applicationform.approved = 1',
                     'query' => 'SELECT school.registry_no AS school_registry_no, '
                     . 'school.name AS school_name,'
                     . 'regioneduadmin.name AS regionedu_name,'
@@ -341,7 +335,34 @@ return function (App $app) {
                         'regionedu_name' => 'Περιφέρεια',
                         'eduadmin_name' => 'Διεύθυνση',
                     ],
-                ]
+                ],
+                'eduadminunits' => [
+                    'query' => 'SELECT id, name '
+                    . 'FROM eduadmin '
+                    . 'ORDER BY name ',
+                    'headers' => [
+                        'id' => 'Κωδικός',
+                        'name' => 'Ονομασία',
+                    ],
+                ],
+                'regioneduadminunits' => [
+                    'query' => 'SELECT id, name '
+                    . 'FROM regioneduadmin '
+                    . 'ORDER BY name ',
+                    'headers' => [
+                        'id' => 'Κωδικός',
+                        'name' => 'Ονομασία',
+                    ],
+                ],
+                'educationlevels' => [
+                    'query' => 'SELECT id, name '
+                    . 'FROM educationlevel '
+                    . 'ORDER BY name ',
+                    'headers' => [
+                        'id' => 'Κωδικός',
+                        'name' => 'Ονομασία',
+                    ],
+                ],
             ];
         };
     });
@@ -367,8 +388,11 @@ return function (App $app) {
         $acl['guards']['routes'] = array_merge($acl['guards']['routes'], [
             ["/open-data/api/schools/prefecture/{prefecture}", ['guest', 'user'], ['get']],
             ["/open-data/api/schools/education_level/{education_level}", ['guest', 'user'], ['get']],
+            ["/open-data/api/schools/prefecture/{prefecture}/education_level/{education_level}", ['guest', 'user'], ['get']],
             ["/open-data/api/schools/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
             ["/open-data/api/schools/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/school/{registry_no:[0-9]+}/application_items", ['guest', 'user'], ['get']],
+            ["/open-data/api/school/{registry_no:[0-9]+}/new_application_items", ['guest', 'user'], ['get']],
             ["/open-data/api/applications/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
             ["/open-data/api/applications/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
             ["/open-data/api/application_items/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
@@ -473,18 +497,19 @@ return function (App $app) {
         }
 
         // fully fledged /schools{/<prefecture>} /schools{/education_level} ??
-        $container[GrEduLabs\OpenData\Action\SchoolsOfPrefecture::class . "_provider"] = function ($c) use ($specs) {
+        $container[GrEduLabs\OpenData\Action\SchoolsFilteredAction::class . "_provider"] = function ($c) use ($specs) {
             $dataProvider = new GrEduLabs\OpenData\Service\RedBeanFilteredQueryPagedDataProvider();
             $dataProvider->setLabels($specs['schools']['headers']);
             $dataProvider->setQuery($specs['schools']['query']);
             return $dataProvider;
         };
-        $container[GrEduLabs\OpenData\Action\SchoolsOfPrefecture::class] = function ($c) {
-            return new GrEduLabs\OpenData\Action\SchoolsOfPrefecture(
-                $c, $c->get(GrEduLabs\OpenData\Action\SchoolsOfPrefecture::class . "_provider"), true
+        $container[GrEduLabs\OpenData\Action\SchoolsFilteredAction::class] = function ($c) {
+            return new GrEduLabs\OpenData\Action\SchoolsFilteredAction(
+                $c, $c->get(GrEduLabs\OpenData\Action\SchoolsFilteredAction::class . "_provider"), true
             );
         };
 
+        // eduadmin and regioneduadmin filter enabled actions 
         foreach (['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved'] as $spec_key) {
             $container[GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_{$spec_key}_provider"] = function ($c) use ($specs, $spec_key) {
                 $spec = $specs[$spec_key];
@@ -499,17 +524,18 @@ return function (App $app) {
                 );
             };
         }
-//        $container[GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_approved_provider"] = function ($c) use ($specs) {
-//            $dataProvider = new GrEduLabs\OpenData\Service\RedBeanFilteredQueryPagedDataProvider();
-//            $dataProvider->setLabels($specs['approved']['headers']);
-//            $dataProvider->setQuery($specs['approved']['query']);
-//            return $dataProvider;
-//        };
-//        $container['approved_filtered_action'] = function ($c) {
-//            return new GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction(
-//                $c, $c->get(GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_approved_provider"), true
-//            );
-//        };
+
+        // application items by school 
+        $container["application_items_of_school_filtered_action"] = function ($c) {
+            return new GrEduLabs\OpenData\Action\RegistryEduadminFilteredPagedApiAction(
+                $c, $c->get(GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_application_items_provider"), true
+            );
+        };
+        $container["new_application_items_of_school_filtered_action"] = function ($c) {
+            return new GrEduLabs\OpenData\Action\RegistryEduadminFilteredPagedApiAction(
+                $c, $c->get(GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_new_application_items_provider"), true
+            );
+        };
     });
 
     $events('on', 'app.bootstrap', function (App $app, Container $c) {
@@ -533,51 +559,49 @@ return function (App $app) {
                 ->setName('open_data.api');
             $this->get('/index', Action\Index::class)
                 ->setName('open_data.api.index');
+
             $this->get('/prefectures', Action\Prefectures::class)
                 ->setName('open_data.api.prefectures');
             $this->get('/prefecture/{name}', Action\Prefectures::class)
                 ->setName('open_data.api.prefecture');
-            $this->get('/itemcategorynames', Action\ItemCategoryNames::class)
-                ->setName('open_data.api.itemcategorynames');
+
+            // TODO remove
             $this->get('/allschools', Action\AllSchools::class)
                 ->setName('open_data.api.allschools');
+
+            // raw, unpaged exports 
             foreach ($data_retrieve_query_types as $data_retrieve_query_type) {
                 $this->get("/raw_{$data_retrieve_query_type}", "raw_{$data_retrieve_query_type}_action")
                     ->setName("open_data.api.raw_{$data_retrieve_query_type}");
             }
+
+            // page enabled actions 
             foreach ($data_retrieve_query_types as $data_retrieve_query_type) {
                 $this->get("/{$data_retrieve_query_type}", "{$data_retrieve_query_type}_action")
                     ->setName("open_data.api.{$data_retrieve_query_type}");
             }
-            $this->get('/schools/prefecture/{prefecture}', Action\SchoolsOfPrefecture::class)
-                ->setName('open_data.api.schools.prefecture');
-            $this->get('/schools/education_level/{education_level}', Action\SchoolsOfPrefecture::class)
-                ->setName('open_data.api.schools.education_level');
 
-            $this->get('/schools/eduadmin/{eduadmin}', 'schools_filtered_action')
-                ->setName('open_data.api.schools.eduadmin');
-            $this->get('/schools/regioneduadmin/{regioneduadmin}', 'schools_filtered_action')
-                ->setName('open_data.api.schools.regioneduadmin');
-            $this->get('/approved/eduadmin/{eduadmin}', 'approved_filtered_action')
-                ->setName('open_data.api.approved.eduadmin');
-            $this->get('/approved/regioneduadmin/{regioneduadmin}', 'approved_filtered_action')
-                ->setName('open_data.api.approved.regioneduadmin');
-            $this->get('/applications/eduadmin/{eduadmin}', 'applications_filtered_action')
-                ->setName('open_data.api.applications.eduadmin');
-            $this->get('/applications/regioneduadmin/{regioneduadmin}', 'applications_filtered_action')
-                ->setName('open_data.api.applications.regioneduadmin');
-            $this->get('/application_items/eduadmin/{eduadmin}', 'application_items_filtered_action')
-                ->setName('open_data.api.application_items.eduadmin');
-            $this->get('/application_items/regioneduadmin/{regioneduadmin}', 'application_items_filtered_action')
-                ->setName('open_data.api.application_items.regioneduadmin');
-            $this->get('/new_applications/eduadmin/{eduadmin}', 'new_applications_filtered_action')
-                ->setName('open_data.api.new_applications.eduadmin');
-            $this->get('/new_applications/regioneduadmin/{regioneduadmin}', 'new_applications_filtered_action')
-                ->setName('open_data.api.new_applications.regioneduadmin');
-            $this->get('/new_application_items/eduadmin/{eduadmin}', 'new_application_items_filtered_action')
-                ->setName('open_data.api.new_application_items.eduadmin');
-            $this->get('/new_application_items/regioneduadmin/{regioneduadmin}', 'new_application_items_filtered_action')
-                ->setName('open_data.api.new_application_items.regioneduadmin');
+            // custom filter enabled actions for schools 
+            $this->get('/schools/prefecture/{prefecture}', Action\SchoolsFilteredAction::class)
+                ->setName('open_data.api.schools.prefecture');
+            $this->get('/schools/education_level/{education_level}', Action\SchoolsFilteredAction::class)
+                ->setName('open_data.api.schools.education_level');
+            $this->get('/schools/prefecture/{prefecture}/education_level/{education_level}', Action\SchoolsFilteredAction::class)
+                ->setName('open_data.api.schools.prefecture_education_level');
+
+            // eduadmin and regioneduadmin filter enabled actions 
+            foreach (['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved'] as $spec_key) {
+                $this->get("/{$spec_key}/eduadmin/{eduadmin}", "{$spec_key}_filtered_action")
+                    ->setName("open_data.api.{$spec_key}.eduadmin");
+                $this->get("/{$spec_key}/regioneduadmin/{regioneduadmin}", "{$spec_key}_filtered_action")
+                    ->setName("open_data.api.{$spec_key}.regioneduadmin");
+            }
+
+            // application items by school 
+            $this->get("/school/{registry_no:[0-9]+}/application_items", "application_items_of_school_filtered_action")
+                ->setName("open_data.api.school.application_items");
+            $this->get("/school/{registry_no:[0-9]+}/new_application_items", "new_application_items_of_school_filtered_action")
+                ->setName("open_data.api.school.new_application_items");
         });
     });
 };

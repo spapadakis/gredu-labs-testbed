@@ -19,7 +19,7 @@ use GrEduLabs\OpenData\InputFilter\EducationLevelNameInputFilter;
 /**
  * @inheritdoc
  */
-class SchoolsOfPrefecture extends PagedApiAction
+class SchoolsFilteredAction extends PagedApiAction
 {
 
     /**
