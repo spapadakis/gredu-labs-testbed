@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * gredu_labs
+ *
+ * @link https://github.com/eellak/gredu_labs for the canonical source repository
+ * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
+ * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
+ */
+return [
+    'receive_equip' => [
+        'file_upload_path' => '', // absolute local path to save file
+        'file_upload_max_size' => , // Maximum number of bytes allowed
+        'file_upload_types_permitted' => [], // Array of allowed extensions (e.g. 'png', 'jpg', 'jpeg')
+    ],
+];
