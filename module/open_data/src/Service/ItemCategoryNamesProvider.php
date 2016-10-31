@@ -39,7 +39,7 @@ class ItemCategoryNamesProvider implements DataProviderInterface
      * 
      * @param int|null $groupflag The group glag to filter 
      */
-    public function filterGroupflag(int $groupflag = null)
+    public function filterGroupflag($groupflag = null)
     {
         $this->_group_filter = $groupflag;
     }
@@ -47,7 +47,7 @@ class ItemCategoryNamesProvider implements DataProviderInterface
     /**
      * Reset any filter data for the groupflag. 
      */
-    public function unfilterGroupflag(int $groupflag)
+    public function unfilterGroupflag($groupflag)
     {
         $this->_group_filter = null;
     }
