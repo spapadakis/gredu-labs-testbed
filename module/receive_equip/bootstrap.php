@@ -85,6 +85,16 @@ return function (Slim\App $app) {
     });
 
     $events('on', 'app.bootstrap', function ($app, $container) {
+        $container[GrEduLabs\ReceiveEquip\Middleware\HandleEmptyPosts::class] = function ($c) {
+            return new GrEduLabs\ReceiveEquip\Middleware\HandleEmptyPosts(
+                $c->get('view'),
+                $c->get(GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface::class),
+                $c
+            );
+        };
+    }, -10000);
+
+    $events('on', 'app.bootstrap', function ($app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
 
         $app->group('/receive-equip', function () {
