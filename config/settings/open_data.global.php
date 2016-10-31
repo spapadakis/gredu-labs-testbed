@@ -10,5 +10,6 @@
 return [
     'open_data' => [
         'pagesize' => 20, // default page size 
+        'maxpagesize' => 200, // maximum page size 
     ],
 ];

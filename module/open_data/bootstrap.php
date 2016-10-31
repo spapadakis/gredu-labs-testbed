@@ -5,7 +5,6 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use GrEduLabs\OpenData\Action;
-use GrEduLabs\OpenData\Service;
 
 /**
  * gredu_labs.
@@ -166,6 +165,7 @@ return function (App $app) {
                     . ' LEFT JOIN school ON applicationform.school_id = school.id '
                     . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
                     . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
+                    . ' LEFT JOIN prefecture ON school.prefecture_id = prefecture.id '
                     . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                     . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                     . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -207,6 +207,7 @@ return function (App $app) {
                     . ' LEFT JOIN school ON applicationform.school_id = school.id '
                     . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
                     . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
+                    . ' LEFT JOIN prefecture ON school.prefecture_id = prefecture.id '
                     . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                     . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                     . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -247,6 +248,7 @@ return function (App $app) {
                     . ' LEFT JOIN school ON applicationform.school_id = school.id '
                     . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
                     . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
+                    . ' LEFT JOIN prefecture ON school.prefecture_id = prefecture.id '
                     . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                     . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                     . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -263,7 +265,7 @@ return function (App $app) {
                     . ') '
                     ,
                     'headers' => [
-                        'id' => 'ID',
+                        'id' => 'ID αίτησης',
                         'school_registry_no' => 'Κωδικός σχολείου',
                         'school_name' => 'Ονομασία σχολείου',
                         'submitted' => 'Ημερομηνία υποβολής',
@@ -294,6 +296,7 @@ return function (App $app) {
                     . ' LEFT JOIN school ON applicationform.school_id = school.id '
                     . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
                     . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
+                    . ' LEFT JOIN prefecture ON school.prefecture_id = prefecture.id '
                     . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                     . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                     . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -327,6 +330,7 @@ return function (App $app) {
                     . 'JOIN school ON applicationform.school_id=school.id '
                     . 'JOIN eduadmin ON school.eduadmin_id=eduadmin.id '
                     . 'JOIN regioneduadmin ON eduadmin.regioneduadmin_id=regioneduadmin.id '
+                    . ' LEFT JOIN prefecture ON school.prefecture_id = prefecture.id '
                     . 'WHERE applicationform.approved=1 '
                     . 'ORDER BY regioneduadmin.name, eduadmin.name, school.name',
                     'headers' => [
@@ -386,23 +390,28 @@ return function (App $app) {
             $acl['guards']['routes'][] = ["/open-data/api/{$data_retrieve_query_type}", ['guest', 'user'], ['get']];
         }
         $acl['guards']['routes'] = array_merge($acl['guards']['routes'], [
-            ["/open-data/api/schools/prefecture/{prefecture}", ['guest', 'user'], ['get']],
             ["/open-data/api/schools/education_level/{education_level}", ['guest', 'user'], ['get']],
             ["/open-data/api/schools/prefecture/{prefecture}/education_level/{education_level}", ['guest', 'user'], ['get']],
             ["/open-data/api/schools/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
             ["/open-data/api/schools/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/schools/prefecture/{prefecture}", ['guest', 'user'], ['get']],
             ["/open-data/api/school/{registry_no:[0-9]+}/application_items", ['guest', 'user'], ['get']],
             ["/open-data/api/school/{registry_no:[0-9]+}/new_application_items", ['guest', 'user'], ['get']],
             ["/open-data/api/applications/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
             ["/open-data/api/applications/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/applications/prefecture/{prefecture}", ['guest', 'user'], ['get']],
             ["/open-data/api/application_items/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
             ["/open-data/api/application_items/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/application_items/prefecture/{prefecture}", ['guest', 'user'], ['get']],
             ["/open-data/api/new_applications/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
             ["/open-data/api/new_applications/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/new_applications/prefecture/{prefecture}", ['guest', 'user'], ['get']],
             ["/open-data/api/new_application_items/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
             ["/open-data/api/new_application_items/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/new_application_items/prefecture/{prefecture}", ['guest', 'user'], ['get']],
             ["/open-data/api/approved/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
             ["/open-data/api/approved/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
+            ["/open-data/api/approved/prefecture/{prefecture}", ['guest', 'user'], ['get']],
         ]);
         $container['settings']->set('acl', $acl);
     });
@@ -509,7 +518,7 @@ return function (App $app) {
             );
         };
 
-        // eduadmin and regioneduadmin filter enabled actions 
+        // eduadmin, regioneduadmin and prefecture filter enabled actions 
         foreach (['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved'] as $spec_key) {
             $container[GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_{$spec_key}_provider"] = function ($c) use ($specs, $spec_key) {
                 $spec = $specs[$spec_key];
@@ -519,7 +528,8 @@ return function (App $app) {
                 return $dataProvider;
             };
             $container["{$spec_key}_filtered_action"] = function ($c) use ($spec_key) {
-                return new GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction(
+//                return new GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction(
+                return new GrEduLabs\OpenData\Action\PrefectureEduadminFilteredPagedApiAction(
                     $c, $c->get(GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_{$spec_key}_provider"), true
                 );
             };
@@ -584,19 +594,21 @@ return function (App $app) {
             }
 
             // custom filter enabled actions for schools 
-            $this->get('/schools/prefecture/{prefecture}', Action\SchoolsFilteredAction::class)
-                ->setName('open_data.api.schools.prefecture');
+//            $this->get('/schools/prefecture/{prefecture}', Action\SchoolsFilteredAction::class)
+//                ->setName('open_data.api.schools.prefecture');
             $this->get('/schools/education_level/{education_level}', Action\SchoolsFilteredAction::class)
                 ->setName('open_data.api.schools.education_level');
             $this->get('/schools/prefecture/{prefecture}/education_level/{education_level}', Action\SchoolsFilteredAction::class)
                 ->setName('open_data.api.schools.prefecture_education_level');
 
-            // eduadmin and regioneduadmin filter enabled actions 
+            // eduadmin, regioneduadmin and prefecture filter enabled actions 
             foreach (['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved'] as $spec_key) {
                 $this->get("/{$spec_key}/eduadmin/{eduadmin}", "{$spec_key}_filtered_action")
                     ->setName("open_data.api.{$spec_key}.eduadmin");
                 $this->get("/{$spec_key}/regioneduadmin/{regioneduadmin}", "{$spec_key}_filtered_action")
                     ->setName("open_data.api.{$spec_key}.regioneduadmin");
+                $this->get("/{$spec_key}/prefecture/{prefecture}", "{$spec_key}_filtered_action")
+                    ->setName("open_data.api.{$spec_key}.prefecture");
             }
 
             // application items by school 

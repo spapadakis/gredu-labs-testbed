@@ -13,44 +13,37 @@ use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use GrEduLabs\OpenData\Service\DataProviderInterface;
-use GrEduLabs\OpenData\InputFilter\PagerInputFilter;
+use GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction;
+use GrEduLabs\OpenData\InputFilter\PrefectureNameInputFilter;
 
 /**
  * @inheritdoc
  */
-class PagedApiAction extends ApiAction
+class PrefectureEduadminFilteredPagedApiAction extends EduadminFilteredPagedApiAction
 {
 
     /**
-     * @var InputFilter 
+     * @var InputFilter for prefecture name 
      */
-    private $inputFilter;
-
-    /**
-     * @var array Settings of open_data module; MUST be defined
-     */
-    private $open_data_settings;
+    private $_prefecturesInputFilter;
 
     public function __construct(Container $container, DataProviderInterface $dataProvider, $empty_data_404 = false)
     {
         parent::__construct($container, $dataProvider, $empty_data_404);
-        $this->open_data_settings = $container['settings']['open_data'];
-        $this->inputFilter = new PagerInputFilter($this->open_data_settings['maxpagesize']);
+        $this->_prefecturesInputFilter = new PrefectureNameInputFilter();
     }
 
     public function __invoke(Request $req, Response $res, array $args = [])
     {
-
-        $this->inputFilter->setData([
-            'page' => $req->getParam('page', 1),
-            'pagesize' => $req->getParam('pagesize', $this->open_data_settings['pagesize'])
+        $this->_prefecturesInputFilter->setData([
+            'name' => (isset($args['prefecture']) ? $args['prefecture'] : null)
         ]);
-        if ($this->inputFilter->isValid()) {
-            $this->dataProvider->setPage($this->inputFilter->getValue('page'));
-            $this->dataProvider->setPagesize($this->inputFilter->getValue('pagesize'));
+
+        if ($this->_prefecturesInputFilter->isValid()) {
+            $this->dataProvider->queryFilter('prefecture.name', $this->_prefecturesInputFilter->getValue('name'));
             return parent::__invoke($req, $res, $args);
         } else {
-            $messages = $this->inputFilter->getMessages();
+            $messages = $this->_prefecturesInputFilter->getMessages();
             $responseData = $this->prepareResponseData(400, [
                 'errors' => array_reduce(array_keys($messages), function ($m, $k) use ($messages) {
                         $m[$k] = array_values($messages[$k]);

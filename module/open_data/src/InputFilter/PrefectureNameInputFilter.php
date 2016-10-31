@@ -25,7 +25,7 @@ class PrefectureNameInputFilter extends InputFilter
             ->getFilterChain()
             ->attach(new Filter\StripNewlines())
             ->attach(new Filter\PregReplace([
-                'pattern' => '/[^a-zA-Zα-ζΑ-Ζ0-9]/',
+                'pattern' => '/[^a-zA-Zα-ζΑ-Ζ0-9\s]/',
                 'replacement' => '',
         ]));
 

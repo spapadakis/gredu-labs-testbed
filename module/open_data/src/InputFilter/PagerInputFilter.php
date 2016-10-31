@@ -16,8 +16,13 @@ use Zend\Validator;
 class PagerInputFilter extends InputFilter
 {
 
-    public function __construct()
+    private $maxpagesize = 0;
+
+    public function __construct($maxpagesize)
     {
+
+        $this->maxpagesize = intval($maxpagesize);
+
         $pagenum = new Input('page');
         $pagesize = new Input('pagesize');
 
@@ -33,7 +38,11 @@ class PagerInputFilter extends InputFilter
             ->attach(new Filter\ToInt());
         $pagesize->getValidatorChain()
             ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\GreaterThan(['min' => 0]));
+            ->attach(new Validator\Between([
+                'min' => 1,
+                'max' => $this->maxpagesize,
+                'inclusive' => true
+        ]));
 
         $this->add($pagenum)
             ->add($pagesize);
