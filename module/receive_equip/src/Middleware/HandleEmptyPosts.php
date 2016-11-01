@@ -51,29 +51,13 @@ class HandleEmptyPosts
     {
         $school = $req->getAttribute('school');
 
-        $this->container["logger"]->info(sprintf(
-                                    'hello from middleware'
-                                ));
-
         if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) == 'post'){ //catch file overload error...
             $postMax = ini_get('post_max_size'); //grab the size limits...
             $this->flash->addMessage('danger', "Αποστείλατε αρχείο με μέγεθος ανώτερο του επιτρεπτού");
-            if (null !== ($receiveEquip = $this->receiveEquipService->findSchoolReceiveEquip($school->id))) {
-                    $this->view['form'] = [
-                    'school' => $school,
-                    'exists' => true,
-                    'values' => $receiveEquip,
-                ];
-            } else {
-                $this->view['form'] = [
-                    'school' => $school,
-                    'exists' => false,
-                    'values' => null,
-                ];
-            }
-            $res = $this->view->render($res, 'receive_equip/form.twig', [
-            ]);
-            return $res;
+            $this->container["logger"]->info(sprintf(
+                                        'post max size exceeded'
+                                    ));
+            return $res->withRedirect($req->getUri());
         }
         else {
             return $next($req, $res);

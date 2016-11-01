@@ -74,25 +74,20 @@ return function (Slim\App $app) {
                 $c->get(GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface::class)
             );
         };
-
-        $container[GrEduLabs\ReceiveEquip\Middleware\SchoolReceiveEquip::class] = function ($c) {
-            return new GrEduLabs\ReceiveEquip\Middleware\SchoolReceiveEquip(
-                $c->get('view'),
-                $c->get(GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface::class),
-                $c
-            );
-        };
+        
     });
 
-    $events('on', 'app.bootstrap', function ($app, $container) {
+    $events('on', 'app.services', function ($container) {
         $container[GrEduLabs\ReceiveEquip\Middleware\HandleEmptyPosts::class] = function ($c) {
             return new GrEduLabs\ReceiveEquip\Middleware\HandleEmptyPosts(
                 $c->get('view'),
                 $c->get(GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface::class),
+                $c['flash'],
                 $c
             );
         };
-    }, -10000);
+
+    }, -100000);
 
     $events('on', 'app.bootstrap', function ($app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
@@ -101,6 +96,7 @@ return function (Slim\App $app) {
             $this->map(['get', 'post'], '', GrEduLabs\ReceiveEquip\Action\ReceiveEquip::class)
                 ->add(GrEduLabs\Application\Middleware\AddCsrfToView::class)
                 ->add('csrf')
+                ->add(GrEduLabs\ReceiveEquip\Middleware\HandleEmptyPosts::class)
                 ->setName('receive_equip');
             $this->get('/submit-success', GrEduLabs\ReceiveEquip\Action\SubmitSuccess::class)
                 ->setName('receive_equip.submit_success');
