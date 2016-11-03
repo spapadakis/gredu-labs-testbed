@@ -32,7 +32,7 @@ class CsvExportDataProvider implements DataProviderInterface
      */
     private $_data_callback;
 
-    public function __construct(Container $container, string $csv_export_type)
+    public function __construct(Container $container, $csv_export_type)
     {
         $this->_container = $container;
         $this->_data = null;

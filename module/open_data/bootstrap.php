@@ -19,6 +19,7 @@ return function (App $app) {
     $events = $container['events'];
 
     $filter_enabled_queries = ['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved', 'labs'];
+    $raw_csv_export_providers = ['schools', 'labs', 'assets', 'software', 'appforms', 'appnewforms', 'appforms_items', 'newapplication'];
 
     $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('GrEduLabs\\OpenData\\', __DIR__ . '/src/');
@@ -405,7 +406,7 @@ return function (App $app) {
     /**
      * Adds api routes to acl 
      */
-    $events('on', 'app.services', function ($container) use ($filter_enabled_queries) {
+    $events('on', 'app.services', function ($container) use ($filter_enabled_queries, $raw_csv_export_providers) {
         $data_retrieve_query_types = array_keys($container['data_retrieve_query_specs']);
         $acl = $container['settings']['acl'];
 
@@ -418,12 +419,10 @@ return function (App $app) {
             ['/open-data/api/itemcategorynames', ['guest', 'user'], ['get']],
         ]);
 
-        // endpoints for non-paged and paged results
+        // endpoints for page-enabled results
         foreach ($data_retrieve_query_types as $data_retrieve_query_type) {
-            $acl['guards']['routes'][] = ["/open-data/api/raw_{$data_retrieve_query_type}", ['guest', 'user'], ['get']];
             $acl['guards']['routes'][] = ["/open-data/api/{$data_retrieve_query_type}", ['guest', 'user'], ['get']];
         }
-
         // endpoints for filter enabled results
         foreach ($filter_enabled_queries as $spec_key) {
             $acl['guards']['routes'][] = ["/open-data/api/{$spec_key}/eduadmin/{eduadmin}", ['guest', 'user'], ['get']];
@@ -441,10 +440,15 @@ return function (App $app) {
             ["/open-data/api/school/{registry_no:[0-9]+}/labs", ['guest', 'user'], ['get']],
         ]);
 
+        // endpoints for raw - non-paged csv export data
+        foreach ($raw_csv_export_providers as $data_retrieve_query_type) {
+            $acl['guards']['routes'][] = ["/open-data/api/raw_{$data_retrieve_query_type}", ['guest', 'user'], ['get']];
+        }
+
         $container['settings']->set('acl', $acl);
     });
 
-    $events('on', 'app.services', function ($container) use ($filter_enabled_queries) {
+    $events('on', 'app.services', function ($container) use ($filter_enabled_queries, $raw_csv_export_providers) {
         $specs = $container['data_retrieve_query_specs'];
         $data_retrieve_query_types = array_keys($specs);
 
@@ -482,7 +486,7 @@ return function (App $app) {
         // unified wrapper for existing csv exports with no paging
         // Using "raw_" prefix to distinguish from new, pager enabled data provider  
         // TODO remove endpoints  
-        foreach ($data_retrieve_query_types as $data_retrieve_query_type) {
+        foreach ($raw_csv_export_providers as $data_retrieve_query_type) {
             $container["raw_{$data_retrieve_query_type}_provider"] = function ($c) use ($data_retrieve_query_type) {
                 return new GrEduLabs\OpenData\Service\CsvExportDataProvider($c, $data_retrieve_query_type);
             };
@@ -564,7 +568,7 @@ return function (App $app) {
         };
     });
 
-    $events('on', 'app.bootstrap', function (App $app, Container $c) use ($filter_enabled_queries) {
+    $events('on', 'app.bootstrap', function (App $app, Container $c) use ($filter_enabled_queries, $raw_csv_export_providers) {
         $data_retrieve_query_types = array_keys($c['data_retrieve_query_specs']);
         $router = $c['router'];
 
@@ -578,7 +582,7 @@ return function (App $app) {
         /**
          * Define api routes. Each route is handled by a devoted class.
          */
-        $app->group('/open-data/api', function () use ($data_retrieve_query_types, $filter_enabled_queries, $router) {
+        $app->group('/open-data/api', function () use ($data_retrieve_query_types, $filter_enabled_queries, $raw_csv_export_providers, $router) {
             $this->get('', function (Request $request, Response $response) use ($router) {
                     return $response->withStatus(302)->withHeader('Location', $router->pathFor('open_data.api.index'));
                 })
@@ -595,7 +599,7 @@ return function (App $app) {
                 ->setName('open_data.api.itemcategorynames');
 
             // raw, unpaged exports 
-            foreach ($data_retrieve_query_types as $data_retrieve_query_type) {
+            foreach ($raw_csv_export_providers as $data_retrieve_query_type) {
                 $this->get("/raw_{$data_retrieve_query_type}", "raw_{$data_retrieve_query_type}_action")
                     ->setName("open_data.api.raw_{$data_retrieve_query_type}");
             }
