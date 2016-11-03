@@ -18,6 +18,8 @@ return function (App $app) {
     $container = $app->getContainer();
     $events = $container['events'];
 
+    $filter_enabled_queries = ['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved'];
+
     $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('GrEduLabs\\OpenData\\', __DIR__ . '/src/');
     });
@@ -33,6 +35,7 @@ return function (App $app) {
                     . ' school.name AS school_name, '
                     . ' schooltype.name as school_type, '
                     . ' prefecture.name AS prefecture, '
+                    . ' school.municipality AS municipality, '
                     . ' eduadmin.name AS eduadmin, '
                     . ' regioneduadmin.name AS region_edu_admin, '
                     . ' educationlevel.name AS education_level '
@@ -49,6 +52,7 @@ return function (App $app) {
                         'school_name' => 'Ονομασία',
                         'school_type' => 'Τύπος μονάδας',
                         'prefecture' => 'Περιφερειακή ενότητα',
+                        'municipality' => 'Δήμος',
                         'eduadmin' => 'Διεύθυνση εκπαίδευσης',
                         'region_edu_admin' => 'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'education_level' => 'Βαθμίδα εκπαίδευσης',
@@ -158,6 +162,8 @@ return function (App $app) {
                     'query' => 'SELECT applicationform.id AS id, '
                     . ' school.registry_no AS school_registry_no, '
                     . ' school.name AS school_name, '
+                    . ' eduadmin.name AS eduadmin, '
+                    . ' regioneduadmin.name AS region_edu_admin, '
                     . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
                     . ' TRIM(applicationform.comments) AS comments'
                     . ' FROM applicationformitem '
@@ -185,6 +191,8 @@ return function (App $app) {
                         'id' => 'ID',
                         'school_registry_no' => 'Κωδικός σχολείου',
                         'school_name' => 'Ονομασία σχολείου',
+                        'eduadmin' => 'Διεύθυνση εκπαίδευσης',
+                        'region_edu_admin' => 'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'submitted' => 'Ημερομηνία υποβολής',
                         'comments' => 'Σχόλια - Παρατηρήσεις',
                     ],
@@ -200,6 +208,8 @@ return function (App $app) {
                     'SELECT applicationform.id AS id, '
                     . ' school.registry_no AS school_registry_no, '
                     . ' school.name AS school_name, '
+                    . ' eduadmin.name AS eduadmin, '
+                    . ' regioneduadmin.name AS region_edu_admin, '
                     . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
                     . ' TRIM(applicationform.comments) AS comments'
                     . ' FROM applicationformitem '
@@ -221,6 +231,8 @@ return function (App $app) {
                         'id' => 'ID',
                         'school_registry_no' => 'Κωδικός σχολείου',
                         'school_name' => 'Ονομασία σχολείου',
+                        'eduadmin' => 'Διεύθυνση εκπαίδευσης',
+                        'region_edu_admin' => 'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'submitted' => 'Ημερομηνία υποβολής',
                         'comments' => 'Σχόλια - Παρατηρήσεις',
                     ],
@@ -236,6 +248,8 @@ return function (App $app) {
                     'SELECT applicationform.id AS id, '
                     . ' school.registry_no AS school_registry_no, '
                     . ' school.name AS school_name, '
+                    . ' eduadmin.name AS eduadmin, '
+                    . ' regioneduadmin.name AS region_edu_admin, '
                     . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
                     . ' lab.id AS lab_id, '
                     . ' TRIM(labtype.name) AS lab_type, '
@@ -268,6 +282,8 @@ return function (App $app) {
                         'id' => 'ID αίτησης',
                         'school_registry_no' => 'Κωδικός σχολείου',
                         'school_name' => 'Ονομασία σχολείου',
+                        'eduadmin' => 'Διεύθυνση εκπαίδευσης',
+                        'region_edu_admin' => 'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'submitted' => 'Ημερομηνία υποβολής',
                         'lab_id' => 'ID χώρου',
                         'lab_type' => 'Τύπος χώρου',
@@ -287,6 +303,8 @@ return function (App $app) {
                     'query' => 'SELECT applicationform.id AS id, '
                     . ' school.registry_no AS school_registry_no, '
                     . ' school.name AS school_name, '
+                    . ' eduadmin.name AS eduadmin, '
+                    . ' regioneduadmin.name AS region_edu_admin, '
                     . ' TRIM(itemcategory.name) AS category, '
                     . ' applicationformitem.qty AS qty, '
                     . ' applicationformitem.qtyacquired AS qtyacquired, '
@@ -309,6 +327,8 @@ return function (App $app) {
                         'id' => 'ID',
                         'school_registry_no' => 'Κωδικός σχολείου',
                         'school_name' => 'Ονομασία σχολείου',
+                        'eduadmin' => 'Διεύθυνση εκπαίδευσης',
+                        'region_edu_admin' => 'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'category' => 'Είδος',
                         'qtyacquired' => 'Πλήθος Υπαρχόντων που λειτουργούν',
                         'qty' => 'Πλήθος Αιτουμένων',
@@ -367,6 +387,14 @@ return function (App $app) {
                         'name' => 'Ονομασία',
                     ],
                 ],
+                'municipalities' => [
+                    'query' => 'SELECT distinct municipality '
+                    . 'FROM school '
+                    . 'ORDER BY municipality ',
+                    'headers' => [
+                        'municipality' => 'Ονομασία δήμου',
+                    ],
+                ],
             ];
         };
     });
@@ -374,49 +402,45 @@ return function (App $app) {
     /**
      * Adds api routes to acl 
      */
-    $events('on', 'app.services', function ($container) {
+    $events('on', 'app.services', function ($container) use ($filter_enabled_queries) {
         $data_retrieve_query_types = array_keys($container['data_retrieve_query_specs']);
         $acl = $container['settings']['acl'];
+
+        // custom endpoints 
         $acl['guards']['routes'] = array_merge($acl['guards']['routes'], [
             ['/open-data/api', ['guest', 'user'], ['get']],
             ['/open-data/api/index', ['guest', 'user'], ['get']],
             ['/open-data/api/prefectures', ['guest', 'user'], ['get']],
             ['/open-data/api/prefecture/{name}', ['guest', 'user'], ['get']],
             ['/open-data/api/itemcategorynames', ['guest', 'user'], ['get']],
-            ['/open-data/api/allschools', ['guest', 'user'], ['get']],
         ]);
+
+        // endpoints for non-paged and paged results
         foreach ($data_retrieve_query_types as $data_retrieve_query_type) {
             $acl['guards']['routes'][] = ["/open-data/api/raw_{$data_retrieve_query_type}", ['guest', 'user'], ['get']];
             $acl['guards']['routes'][] = ["/open-data/api/{$data_retrieve_query_type}", ['guest', 'user'], ['get']];
         }
+
+        // endpoints for filter enabled results
+        foreach ($filter_enabled_queries as $spec_key) {
+            $acl['guards']['routes'][] = ["/open-data/api/{$spec_key}/eduadmin/{eduadmin}", ['guest', 'user'], ['get']];
+            $acl['guards']['routes'][] = ["/open-data/api/{$spec_key}/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']];
+            $acl['guards']['routes'][] = ["/open-data/api/{$spec_key}/prefecture/{prefecture}", ['guest', 'user'], ['get']];
+            $acl['guards']['routes'][] = ["/open-data/api/{$spec_key}/municipality/{municipality}", ['guest', 'user'], ['get']];
+        }
+
+        // endpoints for results by custom or combined filters 
         $acl['guards']['routes'] = array_merge($acl['guards']['routes'], [
             ["/open-data/api/schools/education_level/{education_level}", ['guest', 'user'], ['get']],
             ["/open-data/api/schools/prefecture/{prefecture}/education_level/{education_level}", ['guest', 'user'], ['get']],
-            ["/open-data/api/schools/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/schools/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/schools/prefecture/{prefecture}", ['guest', 'user'], ['get']],
             ["/open-data/api/school/{registry_no:[0-9]+}/application_items", ['guest', 'user'], ['get']],
             ["/open-data/api/school/{registry_no:[0-9]+}/new_application_items", ['guest', 'user'], ['get']],
-            ["/open-data/api/applications/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/applications/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/applications/prefecture/{prefecture}", ['guest', 'user'], ['get']],
-            ["/open-data/api/application_items/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/application_items/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/application_items/prefecture/{prefecture}", ['guest', 'user'], ['get']],
-            ["/open-data/api/new_applications/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/new_applications/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/new_applications/prefecture/{prefecture}", ['guest', 'user'], ['get']],
-            ["/open-data/api/new_application_items/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/new_application_items/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/new_application_items/prefecture/{prefecture}", ['guest', 'user'], ['get']],
-            ["/open-data/api/approved/eduadmin/{eduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/approved/regioneduadmin/{regioneduadmin}", ['guest', 'user'], ['get']],
-            ["/open-data/api/approved/prefecture/{prefecture}", ['guest', 'user'], ['get']],
         ]);
+
         $container['settings']->set('acl', $acl);
     });
 
-    $events('on', 'app.services', function ($container) {
+    $events('on', 'app.services', function ($container) use ($filter_enabled_queries) {
         $specs = $container['data_retrieve_query_specs'];
         $data_retrieve_query_types = array_keys($specs);
 
@@ -431,7 +455,7 @@ return function (App $app) {
             );
         };
 
-        // fully fledged /prefectures{/<name>} ??
+        // prefectures endpoint handler 
         $container[GrEduLabs\OpenData\Service\PrefecturesProvider::class] = function ($c) {
             return new GrEduLabs\OpenData\Service\PrefecturesProvider();
         };
@@ -441,8 +465,7 @@ return function (App $app) {
             );
         };
 
-        // item categories available
-        // NEW for demo
+        // item categories endpoint handler 
         $container[GrEduLabs\OpenData\Service\ItemCategoryNamesProvider::class] = function ($c) {
             return new GrEduLabs\OpenData\Service\ItemCategoryNamesProvider();
         };
@@ -452,24 +475,9 @@ return function (App $app) {
             );
         };
 
-        // all school id and names provider 
-        // NEW for demo 
-        $container[GrEduLabs\OpenData\Action\AllSchools::class . '_provider'] = function ($c) {
-            $dataProvider = new GrEduLabs\OpenData\Service\RedBeanQueryPagedDataProvider();
-            $dataProvider->setPagesize(10);
-            $dataProvider->setPage(1);
-            $dataProvider->setQuery('select id, name from school');
-            return $dataProvider;
-        };
-        $container[GrEduLabs\OpenData\Action\AllSchools::class] = function ($c) {
-            return new GrEduLabs\OpenData\Action\AllSchools(
-                $c, $c->get(GrEduLabs\OpenData\Action\AllSchools::class . '_provider'), true
-            );
-        };
-
-        // unified wrapper for existing csv exports 
-        // Using "raw_" prefix to distinguish from new, pager enabled stuff 
-        // BEWARE! no paging!
+        // unified wrapper for existing csv exports with no paging
+        // Using "raw_" prefix to distinguish from new, pager enabled data provider  
+        // TODO remove endpoints  
         foreach ($data_retrieve_query_types as $data_retrieve_query_type) {
             $container["raw_{$data_retrieve_query_type}_provider"] = function ($c) use ($data_retrieve_query_type) {
                 return new GrEduLabs\OpenData\Service\CsvExportDataProvider($c, $data_retrieve_query_type);
@@ -481,14 +489,14 @@ return function (App $app) {
             };
         }
 
-        // unified paged interface for all previously existing csv exports of open data
+        // unified paged interface 
         foreach ($data_retrieve_query_types as $data_retrieve_query_type) {
             $spec = $specs[$data_retrieve_query_type];
-            $container["{$data_retrieve_query_type}_provider"] = function ($c) use ($spec, $container) {
+            $container["{$data_retrieve_query_type}_provider"] = function ($c) use ($spec) {
                 $dataProvider = new GrEduLabs\OpenData\Service\RedBeanQueryPagedDataProvider();
                 $dataProvider->setPagesize(20);
                 $dataProvider->setPage(1);
-                $params = (isset($spec['params_callback']) ? $spec['params_callback']($container) : []);
+                $params = (isset($spec['params_callback']) ? $spec['params_callback']($c) : []);
                 $dataProvider->setQuery($spec['query'], $params);
                 if (isset($spec['data_post_handle_callback'])) {
                     $dataProvider->setDataPostHandleCallback($spec['data_post_handle_callback']);
@@ -505,7 +513,7 @@ return function (App $app) {
             };
         }
 
-        // fully fledged /schools{/<prefecture>} /schools{/education_level} ??
+        // custom /schools{/<prefecture>} /schools{/education_level} ??
         $container[GrEduLabs\OpenData\Action\SchoolsFilteredAction::class . "_provider"] = function ($c) use ($specs) {
             $dataProvider = new GrEduLabs\OpenData\Service\RedBeanFilteredQueryPagedDataProvider();
             $dataProvider->setLabels($specs['schools']['headers']);
@@ -519,8 +527,8 @@ return function (App $app) {
         };
 
         // eduadmin, regioneduadmin and prefecture filter enabled actions 
-        foreach (['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved'] as $spec_key) {
-            $container[GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_{$spec_key}_provider"] = function ($c) use ($specs, $spec_key) {
+        foreach ($filter_enabled_queries as $spec_key) {
+            $container["MunicipalityPrefectureEduadminFiltered_{$spec_key}_provider"] = function ($c) use ($specs, $spec_key) {
                 $spec = $specs[$spec_key];
                 $dataProvider = new GrEduLabs\OpenData\Service\RedBeanFilteredQueryPagedDataProvider();
                 $dataProvider->setLabels($spec['headers']);
@@ -528,9 +536,8 @@ return function (App $app) {
                 return $dataProvider;
             };
             $container["{$spec_key}_filtered_action"] = function ($c) use ($spec_key) {
-//                return new GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction(
-                return new GrEduLabs\OpenData\Action\PrefectureEduadminFilteredPagedApiAction(
-                    $c, $c->get(GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_{$spec_key}_provider"), true
+                return new GrEduLabs\OpenData\Action\MunicipalityPrefectureEduadminFilteredPagedApiAction(
+                    $c, $c->get("MunicipalityPrefectureEduadminFiltered_{$spec_key}_provider"), true
                 );
             };
         }
@@ -538,17 +545,17 @@ return function (App $app) {
         // application items by school 
         $container["application_items_of_school_filtered_action"] = function ($c) {
             return new GrEduLabs\OpenData\Action\RegistryEduadminFilteredPagedApiAction(
-                $c, $c->get(GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_application_items_provider"), true
+                $c, $c->get("MunicipalityPrefectureEduadminFiltered_application_items_provider"), true
             );
         };
         $container["new_application_items_of_school_filtered_action"] = function ($c) {
             return new GrEduLabs\OpenData\Action\RegistryEduadminFilteredPagedApiAction(
-                $c, $c->get(GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction::class . "_new_application_items_provider"), true
+                $c, $c->get("MunicipalityPrefectureEduadminFiltered_new_application_items_provider"), true
             );
         };
     });
 
-    $events('on', 'app.bootstrap', function (App $app, Container $c) {
+    $events('on', 'app.bootstrap', function (App $app, Container $c) use ($filter_enabled_queries) {
         $data_retrieve_query_types = array_keys($c['data_retrieve_query_specs']);
         $router = $c['router'];
 
@@ -562,7 +569,7 @@ return function (App $app) {
         /**
          * Define api routes. Each route is handled by a devoted class.
          */
-        $app->group('/open-data/api', function () use ($data_retrieve_query_types, $router) {
+        $app->group('/open-data/api', function () use ($data_retrieve_query_types, $filter_enabled_queries, $router) {
             $this->get('', function (Request $request, Response $response) use ($router) {
                     return $response->withStatus(302)->withHeader('Location', $router->pathFor('open_data.api.index'));
                 })
@@ -578,9 +585,6 @@ return function (App $app) {
             $this->get('/itemcategorynames', Action\ItemCategoryNames::class)
                 ->setName('open_data.api.itemcategorynames');
 
-            $this->get('/allschools', Action\AllSchools::class)
-                ->setName('open_data.api.allschools');
-
             // raw, unpaged exports 
             foreach ($data_retrieve_query_types as $data_retrieve_query_type) {
                 $this->get("/raw_{$data_retrieve_query_type}", "raw_{$data_retrieve_query_type}_action")
@@ -594,6 +598,7 @@ return function (App $app) {
             }
 
             // custom filter enabled actions for schools 
+            // moved to generic handler
 //            $this->get('/schools/prefecture/{prefecture}', Action\SchoolsFilteredAction::class)
 //                ->setName('open_data.api.schools.prefecture');
             $this->get('/schools/education_level/{education_level}', Action\SchoolsFilteredAction::class)
@@ -601,14 +606,16 @@ return function (App $app) {
             $this->get('/schools/prefecture/{prefecture}/education_level/{education_level}', Action\SchoolsFilteredAction::class)
                 ->setName('open_data.api.schools.prefecture_education_level');
 
-            // eduadmin, regioneduadmin and prefecture filter enabled actions 
-            foreach (['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved'] as $spec_key) {
+            // eduadmin, regioneduadmin, prefecture and municipality filter enabled actions 
+            foreach ($filter_enabled_queries as $spec_key) {
                 $this->get("/{$spec_key}/eduadmin/{eduadmin}", "{$spec_key}_filtered_action")
                     ->setName("open_data.api.{$spec_key}.eduadmin");
                 $this->get("/{$spec_key}/regioneduadmin/{regioneduadmin}", "{$spec_key}_filtered_action")
                     ->setName("open_data.api.{$spec_key}.regioneduadmin");
                 $this->get("/{$spec_key}/prefecture/{prefecture}", "{$spec_key}_filtered_action")
                     ->setName("open_data.api.{$spec_key}.prefecture");
+                $this->get("/{$spec_key}/municipality/{municipality}", "{$spec_key}_filtered_action")
+                    ->setName("open_data.api.{$spec_key}.municipality");
             }
 
             // application items by school 

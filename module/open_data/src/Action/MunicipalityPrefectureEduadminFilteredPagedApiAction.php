@@ -15,11 +15,12 @@ use Slim\Http\Response;
 use GrEduLabs\OpenData\Service\DataProviderInterface;
 use GrEduLabs\OpenData\Action\EduadminFilteredPagedApiAction;
 use GrEduLabs\OpenData\InputFilter\PrefectureNameInputFilter;
+use GrEduLabs\OpenData\InputFilter\MunicipalityNameInputFilter;
 
 /**
  * @inheritdoc
  */
-class PrefectureEduadminFilteredPagedApiAction extends EduadminFilteredPagedApiAction
+class MunicipalityPrefectureEduadminFilteredPagedApiAction extends EduadminFilteredPagedApiAction
 {
 
     /**
@@ -27,10 +28,16 @@ class PrefectureEduadminFilteredPagedApiAction extends EduadminFilteredPagedApiA
      */
     private $_prefecturesInputFilter;
 
+    /**
+     * @var InputFilter for municipality name 
+     */
+    private $_municipalityInputFilter;
+
     public function __construct(Container $container, DataProviderInterface $dataProvider, $empty_data_404 = false)
     {
         parent::__construct($container, $dataProvider, $empty_data_404);
         $this->_prefecturesInputFilter = new PrefectureNameInputFilter();
+        $this->_municipalityInputFilter = new MunicipalityNameInputFilter();
     }
 
     public function __invoke(Request $req, Response $res, array $args = [])
@@ -39,11 +46,18 @@ class PrefectureEduadminFilteredPagedApiAction extends EduadminFilteredPagedApiA
             'name' => (isset($args['prefecture']) ? $args['prefecture'] : null)
         ]);
 
-        if ($this->_prefecturesInputFilter->isValid()) {
+        $this->_municipalityInputFilter->setData([
+            'name' => (isset($args['municipality']) ? $args['municipality'] : null)
+        ]);
+
+        if ($this->_prefecturesInputFilter->isValid() &&
+            $this->_municipalityInputFilter->isValid()) {
             $this->dataProvider->queryFilter('prefecture.name', $this->_prefecturesInputFilter->getValue('name'));
+            $this->dataProvider->queryFilter('school.municipality', $this->_municipalityInputFilter->getValue('name'));
             return parent::__invoke($req, $res, $args);
+
         } else {
-            $messages = $this->_prefecturesInputFilter->getMessages();
+            $messages = array_merge($this->_prefecturesInputFilter->getMessages(), $this->_municipalityInputFilter->getMessages());
             $responseData = $this->prepareResponseData(400, [
                 'errors' => array_reduce(array_keys($messages), function ($m, $k) use ($messages) {
                         $m[$k] = array_values($messages[$k]);
