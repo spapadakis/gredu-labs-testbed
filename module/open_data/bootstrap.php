@@ -18,7 +18,7 @@ return function (App $app) {
     $container = $app->getContainer();
     $events = $container['events'];
 
-    $filter_enabled_queries = ['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved'];
+    $filter_enabled_queries = ['schools', 'applications', 'application_items', 'new_applications', 'new_application_items', 'approved', 'labs'];
 
     $events('on', 'app.autoload', function ($autoloader) {
         $autoloader->addPsr4('GrEduLabs\\OpenData\\', __DIR__ . '/src/');
@@ -79,6 +79,9 @@ return function (App $app) {
                     . ' LEFT JOIN lesson ON lab_lesson.lesson_id = lesson.id '
                     . ' LEFT JOIN teacher ON lab.responsible_id = teacher.id '
                     . ' LEFT JOIN branch ON branch.id = teacher.branch_id '
+                    . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                    . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
+                    . ' LEFT JOIN prefecture ON school.prefecture_id = prefecture.id '
                     . ' GROUP BY lab.id '
                     . ' ORDER BY school_name ',
                     'headers' => [
@@ -435,6 +438,7 @@ return function (App $app) {
             ["/open-data/api/schools/prefecture/{prefecture}/education_level/{education_level}", ['guest', 'user'], ['get']],
             ["/open-data/api/school/{registry_no:[0-9]+}/application_items", ['guest', 'user'], ['get']],
             ["/open-data/api/school/{registry_no:[0-9]+}/new_application_items", ['guest', 'user'], ['get']],
+            ["/open-data/api/school/{registry_no:[0-9]+}/labs", ['guest', 'user'], ['get']],
         ]);
 
         $container['settings']->set('acl', $acl);
@@ -553,6 +557,11 @@ return function (App $app) {
                 $c, $c->get("MunicipalityPrefectureEduadminFiltered_new_application_items_provider"), true
             );
         };
+        $container["labs_of_school_filtered_action"] = function ($c) {
+            return new GrEduLabs\OpenData\Action\RegistryEduadminFilteredPagedApiAction(
+                $c, $c->get("MunicipalityPrefectureEduadminFiltered_labs_provider"), true
+            );
+        };
     });
 
     $events('on', 'app.bootstrap', function (App $app, Container $c) use ($filter_enabled_queries) {
@@ -623,6 +632,8 @@ return function (App $app) {
                 ->setName("open_data.api.school.application_items");
             $this->get("/school/{registry_no:[0-9]+}/new_application_items", "new_application_items_of_school_filtered_action")
                 ->setName("open_data.api.school.new_application_items");
+            $this->get("/school/{registry_no:[0-9]+}/labs", "labs_of_school_filtered_action")
+                ->setName("open_data.api.school.labs");
         });
     });
 };
