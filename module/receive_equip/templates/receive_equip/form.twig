@@ -25,6 +25,9 @@
         Παραλαβή <small>νέου εξοπλισμού</small>
     {% endblock %}
     </h1>
+    {% for fem in form.formErrorMessages %}
+    {{ macros.infoBox('danger', fem) }}
+    {% endfor %}
 
     <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}"
           data-messages="{{ form.messages|default({})|json_encode }}" enctype="multipart/form-data">
@@ -35,7 +38,8 @@
                 παραλάβατε από κάθε είδος που περιλάμβανε η αίτησή σας. Επίσης,
                 πρέπει να υπογράψετε, να σαρώσετε και να επισυνάψετε το σαρωμένο
                 δελτίο παραλαβής. Τέλος, επιλέξτε "Υποβολή" για να αποστείλετε
-                οριστικά τη φόρμα παραλαβής.
+                οριστικά τη φόρμα παραλαβής. Προσοχή! Αφού υποβάλλετε επιτυχώς
+                τη φόρμα αυτή δεν μπορείτε να την τροποποιήσετε
               {% else %}
                 Ο εξοπλισμός σας έχει παραληφθεί με τα ακόλουθα στοιχεία
               {% endif %}
@@ -87,21 +91,23 @@
                     <table class="table table-hover table-striped table-condensed">
                         <thead>
                             <tr>
-                                <th class="col-xs-8">Τύπος</th>
-                                <th class="col-xs-4 text-center">Πλήθος αιτηθέντων</th>
-                                <th class="col-xs-4">Πλήθος παραληφθέντων</th>
+                                <th class="col-xs-4">Τύπος</th>
+                                <th class="col-xs-4">Χώρος</th>
+                                <th class="col-xs-2 text-center">Πλήθος αιτηθέντων</th>
+                                <th class="col-xs-2">Πλήθος παραληφθέντων</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for itemIndex,item in form.values.items %}
                             {{ macros.itemCount('id', 'id', item.id, loop.index0, 0, 'hidden') }}
                                 <tr>
-                                    <td class="col-xs-8">{{ item.itemcategory }}</td>
-                                    <td class="col-xs-4 text-center">{{ item.qty }}</td>
+                                    <td class="col-xs-4">{{ item.itemcategory }}</td>
+                                    <td class="col-xs-4">{{ item.lab }}</td>
+                                    <td class="col-xs-2 text-center">{{ item.qty }}</td>
                                     {% if form.values.received_ts is empty %}
-                                    <td class="col-xs-4">{{ macros.itemCount('qtyreceived', 'Πλήθος', item.qtyreceived, loop.index0, 0) }}</td>
+                                    <td class="col-xs-2">{{ macros.itemCount('qtyreceived', 'Πλήθος', item.qtyreceived, loop.index0, 0) }}</td>
                                     {% else %}
-                                    <td class="col-xs-4 text-center">{{ item.qtyreceived }}</td>
+                                    <td class="col-xs-2 text-center">{{ item.qtyreceived }}</td>
                                     {% endif %}
                                 </tr>
                             {% endfor %}

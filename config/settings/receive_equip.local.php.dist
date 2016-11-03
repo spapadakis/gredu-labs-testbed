@@ -9,7 +9,7 @@
  */
 return [
     'receive_equip' => [
-        'file_upload_path' => '', // absolute local path to save file
+        'file_upload_path' => 'data/uploads', // path to save file
         'file_upload_max_size' => , // Maximum number of bytes allowed
         'file_upload_types_permitted' => [], // Array of allowed extensions (e.g. 'png', 'jpg', 'jpeg')
     ],

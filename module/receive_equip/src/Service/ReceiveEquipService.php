@@ -76,6 +76,7 @@ public function __construct($logger) {
         $receiveEquip['items'] = array_map(function ($itemBean) {
             return array_merge($itemBean->export(), [
                 'itemcategory' => $itemBean->itemcategory->name,
+                'lab' => $itemBean->lab->name,
                 'version'      => $itemBean->itemcategory->groupflag,
             ]);
         }, $bean->ownApplicationformitemList);

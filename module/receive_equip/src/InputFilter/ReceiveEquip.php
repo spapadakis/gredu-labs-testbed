@@ -15,6 +15,7 @@ use Zend\Filter;
 use Zend\InputFilter\CollectionInputFilter;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\FileInput;
 use Zend\Validator;
 
 class ReceiveEquip extends InputFilter
@@ -30,7 +31,7 @@ class ReceiveEquip extends InputFilter
           ->attach(new Filter\ToInt());
         $id->getValidatorChain()
           ->attach(new Validator\NotEmpty());
-      
+
         $schoolId = new Input('school_id');
         $schoolId->setRequired(true)
             ->getFilterChain()
@@ -46,9 +47,14 @@ class ReceiveEquip extends InputFilter
                 'useDomainCheck' => false,
             ]));
 
+/*        $received_document = new FileInput('received_document');
+        $received_document->getValidatorChain()
+            ->attach(new Validator\File\UploadFile()); */
+
         $this->add($id)
             ->add($schoolId)
             ->add($submittedBy)
+//            ->add($received_document)
             ->add($itemsInputFilter, 'items');
     }
 }

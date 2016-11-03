@@ -63,6 +63,12 @@ class ReceiveEquip
      */
     protected $successUrl;
 
+    /**
+     *
+     * @var array
+     */
+    protected $formErrorMessages;
+
     public function __construct(
     Twig $view, ReceiveEquipServiceInterface $receiveEquipService, InputFilterInterface $receiveEquipInputFilter, AuthenticationServiceInterface $authService, $successUrl, $flash, $container
     ) {
@@ -73,6 +79,7 @@ class ReceiveEquip
         $this->successUrl              = $successUrl;
         $this->flash                   = $flash;
         $this->container               = $container;
+        $this->formErrorMessages       = [];
     }
 
     public function __invoke(Request $req, Response $res)
@@ -94,44 +101,36 @@ class ReceiveEquip
                 $files       = $req->getUploadedFiles();
                 if (empty($files['received_document'])) {
                     $isValidFile = false;
-                    $this->flash->addMessage('danger', "Πρέπει να επισυνάψετε το δελτίο παραλαβής και μετά να επιλέξετε Υποβολή");
+//                    $this->flash->addMessage('danger', "Πρέπει να επισυνάψετε το δελτίο παραλαβής και μετά να επιλέξετε Υποβολή");
+                    array_push($this->formErrorMessages, "Πρέπει να επισυνάψετε το δελτίο παραλαβής και μετά να επιλέξετε Υποβολή");
+
                 } else {
                     $clientFile  = $files['received_document'];
                     $isValidFile = $this->fileUpload($clientFile, $school->id);
                 }
-
-
 
                 if ($isValidFile === true) {
                     $data                                         = $this->receiveEquipInputFilter->getValues();
                     $receiveEquip                                 = $this->receiveEquipService->submit($data, $receivedDocumentFileName);
                     $_SESSION['receiveEquipForm']['receiveEquip'] = $receiveEquip;
                     $res                                          = $res->withRedirect($this->successUrl);
-
                     return $res;
-                } else {
-                    return $res->withRedirect($req->getUri());
                 }
             }
 
-            $this->view['form'] = [
-                'is_valid'        => $isValid,
-                'values'          => $this->receiveEquipInputFilter->getValues(),
-                'raw_values'      => $this->receiveEquipInputFilter->getRawValues(),
-                'messages'        => $this->receiveEquipInputFilter->getMessages(),
-            ];
-        }
-
-        if (!$req->isPost()) {
+            $this->populateInvalidForm($school);
+        } else {    // not post request
             if (null !== ($receiveEquip = $this->receiveEquipService->findSchoolReceiveEquip($school->id))) {
                 $this->view['form'] = [
                     'school' => $school,
+                    'is_valid' => true,
                     'exists' => true,
                     'values' => $receiveEquip,
                 ];
             } else {
                 $this->view['form'] = [
                     'school' => $school,
+                    'is_valid' => true,
                     'exists' => false,
                     'values' => null,
                 ];
@@ -143,6 +142,39 @@ class ReceiveEquip
                 ]);
 
         return $res;
+    }
+
+    private function populateInvalidForm($school) {
+        $receiveEquip = $this->receiveEquipService->findSchoolReceiveEquip($school->id);
+        $dataFromForm = $this->receiveEquipInputFilter->getValues();
+        if ($receiveEquip !== null) {
+            $items = $receiveEquip['items'];
+            $dataItemsFromForm = $dataFromForm['items'];
+            $dataItemsFromFormLength = count($dataItemsFromForm);
+            foreach ($items as $item) {
+              for ($i=0; $i<$dataItemsFromFormLength; $i++) {
+
+                if ((int) $item['id'] === (int) $dataItemsFromForm[$i]['id']) {
+                  $dataItemsFromForm[$i]['itemcategory'] = $item['itemcategory'];
+                  $dataItemsFromForm[$i]['qty'] = $item['qty'];
+                  $dataItemsFromForm[$i]['lab'] = $item['lab'];
+                  break;
+                }
+              }
+
+            }
+            $dataFromForm['items'] = $dataItemsFromForm;
+        }
+        $this->view['form'] = [
+            'school'            => $school,
+            'exists'            => true,
+            'is_valid'          => false,
+            'values'            => $dataFromForm,
+            'raw_values'        => $this->receiveEquipInputFilter->getRawValues(),
+            'messages'          => $this->receiveEquipInputFilter->getMessages(),
+            'formErrorMessages' => $this->formErrorMessages
+        ];
+
     }
 
     private function fileUpload($clientFile, $receivedDocumentFileName)
@@ -157,7 +189,8 @@ class ReceiveEquip
 
             if ((int) $clientFile->getSize() > (int) $this->container['settings']['receive_equip']['file_upload_max_size']) {
                 $vf = false;
-                $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το μέγεθος του αρχείου υπερβαίνει το επιτρεπτό όριο της εφαρμογής Edulabs");
+//                $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το μέγεθος του αρχείου υπερβαίνει το επιτρεπτό όριο της εφαρμογής Edulabs");
+                array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το μέγεθος του αρχείου υπερβαίνει το επιτρεπτό όριο της εφαρμογής Edulabs");
             } else {
                 $clientFileName    = $clientFile->getClientFilename();
                 $clientFileNameExt = strtolower(pathinfo($clientFileName, PATHINFO_EXTENSION));
@@ -168,11 +201,13 @@ class ReceiveEquip
                         $clientFile->moveTo($this->container['settings']['receive_equip']['file_upload_path'] . "/" . $receivedDocumentFileName);
                     }
                     catch (InvalidArgumentException $e) {
-                        $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Η διαδρομή προορισμού δεν υπάρχει");
+//                        $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Η διαδρομή προορισμού δεν υπάρχει");
+                        array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Η διαδρομή προορισμού δεν υπάρχει");
                         $vf = false;
                     }
                     catch (RuntimeException $e) {
-                        $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Σφάλμα στην μετακίνηση του αρχείου");
+//                        $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Σφάλμα στην μετακίνηση του αρχείου");
+                        array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Σφάλμα στην μετακίνηση του αρχείου");
                         $vf = false;
                     }
 
@@ -184,41 +219,50 @@ class ReceiveEquip
 
                 } else {
                     $vf = false;
-                    $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Ο τύπος του αρχείου δεν είναι επιτρεπτός");
+//                    $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Ο τύπος του αρχείου δεν είναι επιτρεπτός");
+                    array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Ο τύπος του αρχείου δεν είναι επιτρεπτός");
                 }
             }
             break;
         case UPLOAD_ERR_INI_SIZE:
             $vf = false;
-            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το μέγεθος του αρχείου υπερβαίνει το επιτρεπτό όριο");
+//            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το μέγεθος του αρχείου υπερβαίνει το επιτρεπτό όριο");
+            array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το μέγεθος του αρχείου υπερβαίνει το επιτρεπτό όριο");
             break;
         case UPLOAD_ERR_FORM_SIZE:
             $vf = false;
-            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το μέγεθος του αρχείου υπερβαίνει το επιτρεπτό όριο της φόρμας παραλαβής");
+//            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το μέγεθος του αρχείου υπερβαίνει το επιτρεπτό όριο της φόρμας παραλαβής");
+            array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το μέγεθος του αρχείου υπερβαίνει το επιτρεπτό όριο της φόρμας παραλαβής");
             break;
         case UPLOAD_ERR_PARTIAL:
             $vf = false;
-            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Μόνο τμήμα του αρχείου αποστάλθηκε. Προσπαθήστε πάλι");
+//            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Μόνο τμήμα του αρχείου αποστάλθηκε. Προσπαθήστε πάλι");
+            array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Μόνο τμήμα του αρχείου αποστάλθηκε. Προσπαθήστε πάλι");
             break;
         case UPLOAD_ERR_NO_FILE:
             $vf = false;
-            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το αρχείο δεν βρέθηκε. Προσπαθήστε πάλι");
+//            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το αρχείο δεν βρέθηκε. Προσπαθήστε πάλι");
+            array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Το αρχείο δεν βρέθηκε. Προσπαθήστε πάλι");
             break;
         case UPLOAD_ERR_NO_TMP_DIR:
             $vf = false;
-            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Δεν υπάρχει προσωρινός χώρος αποθήκευσης");
+//            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Δεν υπάρχει προσωρινός χώρος αποθήκευσης");
+            array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Δεν υπάρχει προσωρινός χώρος αποθήκευσης");
             break;
         case UPLOAD_ERR_CANT_WRITE:
             $vf = false;
-            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Αποτυχία αποθήκευσης");
+//            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Αποτυχία αποθήκευσης");
+            array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Αποτυχία αποθήκευσης");
             break;
         case UPLOAD_ERR_EXTENSION:
             $vf = false;
-            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Η αποστολή τερματίστηκε πρόωρα");
+//            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Η αποστολή τερματίστηκε πρόωρα");
+            array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Η αποστολή τερματίστηκε πρόωρα");
             break;
         default:
             $vf = false;
-            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Απροσδιόριστο σφάλμα");
+//            $this->flash->addMessage('danger', "Η επισύναψη - αποστολή του αρχείου απέτυχε. Απροσδιόριστο σφάλμα");
+            array_push($this->formErrorMessages, "Η επισύναψη - αποστολή του αρχείου απέτυχε. Απροσδιόριστο σφάλμα");
             break;
         }
 

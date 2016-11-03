@@ -7,7 +7,8 @@
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
-
+use Slim\Http\Request;
+use Slim\Http\Response;
 return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
@@ -74,7 +75,7 @@ return function (Slim\App $app) {
                 $c->get(GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface::class)
             );
         };
-        
+
     });
 
     $events('on', 'app.services', function ($container) {
@@ -102,6 +103,22 @@ return function (Slim\App $app) {
                 ->setName('receive_equip.submit_success');
             $this->get('/report', GrEduLabs\ReceiveEquip\Action\ReceiveEquipPdf::class)
                 ->setName('receive_equip.report');
+
         })->add(GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity::class);
+
+        $app->get('/receive-equip/receive-doc/{fn}', function (Request $req, Response $res, $fn) {
+            $file = 'data/uploads/' . $fn[0];
+            $response = $res->withHeader('Content-Description', 'File Transfer')
+                ->withHeader('Content-Type', 'application/octet-stream')
+                ->withHeader('Content-Disposition', 'attachment;filename="'.basename($file).'"')
+                ->withHeader('Expires', '0')
+                ->withHeader('Cache-Control', 'must-revalidate')
+                ->withHeader('Pragma', 'public')
+                ->withHeader('Content-Length', filesize($file));
+
+                readfile($file);
+                return $response;
+            })->setName('receive_doc');
+
     });
 };

@@ -1,4 +1,4 @@
-<h1 class="no-print">
+<h1 class="no-print alert alert-success">
     {% block title %}
         Επιτυχής Καταχώρηση <small>φόρμας παραλαβής νέου εξοπλισμού</small>
     {% endblock %}
@@ -32,6 +32,7 @@
         <thead>
             <tr>
                 <th>Τύπος</th>
+                <th>Χώρος</th>
                 <th>Πλήθος αιτηθέντων</th>
                 <th>Πλήθος παραληφθέντων</th>
             </tr>
@@ -40,6 +41,7 @@
             {% for item in receiveEquip.items %}
                 <tr>
                     <td>{{ item.itemcategory }}</td>
+                    <td>{{ item.lab }}</td>
                     <td>{{ item.qty }}</td>
                     <td>{{ item.qtyreceived }}</td>
                 </tr>

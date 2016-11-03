@@ -35,6 +35,7 @@ return [
                 ['/receive-equip', ['school'], ['get', 'post']],
                 ['/receive-equip/submit-success', ['school'], ['get']],
                 ['/receive-equip/report', ['school'], ['get']],
+                ['/receive-equip/receive-doc/{fn}', ['school'], ['get']],
                 ['/tpe_survey', ['school'], ['get', 'post']],
                 ['/tpe_survey/total-teachers', ['school'], ['post']],
                 ['/forum', ['guest', 'user'], ['get']],
