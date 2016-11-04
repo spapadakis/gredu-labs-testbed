@@ -309,6 +309,10 @@ return function (App $app) {
                     . ' school.name AS school_name, '
                     . ' eduadmin.name AS eduadmin, '
                     . ' regioneduadmin.name AS region_edu_admin, '
+                    . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
+                    . ' lab.id AS lab_id, '
+                    . ' TRIM(labtype.name) AS lab_type, '
+                    . ' IF(lab.is_new = 1, "ΝΑΙ", "ΟΧΙ") AS is_new, '
                     . ' TRIM(itemcategory.name) AS category, '
                     . ' applicationformitem.qty AS qty, '
                     . ' applicationformitem.qtyacquired AS qtyacquired, '
@@ -333,6 +337,10 @@ return function (App $app) {
                         'school_name' => 'Ονομασία σχολείου',
                         'eduadmin' => 'Διεύθυνση εκπαίδευσης',
                         'region_edu_admin' => 'Περιφερειακή διεύθυνση εκπαίδευσης',
+                        'submitted' => 'Ημερομηνία υποβολής',
+                        'lab_id' => 'ID χώρου',
+                        'lab_type' => 'Τύπος χώρου',
+                        'is_new' => 'Νέος χώρος',
                         'category' => 'Είδος',
                         'qtyacquired' => 'Πλήθος Υπαρχόντων που λειτουργούν',
                         'qty' => 'Πλήθος Αιτουμένων',

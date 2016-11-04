@@ -43,6 +43,7 @@ return function (App $app) {
                         'ID',
                         'Κωδικός σχολείου',
                         'Ονομασία σχολείου',
+                        'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'Ονομασία χώρου',
                         'Τύπος χώρου',
                         'Ειδικότητα υπευθύνου',
@@ -65,6 +66,7 @@ return function (App $app) {
                         'Τύπος χώρου',
                         'Κωδικός σχολείου',
                         'Ονομασία σχολείου',
+                        'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'Σχόλια - Παρατηρήσεις',
                     ],
                 ],
@@ -74,6 +76,7 @@ return function (App $app) {
                         'Τύπος',
                         'Κωδικός σχολείου',
                         'Ονομασία σχολείου',
+                        'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'ID χώρου',
                         'Τύπος χώρου',
                         'Ονομασία',
@@ -87,6 +90,7 @@ return function (App $app) {
                         'ID',
                         'Κωδικός σχολείου',
                         'Ονομασία σχολείου',
+                        'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'Ημερομηνία υποβολής',
                         'Σχόλια - Παρατηρήσεις',
                     ],
@@ -98,6 +102,7 @@ return function (App $app) {
                         'ID',
                         'Κωδικός σχολείου',
                         'Ονομασία σχολείου',
+                        'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'Ημερομηνία υποβολής',
                         'Σχόλια - Παρατηρήσεις',
                     ],
@@ -110,6 +115,7 @@ return function (App $app) {
                         'ID',
                         'Κωδικός σχολείου',
                         'Ονομασία σχολείου',
+                        'Περιφερειακή διεύθυνση εκπαίδευσης',
                         'Ημερομηνία υποβολής',
                         'ID χώρου',
                         'Τύπος χώρου',
@@ -125,9 +131,14 @@ return function (App $app) {
                         'ID',
                         'Κωδικός σχολείου',
                         'Ονομασία σχολείου',
+                        'Περιφερειακή διεύθυνση εκπαίδευσης',
+                        'Ημερομηνία υποβολής',
+                        'ID χώρου',
+                        'Τύπος χώρου',
+                        'Νέος χώρος',
                         'Είδος',
-                        'Πλήθος Υπαρχόντων που λειτουργούν',
                         'Πλήθος Αιτουμένων',
+                        'Πλήθος Υπαρχόντων που λειτουργούν',
                         'Αιτιολογία χρήσης',
                     ],
                 ],
@@ -198,6 +209,7 @@ return function (App $app) {
                 $sql = 'SELECT lab.id AS id, '
                         . ' school.registry_no AS school_registry_no, '
                         . ' school.name AS school_name, '
+                        . ' regioneduadmin.name AS region_edu_admin, '
                         . ' TRIM(lab.name) AS name, '
                         . ' TRIM(labtype.name) AS type, '
                         . ' branch.name AS responsible_branch, '
@@ -211,6 +223,8 @@ return function (App $app) {
                         . ' FROM lab '
                         . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
                         . ' LEFT JOIN school ON lab.school_id = school.id '
+                        . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                        . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                         . ' LEFT JOIN lab_lesson ON lab_lesson.lab_id = lab.id '
                         . ' LEFT JOIN lesson ON lab_lesson.lesson_id = lesson.id '
                         . ' LEFT JOIN teacher ON lab.responsible_id = teacher.id '
@@ -234,10 +248,13 @@ return function (App $app) {
                         . ' TRIM(labtype.name) AS lab_type, '
                         . ' school.registry_no AS school_registry_no, '
                         . ' school.name AS school_name, '
+                        . ' regioneduadmin.name AS region_edu_admin, '
                         . ' schoolasset.comments AS comments '
                         . ' FROM schoolasset '
                         . ' LEFT JOIN itemcategory ON schoolasset.itemcategory_id = itemcategory.id '
                         . ' LEFT JOIN school ON schoolasset.school_id = school.id '
+                        . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                        . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                         . ' LEFT JOIN lab ON schoolasset.lab_id = lab.id '
                         . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
                         . ' GROUP BY schoolasset.id '
@@ -249,15 +266,13 @@ return function (App $app) {
             };
         };
 
-  
-
-
    $c['csv_export_software'] = function ($c) {
 
             return function () {
                 $sql = 'SELECT softwarecategory.name AS name, '
                         . ' school.registry_no AS school_registry_no, '
                         . ' school.name AS school_name, '
+                        . ' regioneduadmin.name AS region_edu_admin, '
                         . ' lab.id AS lab_id, '
                         . ' TRIM(labtype.name) AS lab_type, '
                         . ' TRIM(software.title) AS title, '
@@ -266,6 +281,8 @@ return function (App $app) {
                         . ' FROM software '
                         . ' LEFT JOIN softwarecategory ON software.softwarecategory_id = softwarecategory.id '
                         . ' LEFT JOIN school ON software.school_id = school.id '
+                        . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                        . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                         . ' LEFT JOIN lab ON software.lab_id = lab.id '
                         . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
                         . ' ORDER BY school_name ';
@@ -284,17 +301,8 @@ return function (App $app) {
             };
         };
 
-
-
-
-
-
-
-
-
         $c['csv_export_appforms'] = function ($c) {
 
-            //return function () {
         	 return function () use ($c) {
 				$settings = $c->get('settings');
                 $version = $settings['application_form']['itemcategory']['currentversion'];
@@ -322,11 +330,14 @@ return function (App $app) {
 				 $sql = 'SELECT applicationform.id AS id, '
                        . ' school.registry_no AS school_registry_no, '
                         . ' school.name AS school_name, '
+                        . ' regioneduadmin.name AS region_edu_admin, '
                         . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
                         . ' TRIM(applicationform.comments) AS comments' 
                         . ' FROM applicationformitem '
                         . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
                         . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                        . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                        . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                         . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                         . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                         . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -337,39 +348,20 @@ return function (App $app) {
 
                 return $appForms;
 
-
-              //  $sql = 'SELECT applicationform.id AS id, '
-              //          . ' school.registry_no AS school_registry_no, '
-              //          . ' school.name AS school_name, '
-               //         . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
-               //         . ' TRIM(applicationform.comments) AS comments '
-               //         . ' FROM applicationform '
-                //        . ' LEFT JOIN school ON applicationform.school_id = school.id '
-                //        . ' GROUP BY school.id '
-                //        . ' HAVING MAX(applicationform.submitted)';
-
-//                $appForms = R::getAll($sql);
-
-  //              return $appForms;
             };
         };
 
-
         $c['csv_export_appnewforms'] = function ($c) {
 
-       return function () use ($c) {
-
-
+            return function () use ($c) {
                 $appFormIdsSql = 'SELECT id FROM applicationform WHERE (submitted) IN( SELECT MAX(submitted) FROM applicationform GROUP BY school_id)';
 
                 $appFormIds = R::getCol($appFormIdsSql);
-
 
                 if (empty($appFormIds)) {
                     return [];
                 }
                 $in = implode(',', array_fill(0, count($appFormIds), '?'));
-
 
                 $settings = $c->get('settings');
                 $version = $settings['application_form']['itemcategory']['currentversion'];
@@ -377,11 +369,14 @@ return function (App $app) {
                 $sql = 'SELECT applicationform.id AS id, '
                        . ' school.registry_no AS school_registry_no, '
                         . ' school.name AS school_name, '
+                        . ' regioneduadmin.name AS region_edu_admin, '
                         . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
                         . ' TRIM(applicationform.comments) AS comments' 
                         . ' FROM applicationformitem '
                         . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
                         . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                        . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                        . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                         . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                         . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                         . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -394,8 +389,6 @@ return function (App $app) {
                 return $appForms;
             };
         };
-
-
 
         $c['csv_export_appforms_items'] = function ($c) {
 
@@ -413,14 +406,6 @@ return function (App $app) {
 								. ' WHERE itemcategory.groupflag NOT IN(' . $version . ')'
 								. ' GROUP BY school.id)';
 
-
-
-
-              //  $appFormIdsSql = 'SELECT applicationform.id '
-              //     . ' FROM applicationform '
-              //     . ' GROUP BY school_id '
-              //    . ' HAVING MAX(applicationform.submitted)';
-
                 $appFormIds = R::getCol($appFormIdsSql);
 
                 if (empty($appFormIds)) {
@@ -431,6 +416,7 @@ return function (App $app) {
                 $sql = 'SELECT applicationform.id AS id, '
                         . ' school.registry_no AS school_registry_no, '
                         . ' school.name AS school_name, '
+                        . ' regioneduadmin.name AS region_edu_admin, '
                         . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
                         . ' lab.id AS lab_id, '
                         . ' TRIM(labtype.name) AS lab_type, '
@@ -441,6 +427,8 @@ return function (App $app) {
                         . ' FROM applicationformitem '
                         . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
                         . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                        . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                        . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                         . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                         . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                         . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
@@ -452,11 +440,9 @@ return function (App $app) {
             };
         };
 
-     
         $c['csv_export_newapplication'] = function ($c) {
 
             return function () use ($c) {
-
 
                 $appFormIdsSql = 'SELECT id FROM applicationform WHERE (submitted) IN( SELECT MAX(submitted) FROM applicationform GROUP BY school_id)';
 
@@ -475,6 +461,11 @@ return function (App $app) {
                 $sql = 'SELECT applicationform.id AS id, '
                         . ' school.registry_no AS school_registry_no, '
                         . ' school.name AS school_name, '
+                        . ' regioneduadmin.name AS region_edu_admin, '
+                        . ' FROM_UNIXTIME(applicationform.submitted) AS submitted, '
+                        . ' lab.id AS lab_id, '
+                        . ' TRIM(labtype.name) AS lab_type, '
+                        . ' IF(lab.is_new = 1, "ΝΑΙ", "ΟΧΙ") AS is_new, '
                         . ' TRIM(itemcategory.name) AS category, '
                         . ' applicationformitem.qty AS qty, '
                         . ' applicationformitem.qtyacquired AS qtyacquired, '
@@ -482,6 +473,8 @@ return function (App $app) {
                         . ' FROM applicationformitem '
                         . ' LEFT JOIN applicationform ON applicationformitem.applicationform_id = applicationform.id '
                         . ' LEFT JOIN school ON applicationform.school_id = school.id '
+                        . ' LEFT JOIN eduadmin ON school.eduadmin_id = eduadmin.id '
+                        . ' LEFT JOIN regioneduadmin ON eduadmin.regioneduadmin_id = regioneduadmin.id '
                         . ' LEFT JOIN itemcategory ON applicationformitem.itemcategory_id = itemcategory.id '
                         . ' LEFT JOIN lab ON applicationformitem.lab_id = lab.id '
                         . ' LEFT JOIN labtype ON lab.labtype_id = labtype.id '
