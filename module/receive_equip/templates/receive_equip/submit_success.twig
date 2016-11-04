@@ -4,7 +4,11 @@
     <div id="receive-equip-success">
         {% include 'receive_equip/result.twig' %}
         <div class="row no-print">
-            <div class="col-xs-12 text-center">
+            <div class="col-xs-6 text-center">
+                <a href="{{path_for('receive_equip.receive_doc', {'fn':receiveEquip.received_document})}}"
+                    class="btn btn-lg btn-primary btn-print"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>&nbsp;Δελτίο Παραλαβής</a>
+            </div>
+            <div class="col-xs-6 text-center">
                 <a href="{{ path_for('receive_equip.report') }}" class="btn btn-lg btn-primary btn-print">Εκτύπωση</a>
             </div>
         </div>

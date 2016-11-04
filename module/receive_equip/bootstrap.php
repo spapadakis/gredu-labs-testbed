@@ -50,7 +50,6 @@ return function (Slim\App $app) {
                 $c->get(GrEduLabs\ReceiveEquip\InputFilter\ReceiveEquip::class),
                 $c->get('authentication_service'),
                 $c->get('router')->pathFor('receive_equip.submit_success'),
-                $c['flash'],
                 $c
             );
         };
@@ -106,11 +105,17 @@ return function (Slim\App $app) {
 
         })->add(GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity::class);
 
-        $app->get('/receive-equip/receive-doc/{fn}', function (Request $req, Response $res, $fn) {
-            $file = 'data/uploads/' . $fn[0];
+        $app->get('/receive-equip/receive-doc/{fn}', function (Request $req, Response $res) use ($container){
+            $route = $req->getAttribute('route');
+            $fn = $route->getArgument('fn');
+/*            $container["logger"]->info(sprintf('filename = %s  url=%s', $fn, path_for('receive_equip.receive_doc', [
+    'fn' => form.values.received_document,])
+)); */
+
+            $file = $container['settings']['receive_equip']['file_upload_path'] . "/" . $fn;
             $response = $res->withHeader('Content-Description', 'File Transfer')
                 ->withHeader('Content-Type', 'application/octet-stream')
-                ->withHeader('Content-Disposition', 'attachment;filename="'.basename($file).'"')
+                ->withHeader('Content-Disposition', 'attachment;filename="' . basename($file) . '"')
                 ->withHeader('Expires', '0')
                 ->withHeader('Cache-Control', 'must-revalidate')
                 ->withHeader('Pragma', 'public')
@@ -118,7 +123,7 @@ return function (Slim\App $app) {
 
                 readfile($file);
                 return $response;
-            })->setName('receive_doc');
+            })->setName('receive_equip.receive_doc');
 
     });
 };
