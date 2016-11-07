@@ -122,14 +122,20 @@
                         </div>
                     {% else %}
                         <div class="row no-print">
-                            <div class="col-xs-6 text-center">
+                            <div class="col-xs-4 text-center">
                                 <a href="{{path_for('receive_equip.receive_doc', {'fn':form.values.received_document})}}" class="btn btn-lg btn-primary btn-print">
                                     <span class="glyphicon glyphicon-download" aria-hidden="true"></span>&nbsp;Δελτίο Παραλαβής</a>
                             </div>
-                            <div class="col-xs-6 text-center">
+                            <div class="col-xs-4 text-center">
                                 <a href="{{ path_for('receive_equip.report') }}" class="btn btn-lg btn-primary btn-print">
                                     Εκτύπωση</a>
                             </div>
+                            <!-- only for tests -->
+                            <div class="col-xs-4 text-center">
+                                <a href="{{ path_for('receive_equip.undosubmit', {'applicationform_id':form.values.id}) }}" class="btn btn-lg btn-primary btn-print">
+                                    Αναίρεση υποβολής</a>
+                            </div>
+                            <!-- /only for tests -->
                         </div>
                         <br>
                     {% endif %}

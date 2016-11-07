@@ -43,6 +43,7 @@ return [
                 ['/in_numbers', ['guest', 'user'], ['get']],
                 ['/export/csv/edulabs_{type}.csv', ['guest', 'user'], ['get']],
                 ['/open-data', ['guest', 'user'], ['get']],
+                ['/receive-equip/undo-submit/{applicationform_id}', ['school'], ['get']],    // only for tests. Must be removed
             ],
         ],
     ],
