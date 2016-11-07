@@ -9,6 +9,7 @@
  */
 use Slim\Http\Request;
 use Slim\Http\Response;
+
 return function (Slim\App $app) {
     $container = $app->getContainer();
     $events    = $container['events'];
@@ -18,7 +19,6 @@ return function (Slim\App $app) {
     });
 
     $events('on', 'app.services', function ($container) {
-
         $container[GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface::class] = function ($c) {
             return new GrEduLabs\ReceiveEquip\Service\ReceiveEquipService($c['logger']);
         };
@@ -44,6 +44,7 @@ return function (Slim\App $app) {
 
         $container[GrEduLabs\ReceiveEquip\Action\ReceiveEquip::class] = function ($c) {
             $settings = $c->get('settings');
+
             return new GrEduLabs\ReceiveEquip\Action\ReceiveEquip(
                 $c->get('view'),
                 $c->get(GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface::class),
@@ -74,7 +75,6 @@ return function (Slim\App $app) {
                 $c->get(GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface::class)
             );
         };
-
     });
 
     $events('on', 'app.services', function ($container) {
@@ -86,7 +86,6 @@ return function (Slim\App $app) {
                 $c
             );
         };
-
     }, -100000);
 
     $events('on', 'app.bootstrap', function ($app, $container) {
@@ -102,10 +101,9 @@ return function (Slim\App $app) {
                 ->setName('receive_equip.submit_success');
             $this->get('/report', GrEduLabs\ReceiveEquip\Action\ReceiveEquipPdf::class)
                 ->setName('receive_equip.report');
-
         })->add(GrEduLabs\Schools\Middleware\FetchSchoolFromIdentity::class);
 
-        $app->get('/receive-equip/receive-doc/{fn}', function (Request $req, Response $res) use ($container){
+        $app->get('/receive-equip/receive-doc/{fn}', function (Request $req, Response $res) use ($container) {
             $route = $req->getAttribute('route');
             $fn = $route->getArgument('fn');
 /*            $container["logger"]->info(sprintf('filename = %s  url=%s', $fn, path_for('receive_equip.receive_doc', [
@@ -118,12 +116,11 @@ return function (Slim\App $app) {
                 ->withHeader('Content-Disposition', 'attachment;filename="' . basename($file) . '"')
                 ->withHeader('Expires', '0')
                 ->withHeader('Cache-Control', 'must-revalidate')
-                ->withHeader('Pragma', 'public')
                 ->withHeader('Content-Length', filesize($file));
 
-                readfile($file);
-                return $response;
-            })->setName('receive_equip.receive_doc');
+            readfile($file);
 
+            return $response;
+        })->setName('receive_equip.receive_doc');
     });
 };

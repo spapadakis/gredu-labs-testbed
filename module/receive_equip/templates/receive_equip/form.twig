@@ -2,16 +2,15 @@
 
 {% macro itemCount(name, label, value, index, minvalue, type) %}
     <div class="form-group">
-        <div class="col-xs-12 col-sm-12 col-md-9">
-            <input placeholder="{{ label|striptags }}" class="form-control input-sm" min="{{ minvalue|default(1)}}"
-                type="{{ type|default('number') }}" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]" value="{{ value|default('')|raw }}">
-        </div>
+        <input placeholder="{{ label|striptags }}" class="form-control input-sm" min="{{ minvalue|default(1)}}" type="{{ type|default('number') }}" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]" value="{{ value|default('')|raw }}">
     </div>
 {% endmacro %}
 
 {% macro infoBox(boxtype, msg) %}
     <div class="alert alert-{{ boxtype }} alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Κλείσιμο"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Κλείσιμο">
+            <span aria-hidden="true">&times;</span>
+        </button>
         <p class="text-{{ boxtype }}">{{ msg | raw }}</p>
     </div>
 {% endmacro %}
@@ -19,133 +18,128 @@
 {% block content %}
     {% import _self as macros %}
 
-<div id="receive-equip">
-    <h1>
-    {% block title %}
-        Παραλαβή <small>νέου εξοπλισμού</small>
-    {% endblock %}
-    </h1>
-    {% for fem in form.formErrorMessages %}
-    {{ macros.infoBox('danger', fem) }}
-    {% endfor %}
+    <div id="receive-equip">
+        <h1>
+            {% block title %}
+                Παραλαβή
+                <small>νέου εξοπλισμού</small>
+            {% endblock %}
+        </h1>
+        {% for fem in form.formErrorMessages %}
+            {{ macros.infoBox('danger', fem) }}
+        {% endfor %}
 
-    <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}"
-          data-messages="{{ form.messages|default({})|json_encode }}" enctype="multipart/form-data">
-        <div class="form-group">
-            <p>
-              {% if form.values.received_ts is empty %}
-                Σε αυτή την καρτέλα θα καταχωρήσετε τον αριθμό των τεμαχίων που
-                παραλάβατε από κάθε είδος που περιλάμβανε η αίτησή σας. Επίσης,
-                πρέπει να υπογράψετε, να σαρώσετε και να επισυνάψετε το σαρωμένο
-                δελτίο παραλαβής. Τέλος, επιλέξτε "Υποβολή" για να αποστείλετε
-                οριστικά τη φόρμα παραλαβής. Προσοχή! Αφού υποβάλλετε επιτυχώς
-                τη φόρμα αυτή δεν μπορείτε να την τροποποιήσετε
-              {% else %}
-                Ο εξοπλισμός σας έχει παραληφθεί με τα ακόλουθα στοιχεία
-              {% endif %}
-            </p>
-        </div>
+        <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}" data-messages="{{ form.messages|default({})|json_encode }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <p>
+                    {% if form.values.received_ts is empty %}
+                        Σε αυτή την καρτέλα θα καταχωρήσετε τον αριθμό των τεμαχίων που παραλάβατε από κάθε είδος που περιλάμβανε η αίτησή σας. Επίσης, πρέπει να υπογράψετε, να σαρώσετε και να επισυνάψετε το σαρωμένο δελτίο παραλαβής. Τέλος, επιλέξτε "Υποβολή" για να
+                        αποστείλετε οριστικά τη φόρμα παραλαβής. Προσοχή! Αφού υποβάλλετε επιτυχώς τη φόρμα αυτή δεν μπορείτε να την τροποποιήσετε.
+                    {% else %}
+                        Ο εξοπλισμός σας έχει παραληφθεί με τα ακόλουθα στοιχεία:
+                    {% endif %}
+                </p>
+            </div>
 
-        <div class="col-md-12" style="margin-top: 20px;">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Στοιχεία εγκεκριμένης αίτησης</h4>
+            <div class="col-md-12" style="margin-top: 20px;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Στοιχεία εγκεκριμένης αίτησης</h4>
+                    </div>
+                    <div class="panel-body">
+                        {% if form.exists %}
+                            <div class="row">
+                                <dl class="col-sm-12 col-md-6">
+                                    <dt>A/A εγκεκριμένης αίτησης</dt>
+                                    <dd>{{ form.values.id }}</dd>
+                                    <dt>Ημερ. υποβολής</dt>
+                                    <dd>{{ form.values.submitted|date('d/m/Y') }}</dd>
+                                    <dt>Ημερ. παραλαβής</dt>
+                                    <dd>{{ form.values.received_ts|date('d/m/Y') }}</dd>
+                                </dl>
+                                <dl class="col-sm-12 col-md-6">
+                                    <dt>Σχολείο</dt>
+                                    <dd>{{ form.school.name }}</dd>
+                                    <dt>Κωδικός Υπουργείου</dt>
+                                    <dd>{{ form.school.registry_no }}</dd>
+                                    <dt>Διεύθυνση</dt>
+                                    <dd>{{ form.school.eduadmin }}</dd>
+                                    <dt>Περιφέρεια</dt>
+                                    <dd>{{ form.school.regioneduadmin }}</dd>
+                                </dl>
+                                <dl class="col-lg-12">
+                                    <dt>Σχόλια/Παρατηρήσεις</dt>
+                                    <dd>{{ form.values.comments|e }}</dd>
+                                </dl>
+                            </div>
+                        {% else %}
+                            <p>Δεν υπάρχει εγκεκριμένη αίτηση για το σχολείο σας.</p>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="panel-body">
-                    {% if form.exists %}
-                        <div class="row">
-                            <dl class="col-sm-12 col-md-6">
-                                <dt>A/A εγκεκριμένης αίτησης</dt>
-                                <dd>{{ form.values.id }}</dd>
-                                <dt>Ημερ. υποβολής</dt>
-                                <dd>{{ form.values.submitted|date('d/m/Y') }}<dd>
-                                <dt>Ημερ. παραλαβής</dt>
-                                <dd>{{ form.values.received_ts|date('d/m/Y') }}<dd>
-                            </dl>
-                            <dl class="col-sm-12 col-md-6">
-                                <dt>Σχολείο</dt>
-                                <dd>{{ form.school.name }}</dd>
-                                <dt>Κωδικός Υπουργείου</dt>
-                                <dd>{{ form.school.registry_no }}<dd>
-                                <dt>Διεύθυνση</dt>
-                                <dd>{{ form.school.eduadmin }}<dd>
-                                <dt>Περιφέρεια</dt>
-                                <dd>{{ form.school.regioneduadmin }}<dd>
-                            </dl>
-                            <dl class="col-lg-12">
-                                <dt>Σχόλια/Παρατηρήσεις</dt>
-                                <dd>{{ form.values.comments|e }}</dd>
-                            </dl>
+
+                {% if form.exists %}
+                    <div class="table-responsive">
+                        <fieldset>
+                            <div id="items-list">
+                                <table class="table table-hover table-striped table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-xs-4">Τύπος</th>
+                                            <th class="col-xs-4">Χώρος</th>
+                                            <th class="col-xs-2 text-center">Πλήθος αιτηθέντων</th>
+                                            <th class="col-xs-2">Πλήθος παραληφθέντων</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for itemIndex, item in form.values.items %}
+                                            {{ macros.itemCount('id', 'id', item.id, loop.index0, 0, 'hidden') }}
+                                            <tr>
+                                                <td class="col-xs-4">{{ item.itemcategory }}</td>
+                                                <td class="col-xs-4">{{ item.lab }}</td>
+                                                <td class="col-xs-2 text-center">{{ item.qty }}</td>
+                                                {% if form.values.received_ts is empty %}
+                                                    <td class="col-xs-2">{{ macros.itemCount('qtyreceived', 'Πλήθος', item.qtyreceived, loop.index0, 0) }}</td>
+                                                {% else %}
+                                                    <td class="col-xs-2 text-center">{{ item.qtyreceived }}</td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <hr>
+                    {% if form.values.received_ts is empty %}
+
+                        <div class="form-group">
+                            <h3>Αποστολή Δελτίου Παραλαβής</h3>
+                            <input type="file" name="received_document">
+                        </div>
+                        <div class="form-group text-center">
+                            <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
                         </div>
                     {% else %}
-                        <p>Δεν υπάρχει εγκεκριμένη αίτηση για το σχολείο σας.</p>
+                        <div class="row no-print">
+                            <div class="col-xs-6 text-center">
+                                <a href="{{path_for('receive_equip.receive_doc', {'fn':form.values.received_document})}}" class="btn btn-lg btn-primary btn-print">
+                                    <span class="glyphicon glyphicon-download" aria-hidden="true"></span>&nbsp;Δελτίο Παραλαβής</a>
+                            </div>
+                            <div class="col-xs-6 text-center">
+                                <a href="{{ path_for('receive_equip.report') }}" class="btn btn-lg btn-primary btn-print">
+                                    Εκτύπωση</a>
+                            </div>
+                        </div>
+                        <br>
                     {% endif %}
-                </div>
+                    <input type="hidden" name="id" value="{{ form.values.id }}">
+                {% endif %}
+                <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
+                <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
             </div>
-
-
-        {% if form.exists %}
-        <div class="table-responsive">
-            <fieldset>
-                <div id="items-list">
-                    <table class="table table-hover table-striped table-condensed">
-                        <thead>
-                            <tr>
-                                <th class="col-xs-4">Τύπος</th>
-                                <th class="col-xs-4">Χώρος</th>
-                                <th class="col-xs-2 text-center">Πλήθος αιτηθέντων</th>
-                                <th class="col-xs-2">Πλήθος παραληφθέντων</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for itemIndex,item in form.values.items %}
-                            {{ macros.itemCount('id', 'id', item.id, loop.index0, 0, 'hidden') }}
-                                <tr>
-                                    <td class="col-xs-4">{{ item.itemcategory }}</td>
-                                    <td class="col-xs-4">{{ item.lab }}</td>
-                                    <td class="col-xs-2 text-center">{{ item.qty }}</td>
-                                    {% if form.values.received_ts is empty %}
-                                    <td class="col-xs-2">{{ macros.itemCount('qtyreceived', 'Πλήθος', item.qtyreceived, loop.index0, 0) }}</td>
-                                    {% else %}
-                                    <td class="col-xs-2 text-center">{{ item.qtyreceived }}</td>
-                                    {% endif %}
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </fieldset>
-        </div>
-        <hr>
-        {% if form.values.received_ts is empty %}
-
-        <div class="form-group">
-            <h3>Αποστολή Δελτίου Παραλαβής</h3>
-            <input type="file" name="received_document">
-        </div>
-        <div class="form-group text-center">
-            <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
-        </div>
-        {% else %}
-        <div class="row no-print">
-            <div class="col-xs-6 text-center">
-                <a href="{{path_for('receive_equip.receive_doc', {'fn':form.values.received_document})}}"
-                    class="btn btn-lg btn-primary btn-print"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>&nbsp;Δελτίο Παραλαβής</a>
-            </div>
-            <div class="col-xs-6 text-center">
-                <a href="{{ path_for('receive_equip.report') }}" class="btn btn-lg btn-primary btn-print">
-                    Εκτύπωση</a>
-            </div>
-        </div>
-        <br>
-        {% endif %}
-        <input type="hidden" name="id" value="{{ form.values.id }}">
-        {% endif %}
-        <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
-        <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
-      </div>
-    </form>
-</div>
+        </form>
+    </div>
 {% endblock %}
 
 {% block inlinejs %}

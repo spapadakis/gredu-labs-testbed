@@ -10,7 +10,7 @@
 return [
     'receive_equip' => [
         'file_upload_path' => __DIR__ . '/../../data/uploads', // path to save file
-        'file_upload_max_size' => , // Maximum number of bytes allowed
-        'file_upload_types_permitted' => [], // Array of allowed extensions (e.g. 'png', 'jpg', 'jpeg')
+        'file_upload_max_size' => 3145728, // Maximum number of bytes allowed(default 3MB)
+        'file_upload_types_permitted' => ['jpg', 'jpeg', 'pdf', 'png'], // Array of allowed extensions
     ],
 ];
