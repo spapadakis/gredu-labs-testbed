@@ -1,0 +1,224 @@
+{% extends "layout.twig" %}
+
+{% macro itemSelect(name, label, options, selected, index) %}
+    <div class="form-group">
+        <select class="form-control input-sm" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]">
+        <option value="" disabled selected>{{ label|striptags }}</option>
+        {% for option in options %}
+            <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
+                {{ option.label }}
+            </option>
+        {% endfor %}
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro itemCount(name, label, value, index, minvalue) %}
+    <div class="form-group">
+        <div class="col-xs-12 col-sm-12 col-md-9">
+            <input placeholder="{{ label|striptags }}" class="form-control input-sm" min="{{ minvalue|default(1)}}"
+                type="number" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]" value="{{ value|default('')|raw }}">
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro itemReasons(name, label, value, index) %}
+    <div class="form-group">
+        <textarea class="form-control input-sm" name="items[{{ index | default('<%= index %>') | raw }}][{{ name }}]"
+                  placeholder="{{ label|striptags }}"
+                  rows="1" cols="20">{{ value|default('') }}</textarea>
+    </div>
+{% endmacro %}
+
+{% macro select(name, label, options, selected) %}
+    <div class="form-group">
+        <label class="control-label hidden-xs hidden-sm" for="el-{{ name }}">{{ label|raw }}</label>
+        <select class="form-control" name="{{ name }}" id="el-{{ name }}">
+            <option value="" disabled selected>{{ label|striptags }}</option>
+            {% for option in options %}
+            <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
+                {{ option.label }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro yesno(name, label, selected) %}
+    <div class="form-group">
+        <label class="control-label hidden-xs hidden-sm" for="el-{{ name }}">{{ label|raw }}</label>
+        <select class="form-control" name="{{ name }}" id="el-{{ name }}">
+            <option value="" disabled selected>{{ label|striptags }}</option>
+            <option value="ΝΑΙ"{% if selected == 'ΝΑΙ' %} selected{% endif %}>Ναι</option>
+            <option value="ΟΧΙ"{% if selected == 'ΟΧΙ' %} selected{% endif %}>Όχι</option>
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro text(name, label, value) %}
+    <div class="form-group">
+        <label class="control-label hidden-xs hidden-sm" for="el-{{ name }}">{{ label|raw }}</label>
+        <textarea class="form-control" name="{{ name }}"
+                  id="el-{{ name }}"
+                  placeholder="{{ label|striptags }}">{{ value|default('') }}</textarea>
+    </div>
+{% endmacro %}
+
+{% macro infoBox(boxtype, msg) %}
+    <div class="alert alert-{{ boxtype }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Κλείσιμο"><span aria-hidden="true">&times;</span></button>
+        <p class="text-{{ boxtype }}">{{ msg | raw }}</p>
+    </div>
+{% endmacro %}
+
+{% block content %}
+    {% import _self as macros %}
+
+<div id="app-form">
+    <h1>
+    {% block title %}
+        Αίτηση <small>για νέο εξοπλισμό</small>
+    {% endblock %}
+    </h1>
+    <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}"
+          data-messages="{{ form.messages|default({})|json_encode }}">
+        <div class="form-group">
+            <p>
+                Σε αυτή την καρτέλα θα καταχωρήσετε πληροφορίες που αφορούν στον
+                εξοπλισμό που θέλετε να αναβαθμίσετε ή/και στον νέο εξοπλισμό που
+                θέλετε να αποκτήσετε, στο πεδίο <strong>«Αιτιολογία χρήσης»</strong> περιγράφεται
+                συνοπτικά την εκπαιδευτική χρήση του προτεινόμενου εξοπλισμού.
+            </p>
+            <p>
+                Στο πεδίο <strong>«Σχόλια/Παρατηρήσεις»</strong> περιγράφεται το πως θα
+                υποστηρίζονται οι εκπαιδευτικοί του σχολείου σας στην χρήση του
+                συνόλου των νέων ψηφιακών υποδομών που θέλετε να αποκτήσετε και
+                συνοπτικά το σχέδιο του σχολείου σας για την χρήση των νέων ψηφιακών
+                υποδομών στην μαθησιακή διαδικασία με ενδοσχολικές δραστηριότητες
+                αλλά και δράσεις ανοιχτές στην τοπική κοινωνία.
+            </p>
+            <p>
+                Ελέγχετε προσεκτικά όλες τις καρτέλες και τα πεδία της αίτησης
+                του σχολείου σας πριν την υποβάλετε και συνέχεια την εκτυπώνεται
+                σε PDF αρχείο για να έχετε ένα πλήρες αντιγραφο για τα αρχεία
+                σας.
+            </p>
+            <p>
+                Θα ενημερωθείτε στο ηλεκτρονικό σας ταχυδρομείο εάν έχει επιλεγεί
+                το σχολείο σας και με ποιον από τον προτεινόμενο εξοπλισμό να
+                συμμετάσχει στην 1η φάση Αναβάθμισης Ψηφιακών Υποδομών των
+                Σχολείων.
+            </p>
+        </div>
+
+        <div class="table-responsive">
+            <fieldset>
+                <legend>Νέος εξοπλισμός</legend>
+                <div id="items-list">
+                    <table class="table table-hover table-striped table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Πλήθος αιτούμενων</th>
+                                <th>Πλήθος υπαρχόντων που λειτουργούν</th>
+                                <th class="col-xs-3">Τύπος</th>
+                                <th class="col-xs-3">Χώρος</th>
+                                <th class="col-xs-3">Αιτιολογία χρήσης</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for itemIndex,item in form.values.items %}
+                                <tr>
+                                    <td>{{ macros.itemCount('qty', 'Πλήθος', item.qty, loop.index0) }}</td>
+                                    <td>{{ macros.itemCount('qtyacquired', 'Πλήθος', item.qtyacquired, loop.index0, 0) }}</td>
+                                    <td class="col-xs-3">
+                                        {{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, item.itemcategory_id, loop.index0) }}
+                                        {% if item.prev_form_load == true %}
+                                            {% if item.itemcategory_id_prev == -2 %}
+                                                {{ macros.infoBox('warning', "<small>Τα είδη έχουν τροποποιηθεί. Παρακαλούμε επιλέξτε εκ νέου από τη λίστα το είδος #{ item.itemcategory } εφόσον είναι διαθέσιμο.</small>") }}
+                                            {% elseif item.itemcategory_id_prev == -1 %}
+                                                {{ macros.infoBox('danger', "Δεν είναι διαθέσιμο το είδος #{ item.itemcategory } στη νέα αίτηση. Θα πρέπει να το καταργήσετε ή να επιλέξετε νέο είδος εξοπλισμού.") }}
+                                            {% else %}
+                                                {{ macros.infoBox('info', "<small>Το είδος #{ item.itemcategory } έχει αντικατασταθεί στη νέα αίτηση.</small>") }}
+                                            {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="col-xs-3">{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, item.lab_id, loop.index0 ) }}</td>
+                                    <td class="col-xs-3">{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης', item.reasons, loop.index0) }}</td>
+                                    <td>
+                                        {% if loop.index0 > 0 %}
+                                        <button type="button" class="btn btn-xs text-danger remove-row">
+                                        <i class="fa fa-remove"></i>
+                                        {% endif %}
+                                    </button</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td>{{ macros.itemCount('qty', 'Πλήθος', '', 0) }}</td>
+                                    <td>{{ macros.itemCount('qtyacquired', 'Πλήθος', '', 0, 0) }}</td>
+                                    <td class="col-xs-3">{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices, '', 0) }}</td>
+                                    <td class="col-xs-3">{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices, '', 0 ) }}</td>
+                                    <td class="col-xs-3">{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης', '', 0) }}</td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-right col-xs-12">
+                                    <button type="button" class="btn btn-sm btn-primary add-row">
+                                        <i class="fa fa-plus"></i>
+                                        Προσθήκη εξοπλισμού
+                                    </button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.values.comments) }}
+            </fieldset>
+        </div>
+        <hr>
+        <div class="form-group text-center">
+            <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
+        </div>
+        <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
+        <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
+    </form>
+    {% if choose %}
+    <div class="modal fade" id="app-form-load-modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Επιθυμείτε η νέα αίτηση να βασιστεί στη τελευταία αίτησή σας;</p>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">
+                            Όχι
+                        </button>
+                        <a class="btn btn-primary" href="{{ path_for('application_form', {}, { load: 1 }) }}">Ναι</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <script type="text/template" id="app-form-item-row-template">
+        <td>{{ macros.itemCount('qty', 'Πλήθος') }}</td>
+        <td>{{ macros.itemCount('qtyacquired', 'Πλήθος', '', '', 0) }}</td>
+        <td>{{ macros.itemSelect('itemcategory_id', 'Τύπος', type_choices) }}</td>
+        <td>{{ macros.itemSelect('lab_id', 'Χώρος', lab_choices) }}</td>
+        <td>{{ macros.itemReasons('reasons', 'Αιτιολογία χρήσης') }}</td>
+        <td><button type="button" class="btn btn-xs text-danger remove-row">
+            <i class="fa fa-remove"></i>
+        </button</td>
+    </script>
+</div>
+{% endblock %}
+
+{% block inlinejs %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"></script>
+    <script src="{{ base_url() }}/js/application_form/index.js"></script>
+{% endblock %}

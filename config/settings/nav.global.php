@@ -55,6 +55,14 @@ return [
                 'label' => 'Ανοικτά δεδομένα',
                 'route' => 'open_data',
             ],
+            'university_form' => [
+                'label' => 'Ιδρύματα Τριτοβάθμιας',
+                'route' => 'university_form',
+            ],
+            'teacher_form' => [
+                'label' => 'Εθελοντές Εκαπιδευτικοί',
+                'route' => 'teacher_form',
+            ],
             'about' => [
                 'label' => 'Σχετικά με τη δράση',
                 'route' => 'about',
