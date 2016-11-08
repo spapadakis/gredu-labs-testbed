@@ -48,6 +48,6 @@ class CanSubmit implements AssertionInterface
         }
         $receiveEquip = $this->receiveEquipService->findSchoolReceiveEquip($school->id);
 
-        return null === $receiveEquip;
+        return null !== $receiveEquip;
     }
 }

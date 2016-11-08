@@ -32,7 +32,7 @@ return [
                 ['/application-form', ['school'], ['get', 'post']],
                 ['/application-form/submit-success', ['school'], ['get']],
                 ['/application-form/report', ['school'], ['get']],
-                ['/receive-equip', ['school'], ['get', 'post']],
+                ['/receive-equip', ['school'], ['get', 'post'], GrEduLabs\ReceiveEquip\Acl\Assertion\CanSubmit::class],
                 ['/receive-equip/submit-success', ['school'], ['get']],
                 ['/receive-equip/report', ['school'], ['get']],
                 ['/receive-equip/receive-doc/{fn}', ['school'], ['get']],
