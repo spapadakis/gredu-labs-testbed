@@ -69,20 +69,20 @@ class TeacherForm
 
             $this->TeacherFormInputFilter->setData($reqParams);
             $isValid = $this->TeacherFormInputFilter->isValid();
-     
+
             if ($isValid) {
                 $data = $this->TeacherFormInputFilter->getValues();
-                $TeacherForm = $this->TeacherFormService->submit($data);
+                $TeacherForm = $this->TeacherFormService->submit($data, $reqParams);
                 $_SESSION['teacherForm']['tForm'] = $TeacherForm;
                 $res = $res->withRedirect($this->successUrl);
                 return $res;
             }
-             else 
+             else
                 print_r("lalalalalal");
-               
-             
-             
-        } 
+
+
+
+        }
         $res = $this->view->render($res, 'teacher_form/form.twig', [
             'branches'  => array_map(function ($branch) {
                 return ['value' => $branch['id'], 'label' => $branch['name']];

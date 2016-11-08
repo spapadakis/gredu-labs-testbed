@@ -12,6 +12,6 @@ namespace GrEduLabs\TeacherForm\Service;
 
 interface TeacherFormServiceInterface
 {
-    public function submit(array $data);
+    public function submit(array $data, array $params);
     public function getBranches();
 }

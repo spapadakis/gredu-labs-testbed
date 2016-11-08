@@ -1,7 +1,7 @@
 <?php
 /**
  * gredu_labs
- * 
+ *
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
@@ -15,10 +15,10 @@ use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
 use Zend\Validator;
 
-class TeacherForm extends InputFilter 
+class TeacherForm extends InputFilter
 {
 
- 
+
     public function __construct()
     {
 
@@ -28,7 +28,7 @@ class TeacherForm extends InputFilter
           ->attach(new Filter\ToInt());
         $id->getValidatorChain()
           ->attach(new Validator\NotEmpty());
-  
+
         $email = new Input('email');
         $email->setRequired(true)
             ->getValidatorChain()
@@ -45,9 +45,8 @@ class TeacherForm extends InputFilter
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 10]));
 
-        $this->inputFilter = new InputFilter();
-        $this->inputFilter
-            ->add($id)
+//        $this->inputFilter = new InputFilter();
+        $this->add($id)
             ->add($email)
             ->add($telef);
           }
