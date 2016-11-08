@@ -1,0 +1,48 @@
+{% extends "layout.twig" %}
+
+{% import "schools/form.twig" as macros %}
+
+ {% block content %}
+                <div id="school-info">
+                    <p>
+                        <h1>Φόρμα εκδήλωση ενδιαφέροντος</h1>
+                        <br>
+                        Σε αυτή την καρτέλα ........
+                    </p>
+                </div>
+                 
+
+
+             {% block schoolContent %}
+        <form  method="post" action="" class="form-horizontal" >
+                    <div class="modal-body">
+                        {{ macros.input('idrima', 'Iδρυμα', '', 'text') }}
+                        {{ macros.input('sxolh', 'Σχολή', '', 'text' ) }}
+                        {{ macros.input('tmhma', 'Τμήμα', '', 'text' ) }}
+                        {{ macros.input('person', 'Υπεύθυνος Επικοινωνίας', '', 'text' ) }}
+                        {{ macros.input('telef', 'Τηλέφωνο', '', 'text' ) }}
+                        {{ macros.input('email', 'Email', '', 'text' ) }}
+                        {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.values.comments) }}
+                        <input type="hidden" name="id" value="">
+                    </div>
+
+             <div class="form-group text-center">
+                        <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
+                        <input type="hidden" name="id" value="{{ form.values.id }}">
+            </div>
+             <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
+             <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
+        </form>
+
+        <script type="text/template">
+            <td class="telef"><%= telef %></td>
+        </script>
+    {% endblock %}
+
+{% endblock %}
+
+{% block inlinejs %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"></script>
+{% endblock %}
