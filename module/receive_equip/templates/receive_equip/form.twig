@@ -24,6 +24,30 @@
                 Παραλαβή
                 <small>νέου εξοπλισμού</small>
             {% endblock %}
+            {% block help %}
+            <div class="pull-right" data-toggle="modal" data-target="#helpModal">
+                <i class="glyphicon glyphicon-question-sign"></i>
+            </div>
+            {% endblock %}
+            {% block helpModal %}
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Demo</h4>
+            </div>
+            <div class="modal-body">
+                Body modal
+                <input type="text" name="id" class="modal-body input"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
         </h1>
         {% for fem in form.formErrorMessages %}
             {{ macros.infoBox('danger', fem) }}
@@ -153,4 +177,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"></script>
     <script src="{{ base_url() }}/js/receive_equip/index.js"></script>
+    <script>
+    $('#helpModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) // Button that triggered the modal
+  var modal = $(this)
+  modal.find('.modal-title').text('The ID is: ')
+})
+    </script>
 {% endblock %}
