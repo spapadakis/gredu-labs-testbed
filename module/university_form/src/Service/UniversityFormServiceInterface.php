@@ -12,5 +12,5 @@ namespace GrEduLabs\UniversityForm\Service;
 
 interface UniversityFormServiceInterface
 {
-    public function submit(array $data);
+    public function submit(array $data, array $reqParams);
 }

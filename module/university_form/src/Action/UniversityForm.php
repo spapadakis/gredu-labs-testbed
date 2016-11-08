@@ -53,26 +53,36 @@ class UniversityForm
         $this->view                    = $view;
         $this->UniversityFormService   = $UniversityFormService;
         $this->UniversityFormInputFilter = $UniversityFormInputFilter;
-        $this->successUrl = $successUrl;
+        $this->successUrl =             $successUrl;
         $this->container               = $container;
     }
 
     public function __invoke(Request $req, Response $res)
     {
+
+        print_r($this->successUrl);
         if ($req->isPost()) {
             $reqParams = $req->getParams();
 
+            $this->UniversityFormInputFilter->setData($reqParams);
             $isValid = $this->UniversityFormInputFilter->isValid();
+             print_r($this->successUrl);
             if ($isValid) {
                 $data = $this->UniversityFormInputFilter->getValues();
-                $UniversityForm = $this->UniversityFormService->submit($data);
-              
+                $UniversityForm = $this->UniversityFormService->submit($data, $reqParams);
+                $_SESSION['UnivForm']['uForm'] = $UniversityForm;
+                $res = $res->withRedirect($this->successUrl);
                 return $res;
             }
-
-//            $UniversityForm = $this->UniversityFormService->submit($reqParams);
-                  
+            $this->view['form'] = [
+                'is_valid' => $isValid,
+                'values' => $this->UniversityFormInputFilter->getValues(),
+                'raw_values' => $this->UniversityFormInputFilter->getRawValues(),
+                'messages' => $this->UniversityFormInputFilter->getMessages(),
+            ];
+             
         } 
+
         $res = $this->view->render($res, 'university_form/form.twig', [
                 ]);
        return $res;

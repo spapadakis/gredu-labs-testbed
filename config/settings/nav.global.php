@@ -64,7 +64,7 @@ return [
                 'route' => 'university_form',
             ],
             'teacher_form' => [
-                'label' => 'Εθελοντές Εκαπιδευτικοί',
+                'label' => 'Εθελοντές Εκπαιδευτικοί',
                 'route' => 'teacher_form',
             ],
             'about' => [

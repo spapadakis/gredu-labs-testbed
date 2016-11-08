@@ -37,7 +37,7 @@ $events('on', 'app.services', function ($container) {
                 $c->get('view'),
                 $c->get(GrEduLabs\UniversityForm\Service\UniversityFormServiceInterface::class),
                 $c->get(GrEduLabs\UniversityForm\InputFilter\UniversityForm::class),
-                $c->get('router')->pathFor('application_form'),
+                $c->get('router')->pathFor('university_form.submit_success'),
                 $c);
         };
 });
@@ -45,9 +45,14 @@ $events('on', 'app.services', function ($container) {
 $events('on', 'app.bootstrap', function ($app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
 
-        $app->map(['GET', 'POST'],'/university-form', GrEduLabs\UniversityForm\Action\UniversityForm::class)
+     $app->group('/university-form', function () {
+            $this->map(['get', 'post'], '', GrEduLabs\UniversityForm\Action\UniversityForm::class)
                 ->add(GrEduLabs\Application\Middleware\AddCsrfToView::class)
                 ->add('csrf')
                 ->setName('university_form');
+            $this->get('/submit-success', GrEduLabs\UniversityForm\Action\SubmitSuccess::class)
+                ->setName('university_form.submit_success');
+     });
     });
+
 };

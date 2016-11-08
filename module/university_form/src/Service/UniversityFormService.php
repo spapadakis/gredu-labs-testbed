@@ -15,18 +15,19 @@ use RedBeanPHP\R;
 
 class UniversityFormService implements UniversityFormServiceInterface
 {
-    public function submit(array $data)
+    public function submit(array $data, array $reqParams)
     {
         $appForm                      = R::dispense('univ');       
 
       	$appForm                      = R::dispense('univ');
-        $appForm->id                  = $data['id'];
+        $appForm->id                  = $reqParams['id'];
         $appForm->idrima              = $data['idrima'];
         $appForm->sxolh               = $data['sxolh'];
         $appForm->tmhma               = $data['tmhma'];
         $appForm->person              = $data['person'];
         $appForm->telef               = trim($data['telef']);
         $appForm->email               = $data['email'];
+        $appForm->comments            = $reqParams['comments'];
  
  
         R::store($appForm); 

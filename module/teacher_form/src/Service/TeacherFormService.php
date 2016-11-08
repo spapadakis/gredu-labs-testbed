@@ -19,15 +19,15 @@ class TeacherFormService implements TeacherFormServiceInterface
     {
 
         $appForm                      = R::dispense('volunteerteachers');
-        $appForm->id                  = $data['id'];
-        $appForm->name                = $reqParams['name'];
-        $appForm->surname             = $reqParams['surname'];
-        $appForm->eidikothta          = $reqParams['eidikothta'];
-        $appForm->arithmitroou        = $reqParams['arithmitroou'];
+        $appForm->id                  = $reqParams['id'];
+        $appForm->name                = $data['name'];
+        $appForm->surname             = $data['surname'];
+        $appForm->eidikothta          = $data['eidikothta'];
+        $appForm->arithmitroou        = $data['arithmitroou'];
         $appForm->email               = $data['email'];
         $appForm->telef               = trim($data['telef']);
-        $appForm->school              = $reqParams['school'];
-        $appForm->schooltelef         = trim($reqParams['schooltelef']);
+        $appForm->school              = $data['school'];
+        $appForm->schooltelef         = trim($data['schooltelef']);
         $appForm->comments            = $reqParams['comments'];
         R::store($appForm);
         return $appForm;

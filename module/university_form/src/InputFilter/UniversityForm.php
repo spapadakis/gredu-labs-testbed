@@ -20,15 +20,42 @@ class UniversityForm extends InputFilter
  
     public function __construct()
     {
+       
 
-  
-        $email = new Input('email');
-        $email->setRequired(true)
-            ->getValidatorChain()
+        $idrima = new Input('idrima');
+        $idrima->setRequired(true)
+            ->getFilterChain()
+            ->attach(new Filter\StringTrim());
+        $idrima->getValidatorChain()
             ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\EmailAddress([
-                'useDomainCheck' => false,
-            ]));
+            ->attach(new Validator\StringLength(['min' => 3]));
+
+        $sxolh = new Input('sxolh');
+        $sxolh->setRequired(true)
+            ->getFilterChain()
+            ->attach(new Filter\StringTrim());
+        $sxolh->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\StringLength(['min' => 3]));
+
+        $tmhma = new Input('tmhma');
+        $tmhma->setRequired(true)
+            ->getFilterChain()
+            ->attach(new Filter\StringTrim());
+        $tmhma->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\StringLength(['min' => 3]));
+
+        $person = new Input('person');
+        $person->setRequired(true)
+            ->getFilterChain()
+            ->attach(new Filter\StringTrim());
+        $person->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\StringLength(['min' => 3]));
+
+
+
 
         $telef = new Input('telef');
         $telef->setRequired(true)
@@ -38,9 +65,23 @@ class UniversityForm extends InputFilter
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 10]));
 
-        $this->inputFilter = new InputFilter();
-        $this->inputFilter
-            ->add($email)
-            ->add($telef);
-          }
+        
+        $email = new Input('email');
+        $email->setRequired(true)
+            ->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\EmailAddress([
+                'useDomainCheck' => false,
+            ]));
+
+
+      //  $this->inputFilter = new InputFilter();
+        $this->add($id)
+            ->add($idrima)
+            ->add($sxolh)
+            ->add($tmhma)
+            ->add($person)
+            ->add($telef)
+            ->add($email);
+    }
 }

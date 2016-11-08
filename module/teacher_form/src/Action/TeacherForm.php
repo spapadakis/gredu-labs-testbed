@@ -77,12 +77,14 @@ class TeacherForm
                 $res = $res->withRedirect($this->successUrl);
                 return $res;
             }
-             else
-                print_r("lalalalalal");
+          $this->view['form'] = [
+                'is_valid' => $isValid,
+                'values' => $this->TeacherFormInputFilter->getValues(),
+                'raw_values' => $this->TeacherFormInputFilter->getRawValues(),
+                'messages' => $this->TeacherFormInputFilter->getMessages(),
+            ];
 
-
-
-        }
+       }
         $res = $this->view->render($res, 'teacher_form/form.twig', [
             'branches'  => array_map(function ($branch) {
                 return ['value' => $branch['id'], 'label' => $branch['name']];

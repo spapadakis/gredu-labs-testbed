@@ -22,20 +22,35 @@ class TeacherForm extends InputFilter
     public function __construct()
     {
 
-        $id = new Input('id');
-        $id->setRequired(true)
-          ->getFilterChain()
-          ->attach(new Filter\ToInt());
-        $id->getValidatorChain()
-          ->attach(new Validator\NotEmpty());
+        $name = new Input('name');
+        $name->setRequired(true)
+            ->getFilterChain()
+            ->attach(new Filter\StringTrim());
+        $name->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\StringLength(['min' => 3]));
 
-        $email = new Input('email');
-        $email->setRequired(true)
+        $surname = new Input('surname');
+        $surname->setRequired(true)
+            ->getFilterChain()
+            ->attach(new Filter\StringTrim());
+        $surname->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\StringLength(['min' => 3]));
+
+        $eidikothta = new Input('eidikothta');
+        $eidikothta->setRequired(true)
             ->getValidatorChain()
             ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\EmailAddress([
-                'useDomainCheck' => false,
-            ]));
+            ->attach(new Validator\Digits());
+    
+        $arithmhtroou = new Input('arithmhtroou');
+        $arithmhtroou->setRequired(true)
+            ->getFilterChain()
+            ->attach(new Filter\StringTrim());
+        $arithmhtroou->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\StringLength(['min' => 6]));
 
         $telef = new Input('telef');
         $telef->setRequired(true)
@@ -45,9 +60,43 @@ class TeacherForm extends InputFilter
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 10]));
 
-//        $this->inputFilter = new InputFilter();
-        $this->add($id)
+        
+        $email = new Input('email');
+        $email->setRequired(true)
+            ->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\EmailAddress([
+                'useDomainCheck' => false,
+            ]));
+
+      
+        $school = new Input('school');
+        $school->setRequired(true)
+            ->getFilterChain()
+            ->attach(new Filter\StringTrim());
+        $school->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\StringLength(['min' => 3]));
+     
+
+
+        $schooltelef = new Input('schooltelef');
+        $schooltelef->setRequired(true)
+            ->getFilterChain()
+            ->attach(new Filter\Digits());
+        $schooltelef->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\StringLength(['min' => 10]));
+
+
+        //$this->inputFilter = new InputFilter();
+        $this->add($name)
+            ->add($surname)
+            ->add($eidikothta)
+            ->add($arithmhtroou)
+            ->add($telef)
             ->add($email)
-            ->add($telef);
-          }
+            ->add($school)
+            ->add($schooltelef);
+    }
 }
