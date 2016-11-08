@@ -1,0 +1,4039 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "0.7.1",
+        "title": "EDULABS open data api",
+        "description": "Λειτουργίες άντλησης δεδομένων από την πλατφόρμα\n[EDULABS](http://edulabs.minedu.gov.gr) του ΥΠΠΕΘ. \n\n*Το open data api δεν παρέχει λειτουργίες ενημέρωσης των δεδομένων \nπου είναι καταχωρημένα στο EDULABS.*\n\nΤα δεδομένα παρέχονται κατά κύριο λόγο σε σελίδες με μέγιστο πλήθος\nαποτελεσμάτων τα 200. Το πλήθος των αποτελεσμάτων ανά σελίδα\nπροσδιορίζεται και κατά την κλήση (λεπτομέρειες στην αναλυτική\nτεκμηρίωση των λειτουργιών παρακάτω). \n\nΠρος το παρόν τα endpoints είναι (base path /open-data/api)\n* /index **entry point** *παρέχεται προσωρινά για διευκόλυνση* \n\n* /schools, /applications, /new_applications, /application_items, \n  /new_application_items, /approved, /labs\n  **μονάδες που συμμετέχουν στη δράση**, **αιτήσεις (α φάση και β φάση (νέες))**, \n  **αιτούμενα είδη**, **αιτήσεις που εγκρίθηκαν**, **χώροι μονάδων που καταγράφηκαν**\n  με **σελιδοποιημένα** αποτελέσματα \n  \n  Όλα τα παραπάνω endpoints παρέχουν και **φιλτράρισμα ανά περιφέρεια εκπαίδευσης ή\n  διεύθυνση εκπαίδευσης ή νομό (περιφερειακή ενότητα) ή δήμο** \n  σε endpoints της μορφής:\n  * /*base_endpoint*/eduadmin/{eduadmin}\n  * /*base_endpoint*/regioneduadmin/{regioneduadmin}\n  * /*base_endpoint*/prefecture/{prefecture}\n  * /*base_endpoint*/municipality/{municipality}\n  \n  Επιπλέον για τις **μονάδες** έχουν φτιαχτεί και **φίλτρα για βαθμίδα εκπαίδευσης\n  ή/και νομό (περιφερειακή ενότητα)** \n  * /schools/education_level/{education_level}\n  * /schools/prefecture/{prefecture}/education_level/{education_level}\n\n  Για τα στοιχεία αιτηθέντος εξοπλισμού υπάρχει η δυνατότητα **άντλησης του εξοπλισμού\n  για συγκεκριμένο σχολείο**\n  * /school/{registry_no}/application_items (α' φάση) \n  * /school/{registry_no}/new_application_items (β' φάση) \n\n* /eduadminunits **διαθέσιμες διευθύνσεις εκπαίδευσης** \n\n* /regioneduadminunits **διαθέσιμες περιφερειακές διευθύνσεις εκπαίδευσης** \n\n* /educationlevels **διαθέσιμες βαθμίδες εκπαίδευσης** \n\n* /itemcategorynames **διαθέσιμα είδη εξοπλισμού - φιλτρο ανά κατηγορία**  \n\n* /municipalities **διαθέσιμοι Δήμοι (από τα σχολεία που έχουν καταχωρηθεί στο σύστημα)** \n\n* /prefectures, /prefecture/{name} **διαθέσιμες περιφερειακές ενότητες** \n\n* /assets, /software **σελιδοποιημένα αποτελέσματα για τα ίδια στοιχεία που \n  παράγονται από όλα τα ήδη διαθέσιμα csv exports**\n\n* /*raw_*{schools,labs,assets,software,appforms,appnewforms,appforms_items,newapplication\n  *δοκιμαστικά services που παράγουν τα ίδια στοιχεία με τα ήδη υπάρχοντα csv exports* \n  \n  * δεν θα αναρτηθούν στο σύστημα παραγωγής!\n"
+    },
+    "host": "eduslim1.minedu.gov.gr",
+    "schemes": [
+        "http"
+    ],
+    "basePath": "/open-data/api/",
+    "consumes": [
+        "text/plain"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "Inventory",
+            "description": "Ευρετήρια για παραμέτρους του συστήματος"
+        },
+        {
+            "name": "Schools",
+            "description": "Στοιχεία μονάδων ή σχετικά με τις μονάδες"
+        },
+        {
+            "name": "Applications",
+            "description": "Στοιχεία αιτήσεων μονάδων ή ειδών που περιλαμβάνονται στις αιτήσεις"
+        },
+        {
+            "name": "Labs",
+            "description": "Στοιχεία χώρων που καταγράφηκαν από τη δράση"
+        },
+        {
+            "name": "default",
+            "description": "Χωρίς ετικέτα - υπό αναθεώρηση ή μη ολοκληρωμένη τεκμηρίωση"
+        }
+    ],
+    "paths": {
+        "/index": {
+            "get": {
+                "summary": "Κατάλογος λειτουργιών",
+                "description": "Επιστρέφει μία λίστα endpoints για τις διαθέσιμες λειτουργίες. \n\n** Υπό ανάπτυξη - δεν τεκμηριώνεται ακόμη **\n",
+                "tags": [
+                    "Index"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "TBD",
+                        "schema": {
+                            "type": "object"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 64,
+                                "countall": null,
+                                "page": null,
+                                "pages": null,
+                                "labels": {
+                                    "label": "Ονομασία",
+                                    "path": "Σχετικό path για κλήση"
+                                },
+                                "data": [
+                                    {
+                                        "label": "api",
+                                        "path": "/open-data/api"
+                                    },
+                                    {
+                                        "label": "index",
+                                        "path": "/open-data/api/index"
+                                    },
+                                    {
+                                        "label": "prefectures",
+                                        "path": "/open-data/api/prefectures"
+                                    },
+                                    {
+                                        "label": "{name}",
+                                        "path": "/open-data/api/prefecture/{name}"
+                                    },
+                                    {
+                                        "label": "itemcategorynames",
+                                        "path": "/open-data/api/itemcategorynames"
+                                    },
+                                    {
+                                        "label": "raw_schools",
+                                        "path": "/open-data/api/raw_schools"
+                                    },
+                                    {
+                                        "label": "raw_labs",
+                                        "path": "/open-data/api/raw_labs"
+                                    },
+                                    {
+                                        "label": "raw_assets",
+                                        "path": "/open-data/api/raw_assets"
+                                    },
+                                    {
+                                        "label": "raw_software",
+                                        "path": "/open-data/api/raw_software"
+                                    },
+                                    {
+                                        "label": "raw_applications",
+                                        "path": "/open-data/api/raw_applications"
+                                    },
+                                    {
+                                        "label": "raw_new_applications",
+                                        "path": "/open-data/api/raw_new_applications"
+                                    },
+                                    {
+                                        "label": "raw_application_items",
+                                        "path": "/open-data/api/raw_application_items"
+                                    },
+                                    {
+                                        "label": "raw_new_application_items",
+                                        "path": "/open-data/api/raw_new_application_items"
+                                    },
+                                    {
+                                        "label": "raw_approved",
+                                        "path": "/open-data/api/raw_approved"
+                                    },
+                                    {
+                                        "label": "raw_eduadminunits",
+                                        "path": "/open-data/api/raw_eduadminunits"
+                                    },
+                                    {
+                                        "label": "raw_regioneduadminunits",
+                                        "path": "/open-data/api/raw_regioneduadminunits"
+                                    },
+                                    {
+                                        "label": "raw_educationlevels",
+                                        "path": "/open-data/api/raw_educationlevels"
+                                    },
+                                    {
+                                        "label": "raw_municipalities",
+                                        "path": "/open-data/api/raw_municipalities"
+                                    },
+                                    {
+                                        "label": "schools",
+                                        "path": "/open-data/api/schools"
+                                    },
+                                    {
+                                        "label": "labs",
+                                        "path": "/open-data/api/labs"
+                                    },
+                                    {
+                                        "label": "assets",
+                                        "path": "/open-data/api/assets"
+                                    },
+                                    {
+                                        "label": "software",
+                                        "path": "/open-data/api/software"
+                                    },
+                                    {
+                                        "label": "applications",
+                                        "path": "/open-data/api/applications"
+                                    },
+                                    {
+                                        "label": "new_applications",
+                                        "path": "/open-data/api/new_applications"
+                                    },
+                                    {
+                                        "label": "application_items",
+                                        "path": "/open-data/api/application_items"
+                                    },
+                                    {
+                                        "label": "new_application_items",
+                                        "path": "/open-data/api/new_application_items"
+                                    },
+                                    {
+                                        "label": "approved",
+                                        "path": "/open-data/api/approved"
+                                    },
+                                    {
+                                        "label": "eduadminunits",
+                                        "path": "/open-data/api/eduadminunits"
+                                    },
+                                    {
+                                        "label": "regioneduadminunits",
+                                        "path": "/open-data/api/regioneduadminunits"
+                                    },
+                                    {
+                                        "label": "educationlevels",
+                                        "path": "/open-data/api/educationlevels"
+                                    },
+                                    {
+                                        "label": "municipalities",
+                                        "path": "/open-data/api/municipalities"
+                                    },
+                                    {
+                                        "label": "{education_level}",
+                                        "path": "/open-data/api/schools/education_level/{education_level}"
+                                    },
+                                    {
+                                        "label": "{education_level}",
+                                        "path": "/open-data/api/schools/prefecture/{prefecture}/education_level/{education_level}"
+                                    },
+                                    {
+                                        "label": "{eduadmin}",
+                                        "path": "/open-data/api/schools/eduadmin/{eduadmin}"
+                                    },
+                                    {
+                                        "label": "{regioneduadmin}",
+                                        "path": "/open-data/api/schools/regioneduadmin/{regioneduadmin}"
+                                    },
+                                    {
+                                        "label": "{prefecture}",
+                                        "path": "/open-data/api/schools/prefecture/{prefecture}"
+                                    },
+                                    {
+                                        "label": "{municipality}",
+                                        "path": "/open-data/api/schools/municipality/{municipality}"
+                                    },
+                                    {
+                                        "label": "{eduadmin}",
+                                        "path": "/open-data/api/applications/eduadmin/{eduadmin}"
+                                    },
+                                    {
+                                        "label": "{regioneduadmin}",
+                                        "path": "/open-data/api/applications/regioneduadmin/{regioneduadmin}"
+                                    },
+                                    {
+                                        "label": "{prefecture}",
+                                        "path": "/open-data/api/applications/prefecture/{prefecture}"
+                                    },
+                                    {
+                                        "label": "{municipality}",
+                                        "path": "/open-data/api/applications/municipality/{municipality}"
+                                    },
+                                    {
+                                        "label": "{eduadmin}",
+                                        "path": "/open-data/api/application_items/eduadmin/{eduadmin}"
+                                    },
+                                    {
+                                        "label": "{regioneduadmin}",
+                                        "path": "/open-data/api/application_items/regioneduadmin/{regioneduadmin}"
+                                    },
+                                    {
+                                        "label": "{prefecture}",
+                                        "path": "/open-data/api/application_items/prefecture/{prefecture}"
+                                    },
+                                    {
+                                        "label": "{municipality}",
+                                        "path": "/open-data/api/application_items/municipality/{municipality}"
+                                    },
+                                    {
+                                        "label": "{eduadmin}",
+                                        "path": "/open-data/api/new_applications/eduadmin/{eduadmin}"
+                                    },
+                                    {
+                                        "label": "{regioneduadmin}",
+                                        "path": "/open-data/api/new_applications/regioneduadmin/{regioneduadmin}"
+                                    },
+                                    {
+                                        "label": "{prefecture}",
+                                        "path": "/open-data/api/new_applications/prefecture/{prefecture}"
+                                    },
+                                    {
+                                        "label": "{municipality}",
+                                        "path": "/open-data/api/new_applications/municipality/{municipality}"
+                                    },
+                                    {
+                                        "label": "{eduadmin}",
+                                        "path": "/open-data/api/new_application_items/eduadmin/{eduadmin}"
+                                    },
+                                    {
+                                        "label": "{regioneduadmin}",
+                                        "path": "/open-data/api/new_application_items/regioneduadmin/{regioneduadmin}"
+                                    },
+                                    {
+                                        "label": "{prefecture}",
+                                        "path": "/open-data/api/new_application_items/prefecture/{prefecture}"
+                                    },
+                                    {
+                                        "label": "{municipality}",
+                                        "path": "/open-data/api/new_application_items/municipality/{municipality}"
+                                    },
+                                    {
+                                        "label": "{eduadmin}",
+                                        "path": "/open-data/api/approved/eduadmin/{eduadmin}"
+                                    },
+                                    {
+                                        "label": "{regioneduadmin}",
+                                        "path": "/open-data/api/approved/regioneduadmin/{regioneduadmin}"
+                                    },
+                                    {
+                                        "label": "{prefecture}",
+                                        "path": "/open-data/api/approved/prefecture/{prefecture}"
+                                    },
+                                    {
+                                        "label": "{municipality}",
+                                        "path": "/open-data/api/approved/municipality/{municipality}"
+                                    },
+                                    {
+                                        "label": "{eduadmin}",
+                                        "path": "/open-data/api/labs/eduadmin/{eduadmin}"
+                                    },
+                                    {
+                                        "label": "{regioneduadmin}",
+                                        "path": "/open-data/api/labs/regioneduadmin/{regioneduadmin}"
+                                    },
+                                    {
+                                        "label": "{prefecture}",
+                                        "path": "/open-data/api/labs/prefecture/{prefecture}"
+                                    },
+                                    {
+                                        "label": "{municipality}",
+                                        "path": "/open-data/api/labs/municipality/{municipality}"
+                                    },
+                                    {
+                                        "label": "application_items",
+                                        "path": "/open-data/api/school/{registry_no:[0-9]+}/application_items"
+                                    },
+                                    {
+                                        "label": "new_application_items",
+                                        "path": "/open-data/api/school/{registry_no:[0-9]+}/new_application_items"
+                                    },
+                                    {
+                                        "label": "labs",
+                                        "path": "/open-data/api/school/{registry_no:[0-9]+}/labs"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schools": {
+            "get": {
+                "summary": "Λίστα των μονάδων που συμμετέχουν στη δράση",
+                "description": "Επιστρέφει στοιχεία των μονάδων που συμμετέχουν στη δράση.\n",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των μονάδων που συμμετέχουν στη δράση",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/School"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν μονάδες"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/schools/prefecture/{prefecture}": {
+            "get": {
+                "summary": "Λίστα των μονάδων της περιφερειακής ενότητας που συμμετέχουν στη δράση",
+                "description": "Επιστρέφει στοιχεία των μονάδων που συμμετέχουν στη δράση και ανήκουν \nστην συγκεκριμένη περιφερειακή ενότητα.\n",
+                "parameters": [
+                    {
+                        "name": "prefecture",
+                        "in": "path",
+                        "description": "Το όνομα της περιφερειακής ενότητας",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των μονάδων που συμμετέχουν στη δράση και ανήκουν στην συγκεκριμένη περιφερειακή ενότητα",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/School"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος ή δεν υπάρχει η περιφερειακή ενότητα"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν μονάδες με τα δεδομένα κριτήρια"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/schools/municipality/{municipality}": {
+            "get": {
+                "summary": "Λίστα των μονάδων του Δήμου που συμμετέχουν στη δράση",
+                "description": "Επιστρέφει στοιχεία των μονάδων που συμμετέχουν στη δράση και ανήκουν \nστο συγκεκριμένο Δήμο.\n",
+                "parameters": [
+                    {
+                        "name": "municipality",
+                        "in": "path",
+                        "description": "Η ονομασία του Δήμου",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των μονάδων που συμμετέχουν στη δράση και ανήκουν στο συγκεκριμένο Δήμο",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/School"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος ή δεν υπάρχει η περιφερειακή ενότητα"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν μονάδες με τα δεδομένα κριτήρια"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/schools/education_level/{education_level}": {
+            "get": {
+                "summary": "Λίστα των μονάδων της βαθμίδας εκπαίδευσης που συμμετέχουν στη δράση",
+                "description": "Επιστρέφει στοιχεία των μονάδων που συμμετέχουν στη δράση και ανήκουν \nστην συγκεκριμένη βαθμίδα εκπαίδευσης.\n",
+                "parameters": [
+                    {
+                        "name": "education_level",
+                        "in": "path",
+                        "description": "Το όνομα της βαθμίδας εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των μονάδων που συμμετέχουν στη δράση και ανήκουν στην συγκεκριμένη βαθμίδα εκπαίδευσης",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/School"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος ή δεν υπάρχει η περιφερειακή ενότητα"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν μονάδες με τα δεδομένα κριτήρια"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/schools/prefecture/{prefecture}/education_level/{education_level}": {
+            "get": {
+                "summary": "Λίστα των μονάδων της βαθμίδας εκπαίδευσης που συμμετέχουν στη δράση",
+                "description": "Επιστρέφει στοιχεία των μονάδων που συμμετέχουν στη δράση και ανήκουν \nστην συγκεκριμένη περιφερειακή ενότητα και βαθμίδα εκπαίδευσης.\n",
+                "parameters": [
+                    {
+                        "name": "prefecture",
+                        "in": "path",
+                        "description": "Το όνομα της περιφερειακής ενότητας",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "education_level",
+                        "in": "path",
+                        "description": "Το όνομα της βαθμίδας εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των μονάδων που συμμετέχουν στη δράση και ανήκουν στην συγκεκριμένη περιφερειακή ενότητα και βαθμίδα εκπαίδευσης",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/School"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος ή δεν υπάρχει η περιφερειακή ενότητα ή η βαθμίδα εκπαίδευσης"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν μονάδες με τα δεδομένα κριτήρια"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/schools/eduadmin/{eduadmin}": {
+            "get": {
+                "summary": "Λίστα των μονάδων που συμμετέχουν στη δράση και υπάγονται στη διεύθυνση εκπαίδευσης με δεδομένο λεκτικό.",
+                "description": "Επιστρέφει στοιχεία των μονάδων που συμμετέχουν στη δράση και ανήκουν \nστη διεύθυνση εκπαίδευσης με λεκτικό *eduadmin*. \nΤο λεκτικό που δίνεται ως παράμετρος πρέπει να περιλαμβάνεται στην \nονομασία της διεύθυνσης εκπαίδευσης. Για παράδειγμα το λεκτικό \"ΗΡΑΚΛ\"\nαντιστοιχεί \"ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ\" και \"ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΗΡΑΚΛΕΙΟΥ\".\n",
+                "parameters": [
+                    {
+                        "name": "eduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των μονάδων που συμμετέχουν στη δράση και υπάγονται στη διεύθυνση εκπαίδευσης με δεδομένο λεκτικό",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/School"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος ή δεν υπάρχει διεύθυνση εκπαίδευσης με το δεδομένο λεκτικό"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν μονάδες με τα δεδομένα κριτήρια"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/schools/regioneduadmin/{regioneduadmin}": {
+            "get": {
+                "summary": "Λίστα των μονάδων που συμμετέχουν στη δράση και υπάγονται στη περιφερειακή διεύθυνση εκπαίδευσης με δεδομένο λεκτικό.",
+                "description": "Επιστρέφει στοιχεία των μονάδων που συμμετέχουν στη δράση και ανήκουν \nστη περιφερειακή διεύθυνση εκπαίδευσης με λεκτικό *regioneduadmin*. \nΤο λεκτικό που δίνεται ως παράμετρος πρέπει να περιλαμβάνεται στην \nονομασία της περιφερειακής διεύθυνσης εκπαίδευσης. \nΓια παράδειγμα το λεκτικό \"ΑΙΓΑΙΟ\"\nαντιστοιχεί \"ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΝΟΤΙΟΥ ΑΙΓΑΙΟΥ\" και \n\"ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΒΟΡΕΙΟΥ ΑΙΓΑΙΟΥ\".\n",
+                "parameters": [
+                    {
+                        "name": "regioneduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της περιφερειακής διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των μονάδων που συμμετέχουν στη δράση και υπάγονται στη περιφερειακή διεύθυνση εκπαίδευσης με δεδομένο λεκτικό",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/School"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος ή δεν υπάρχει περιφερειακή διεύθυνση εκπαίδευσης με το δεδομένο λεκτικό"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν μονάδες με τα δεδομένα κριτήρια"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/prefectures": {
+            "get": {
+                "summary": "Λίστα των περιφερειακών ενοτήτων",
+                "description": "Επιστρέφει πλήρη λίστα των περιφερειακών ενοτήτων\nπου είναι καταχωρημένα στο σύστημα. \n",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των περιφερειακών ενοτήτων",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/Prefecture"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 2,
+                                "countall": 74,
+                                "page": 10,
+                                "pages": 37,
+                                "labels": {
+                                    "id": "Αναγνωριστικό ID",
+                                    "name": "Ονομασία Π.Ε."
+                                },
+                                "data": [
+                                    {
+                                        "id": "25",
+                                        "name": "ΗΜΑΘΙΑΣ"
+                                    },
+                                    {
+                                        "id": "8",
+                                        "name": "ΗΡΑΚΛΕΙΟΥ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν περιφερειακές ενότητες"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/prefecture/{prefecture}": {
+            "get": {
+                "summary": "Στοιχεία περιφερειακής ενότητας",
+                "description": "Επιστρέφει τα στοιχεία της περιφερειακής ενότητας.\n",
+                "parameters": [
+                    {
+                        "name": "prefecture",
+                        "in": "path",
+                        "description": "Το όνομα της περιφερειακής ενότητας",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Στοιχεία της περιφερειακής ενότητας",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "maxLength": 1,
+                                            "items": {
+                                                "$ref": "#/definitions/Prefecture"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος ή δεν υπάρχει η περιφερειακή ενότητα"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/municipalities": {
+            "get": {
+                "summary": "Λίστα των δήμων",
+                "description": "Επιστρέφει κατάλογο των δήμων των σχολείων που είναι καταχωρημένα \nστο σύστημα. \n",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των δήμων",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/Municipality"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 5,
+                                "countall": 317,
+                                "page": 13,
+                                "pages": 64,
+                                "labels": {
+                                    "municipality": "Ονομασία δήμου"
+                                },
+                                "data": [
+                                    {
+                                        "municipality": "ΒΥΡΩΝΟΣ"
+                                    },
+                                    {
+                                        "municipality": "ΓΑΛΑΤΣΙΟΥ"
+                                    },
+                                    {
+                                        "municipality": "ΓΕΩΡΓΙΟΥ ΚΑΡΑΪΣΚΑΚΗ"
+                                    },
+                                    {
+                                        "municipality": "ΓΛΥΦΑΔΑΣ"
+                                    },
+                                    {
+                                        "municipality": "ΓΟΡΤΥΝΑΣ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν δήμοι"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/itemcategorynames": {
+            "get": {
+                "summary": "Λίστα των διαθέσιμων ειδών εξοπλισμού",
+                "description": "Επιστρέφει πλήρη λίστα των διαθέσιμων ειδών εξοπλισμού, ενδεχομένως\nφιλτραρισμένη με το πεδίο groupflag. \n",
+                "parameters": [
+                    {
+                        "name": "group",
+                        "in": "query",
+                        "description": "Ο αριθμός του groupflag (π.χ. 0 ή 1...) που αντιστοιχεί στην έκδοση της αίτησης που περιλαμβάνει τον εξοπλισμό αυτό",
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των ειδών εξοπλισμού",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ItemCategory"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 23,
+                                "countall": null,
+                                "page": null,
+                                "pages": null,
+                                "labels": {
+                                    "id": "Αναγνωριστικό ID",
+                                    "name": "Ονομασία",
+                                    "groupflag": "Ομάδα"
+                                },
+                                "data": [
+                                    {
+                                        "id": "101",
+                                        "name": "ΣΤΑΘΕΡΟΣ ΗΛΕΚΤΡΟΝΙΚΟΣ ΥΠΟΛΟΓΙΣΤΗΣ (DESKTOP)",
+                                        "groupflag": "1"
+                                    },
+                                    {
+                                        "id": "102",
+                                        "name": "ΦΟΡΗΤΟΣ ΗΛΕΚΤΡΟΝΙΚΟΣ ΥΠΟΛΟΓΙΣΤΗΣ (LAPTOP)",
+                                        "groupflag": "1"
+                                    },
+                                    {
+                                        "id": "103",
+                                        "name": "ΕΠΙΤΡΑΠΕΖΙΟΣ ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ (SHORT THROW PROJECTOR)",
+                                        "groupflag": "1"
+                                    },
+                                    {
+                                        "id": "104",
+                                        "name": "ΕΠΙΤΟΙΧΟΣ ΒΙΝΤΕΟΠΡΟΒΟΛΕΑΣ (ULTRA SHORT THROW WIFI PROJECTOR)",
+                                        "groupflag": "1"
+                                    },
+                                    {
+                                        "id": "105",
+                                        "name": "ΕΓΧΡΩΜΟΣ ΕΚΤΥΠΩΤΗΣ Α4",
+                                        "groupflag": "1"
+                                    },
+                                    {
+                                        "id": "106",
+                                        "name": "ΑΣΠΡΟΜΑΥΡΟΣ ΕΚΤΥΠΩΤΗΣ LASER Α4",
+                                        "groupflag": "1"
+                                    },
+                                    {
+                                        "id": "107",
+                                        "name": "ΔΙΑΔΙΚΤΥΑΚΗ ΚΑΜΕΡΑ (WEB CAMERA)",
+                                        "groupflag": "1"
+                                    },
+                                    {
+                                        "id": "108",
+                                        "name": "ΕΞΩΤΕΡΙΚΟΣ ΣΚΛΗΡΟΣ ΔΙΣΚΟΣ",
+                                        "groupflag": "1"
+                                    },
+                                    {
+                                        "id": "109",
+                                        "name": "ΑΣΠΡΟΜΑΥΡΟ ΠΟΛΥΜΗΧΑΝΗΜΑ Α4",
+                                        "groupflag": "1"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν περιφερειακές ενότητες"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/eduadminunits": {
+            "get": {
+                "summary": "Λίστα των διαθέσιμων διευθύνσεων εκπαίδευσης",
+                "description": "Επιστρέφει πλήρη λίστα των διαθέσιμων διευθύνσεων εκπαίδευσης. \n",
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των διαθέσιμων διευθύνσεων εκπαίδευσης",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/BasicIdNameEntity"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 4,
+                                "countall": 119,
+                                "page": 1,
+                                "pages": 30,
+                                "labels": {
+                                    "id": "Κωδικός",
+                                    "name": "Ονομασία"
+                                },
+                                "data": [
+                                    {
+                                        "id": "134",
+                                        "name": "ΓΡΑΦΕΙΟ ΜΕΙΟΝΟΤΙΚΗΣ ΕΚΠΑΙΔΕΥΣΗΣ"
+                                    },
+                                    {
+                                        "id": "133",
+                                        "name": "ΔΙΕΥΘΥΝΣΗ Δ.Ε. Α΄ ΑΘΗΝΑΣ"
+                                    },
+                                    {
+                                        "id": "129",
+                                        "name": "ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΑΙΤΩΛΟΑΚΑΡΝΑΝΙΑΣ"
+                                    },
+                                    {
+                                        "id": "130",
+                                        "name": "ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΑΝΑΤ. ΘΕΣ/ΝΙΚΗΣ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/regioneduadminunits": {
+            "get": {
+                "summary": "Λίστα των διαθέσιμων περιφερειακών διευθύνσεων εκπαίδευσης",
+                "description": "Επιστρέφει πλήρη λίστα των διαθέσιμων περιφερειακών διευθύνσεων εκπαίδευσης. \n",
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των διαθέσιμων περιφερειακών διευθύνσεων εκπαίδευσης",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/BasicIdNameEntity"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 4,
+                                "countall": 14,
+                                "page": 3,
+                                "pages": 4,
+                                "labels": {
+                                    "id": "Κωδικός",
+                                    "name": "Ονομασία"
+                                },
+                                "data": [
+                                    {
+                                        "id": "13",
+                                        "name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΙΟΝΙΩΝ ΝΗΣΩΝ"
+                                    },
+                                    {
+                                        "id": "9",
+                                        "name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΕΝΤΡΙΚΗΣ ΜΑΚΕΔΟΝΙΑΣ"
+                                    },
+                                    {
+                                        "id": "6",
+                                        "name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ"
+                                    },
+                                    {
+                                        "id": "4",
+                                        "name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΝΟΤΙΟΥ ΑΙΓΑΙΟΥ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/educationlevels": {
+            "get": {
+                "summary": "Λίστα των διαθέσιμων βαθμίδων εκπαίδευσης",
+                "description": "Επιστρέφει πλήρη λίστα των διαθέσιμων βαθμίδων εκπαίδευσης. \n",
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λίστα των διαθέσιμων βαθμίδων εκπαίδευσης",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/BasicIdNameEntity"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 4,
+                                "countall": 4,
+                                "page": 1,
+                                "pages": 1,
+                                "labels": {
+                                    "id": "Κωδικός",
+                                    "name": "Ονομασία"
+                                },
+                                "data": [
+                                    {
+                                        "id": "4",
+                                        "name": "ΑΝΕΞ. ΒΑΘΜΙΔΑΣ"
+                                    },
+                                    {
+                                        "id": "2",
+                                        "name": "ΔΕΥΤΕΡΟΒΑΘΜΙΑ"
+                                    },
+                                    {
+                                        "id": "3",
+                                        "name": "ΜΕΤΑΔΕΥΤΕΡΟΒΑΘΜΙΑ"
+                                    },
+                                    {
+                                        "id": "1",
+                                        "name": "ΠΡΩΤΟΒΑΘΜΙΑ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/UnexpectedError"
+                        }
+                    }
+                }
+            }
+        },
+        "/approved": {
+            "get": {
+                "summary": "Αιτήσεις που εγκρίθηκαν",
+                "description": "Επιστρέφει λίστα των αιτήσεων που εγκρίθηκαν.",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Αιτήσεις που εγκρίθηκαν",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ApprovedApplicationInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 2,
+                                "countall": 118,
+                                "page": 1,
+                                "pages": 59,
+                                "labels": {
+                                    "school_registry_no": "Κωδικός σχολείου",
+                                    "school_name": "Ονομασία σχολείου",
+                                    "regionedu_name": "Περιφέρεια",
+                                    "eduadmin_name": "Διεύθυνση"
+                                },
+                                "data": [
+                                    {
+                                        "school_registry_no": "0951009",
+                                        "school_name": "4ο ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΔΡΑΜΑΣ",
+                                        "regionedu_name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΑΝΑΤΟΛΙΚΗΣ ΜΑΚΕΔΟΝΙΑΣ ΚΑΙ ΘΡΑΚΗΣ",
+                                        "eduadmin_name": "ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΔΡΑΜΑΣ"
+                                    },
+                                    {
+                                        "school_registry_no": "1102011",
+                                        "school_name": "2ο ΗΜΕΡΗΣΙΟ ΓΥΜΝΑΣΙΟ ΔΙΔΥΜΟΤΕΙΧΟ ΕΒΡΟΥ",
+                                        "regionedu_name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΑΝΑΤΟΛΙΚΗΣ ΜΑΚΕΔΟΝΙΑΣ ΚΑΙ ΘΡΑΚΗΣ",
+                                        "eduadmin_name": "ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΕΒΡΟΥ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/approved/eduadmin/{eduadmin}": {
+            "get": {
+                "summary": "Αιτήσεις που εγκρίθηκαν για μονάδες που υπάγονται στη διεύθυνση εκπαίδευσης με δεδομένο λεκτικό",
+                "description": "Επιστρέφει λίστα των αιτήσεων που εγκρίθηκαν για μονάδες που υπάγονται στη διεύθυνση εκπαίδευσης με δεδομένο λεκτικό. Το λεκτικό που δίνεται ως παράμετρος πρέπει να περιλαμβάνεται στην ονομασία της διεύθυνσης εκπαίδευσης. Για παράδειγμα το λεκτικό \"ΗΡΑΚΛ\" αντιστοιχεί \"ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ\" και \"ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΗΡΑΚΛΕΙΟΥ\".",
+                "parameters": [
+                    {
+                        "name": "eduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Αιτήσεις που εγκρίθηκαν",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ApprovedApplicationInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 2,
+                                "countall": 2,
+                                "page": 1,
+                                "pages": 1,
+                                "labels": {
+                                    "school_registry_no": "Κωδικός σχολείου",
+                                    "school_name": "Ονομασία σχολείου",
+                                    "regionedu_name": "Περιφέρεια",
+                                    "eduadmin_name": "Διεύθυνση"
+                                },
+                                "data": [
+                                    {
+                                        "school_registry_no": "9170259",
+                                        "school_name": "14ο ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΗΡΑΚΛΕΙΟΥ",
+                                        "regionedu_name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ",
+                                        "eduadmin_name": "ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ"
+                                    },
+                                    {
+                                        "school_registry_no": "9170494",
+                                        "school_name": "31ο ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΗΡΑΚΛΕΙΟΥ",
+                                        "regionedu_name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ",
+                                        "eduadmin_name": "ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/approved/regioneduadmin/{regioneduadmin}": {
+            "get": {
+                "summary": "Αιτήσεις που εγκρίθηκαν για μονάδες που υπάγονται στην περιφερειακή διεύθυνση εκπαίδευσης με δεδομένο λεκτικό",
+                "description": "Επιστρέφει λίστα των αιτήσεων που εγκρίθηκαν για μονάδες που υπάγονται στην περιφερειακή διεύθυνση εκπαίδευσης με λεκτικό *regioneduadmin*. Το λεκτικό που δίνεται ως παράμετρος πρέπει να περιλαμβάνεται στην ονομασία της περιφερειακής διεύθυνσης εκπαίδευσης. Για παράδειγμα το λεκτικό \"ΑΙΓΑΙΟ\" αντιστοιχεί \"ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΝΟΤΙΟΥ ΑΙΓΑΙΟΥ\" και \"ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΒΟΡΕΙΟΥ ΑΙΓΑΙΟΥ\".",
+                "parameters": [
+                    {
+                        "name": "regioneduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της περιφερειακής διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Αιτήσεις που εγκρίθηκαν",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ApprovedApplicationInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 2,
+                                "countall": 2,
+                                "page": 1,
+                                "pages": 1,
+                                "labels": {
+                                    "school_registry_no": "Κωδικός σχολείου",
+                                    "school_name": "Ονομασία σχολείου",
+                                    "regionedu_name": "Περιφέρεια",
+                                    "eduadmin_name": "Διεύθυνση"
+                                },
+                                "data": [
+                                    {
+                                        "school_registry_no": "9170259",
+                                        "school_name": "14ο ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΗΡΑΚΛΕΙΟΥ",
+                                        "regionedu_name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ",
+                                        "eduadmin_name": "ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ"
+                                    },
+                                    {
+                                        "school_registry_no": "9170494",
+                                        "school_name": "31ο ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΗΡΑΚΛΕΙΟΥ",
+                                        "regionedu_name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ",
+                                        "eduadmin_name": "ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/approved/prefecture/{prefecture}": {
+            "get": {
+                "summary": "Αιτήσεις που εγκρίθηκαν για μονάδες που ανήκουν στη δεδομένη περιφερειακή ενότητα",
+                "description": "Επιστρέφει λίστα των αιτήσεων που εγκρίθηκαν για μονάδες που ανήκουν στη δεδομένη περιφερειακή ενότητα.",
+                "parameters": [
+                    {
+                        "name": "prefecture",
+                        "in": "path",
+                        "description": "Το όνομα της περιφερειακής ενότητας",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Αιτήσεις που εγκρίθηκαν",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ApprovedApplicationInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 2,
+                                "countall": 2,
+                                "page": 1,
+                                "pages": 1,
+                                "labels": {
+                                    "school_registry_no": "Κωδικός σχολείου",
+                                    "school_name": "Ονομασία σχολείου",
+                                    "regionedu_name": "Περιφέρεια",
+                                    "eduadmin_name": "Διεύθυνση"
+                                },
+                                "data": [
+                                    {
+                                        "school_registry_no": "9170259",
+                                        "school_name": "14ο ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΗΡΑΚΛΕΙΟΥ",
+                                        "regionedu_name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ",
+                                        "eduadmin_name": "ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ"
+                                    },
+                                    {
+                                        "school_registry_no": "9170494",
+                                        "school_name": "31ο ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΗΡΑΚΛΕΙΟΥ",
+                                        "regionedu_name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ",
+                                        "eduadmin_name": "ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/approved/municipality/{municipality}": {
+            "get": {
+                "summary": "Αιτήσεις που εγκρίθηκαν για μονάδες που ανήκουν στο συγκεκριμένο Δήμο",
+                "description": "Επιστρέφει λίστα των αιτήσεων που εγκρίθηκαν για μονάδες που ανήκουν στο συγκεκριμένο Δήμο.",
+                "parameters": [
+                    {
+                        "name": "municipality",
+                        "in": "path",
+                        "description": "Η ονομασία του Δήμου",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Αιτήσεις που εγκρίθηκαν",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ApprovedApplicationInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 2,
+                                "countall": 2,
+                                "page": 1,
+                                "pages": 1,
+                                "labels": {
+                                    "school_registry_no": "Κωδικός σχολείου",
+                                    "school_name": "Ονομασία σχολείου",
+                                    "regionedu_name": "Περιφέρεια",
+                                    "eduadmin_name": "Διεύθυνση"
+                                },
+                                "data": [
+                                    {
+                                        "school_registry_no": "9170259",
+                                        "school_name": "14ο ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΗΡΑΚΛΕΙΟΥ",
+                                        "regionedu_name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ",
+                                        "eduadmin_name": "ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ"
+                                    },
+                                    {
+                                        "school_registry_no": "9170494",
+                                        "school_name": "31ο ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΗΡΑΚΛΕΙΟΥ",
+                                        "regionedu_name": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ",
+                                        "eduadmin_name": "ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/new_applications": {
+            "get": {
+                "summary": "Λίστα των αιτήσεων που υποβλήθηκαν από τις μονάδες (Β' φάση)",
+                "description": "Επιστρέφει στοιχεία των αιτήσεων που υποβλήθηκαν από τις μονάδες κατά\nτη δεύτερη φάση διεξαγωγής του προγράμματος.\n",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Αιτήσεις που υποβλήθηκαν από τις μονάδες (Α' φάση)",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/Application"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 2,
+                                "countall": 162,
+                                "page": 10,
+                                "pages": 81,
+                                "labels": {
+                                    "id": "ID",
+                                    "school_registry_no": "Κωδικός σχολείου",
+                                    "school_name": "Ονομασία σχολείου",
+                                    "submitted": "Ημερομηνία υποβολής",
+                                    "comments": "Σχόλια - Παρατηρήσεις"
+                                },
+                                "data": [
+                                    {
+                                        "id": "123",
+                                        "school_registry_no": "1234567",
+                                        "school_name": "ΕΝΑ ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΗΡΑΚΛΕΙΟΥ",
+                                        "submitted": "2016-04-02 12:57:24",
+                                        "comments": ""
+                                    },
+                                    {
+                                        "id": "234",
+                                        "school_registry_no": "3456789",
+                                        "school_name": "ΕΝΑ ΑΛΛΟ ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ",
+                                        "submitted": "2016-04-08 12:25:38",
+                                        "comments": "Χρειαζόμαστε Δομημένη Καλωδίωση σε όλες τι τάξεις για τη χρήση με το κινητό εργαστήριο"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/new_applications/eduadmin/{eduadmin}": {
+            "get": {
+                "summary": "Λίστα των αιτήσεων που υποβλήθηκαν στη B' φάση από μονάδες που υπάγονται σε διεύθυνση εκπαίδευσης με δεδομένο λεκτικό.",
+                "description": "Επιστρέφει στοιχεία των αιτήσεων που υποβλήθηκαν στη B' φάση από \nμονάδες ανήκουν στη διεύθυνση εκπαίδευσης με λεκτικό *eduadmin*. \nΤο λεκτικό που δίνεται ως παράμετρος πρέπει να περιλαμβάνεται στην \nονομασία της διεύθυνσης εκπαίδευσης. Για παράδειγμα το λεκτικό \"ΗΡΑΚΛ\"\nαντιστοιχεί \"ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ\" και \"ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΗΡΑΚΛΕΙΟΥ\".\n",
+                "parameters": [
+                    {
+                        "name": "eduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Αιτήσεις που υποβλήθηκαν από τις μονάδες (B' φάση) από μονάδες που υπάγονται στη διεύθυνση εκπαίδευσης με το δεδομένο λεκτικό"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/new_applications/regioneduadmin/{regioneduadmin}": {
+            "get": {
+                "summary": "Λίστα των αιτήσεων που υποβλήθηκαν στη B' φάση από μονάδες που υπάγονται σε περιφερειακή διεύθυνση εκπαίδευσης με δεδομένο λεκτικό.",
+                "description": "Επιστρέφει στοιχεία των αιτήσεων που υποβλήθηκαν στη B' φάση από \nμονάδες ανήκουν στην περιφερειακή διεύθυνση εκπαίδευσης με λεκτικό *eduadmin*. \nΤο λεκτικό που δίνεται ως παράμετρος πρέπει να περιλαμβάνεται στην \nονομασία της περιφερειακής διεύθυνσης εκπαίδευσης. \nΓια παράδειγμα το λεκτικό \"ΑΙΓΑΙΟ\"\nαντιστοιχεί \"ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΝΟΤΙΟΥ ΑΙΓΑΙΟΥ\" και \n\"ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΒΟΡΕΙΟΥ ΑΙΓΑΙΟΥ\".\n",
+                "parameters": [
+                    {
+                        "name": "regioneduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της περιφερειακής διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Αιτήσεις που υποβλήθηκαν από τις μονάδες (B' φάση) από μονάδες που υπάγονται στην περιφερειακή διεύθυνση εκπαίδευσης με το δεδομένο λεκτικό"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/new_applications/prefecture/{prefecture}": {
+            "get": {
+                "summary": "Λίστα των αιτήσεων που υποβλήθηκαν στη B' φάση από μονάδες που ανήκουν στη δεδομένη περιφερειακή ενότητα.",
+                "description": "Επιστρέφει στοιχεία των αιτήσεων που υποβλήθηκαν στη B' φάση από \nμονάδες ανήκουν στη δεδομένη περιφερειακή ενότητα με ονομασία *prefecture*. \n",
+                "parameters": [
+                    {
+                        "name": "prefecture",
+                        "in": "path",
+                        "description": "Το όνομα της περιφερειακής ενότητας",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Αιτήσεις που υποβλήθηκαν από τις μονάδες (B' φάση) από μονάδες που υπάγονται στη διεύθυνση εκπαίδευσης με το δεδομένο λεκτικό"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/new_applications/municipality/{municipality}": {
+            "get": {
+                "summary": "Λίστα των αιτήσεων που υποβλήθηκαν στη B' φάση από μονάδες που ανήκουν στο συγκεκριμένο Δήμο.",
+                "description": "Επιστρέφει στοιχεία των αιτήσεων που υποβλήθηκαν στη B' φάση από \nμονάδες ανήκουν στο συγκεκριμένο Δήμο με ονομασία *municipality*. \n",
+                "parameters": [
+                    {
+                        "name": "municipality",
+                        "in": "path",
+                        "description": "Η ονομασία του Δήμου",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Αιτήσεις που υποβλήθηκαν από τις μονάδες (B' φάση) από μονάδες που υπάγονται στο συγκεκριμένο Δήμο με τη δεδομένη ονομασία"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/applications": {
+            "get": {
+                "summary": "Λίστα των αιτήσεων που υποβλήθηκαν από τις μονάδες (Α' φάση)",
+                "description": "Αντίστοιχα με το /new_applications",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Αντίστοιχα με το /new_applications"
+                    }
+                }
+            }
+        },
+        "/applications/eduadmin/{eduadmin}": {
+            "get": {
+                "summary": "Λίστα των αιτήσεων που υποβλήθηκαν στην Α' φάση από μονάδες που υπάγονται σε διεύθυνση εκπαίδευσης με δεδομένο λεκτικό.",
+                "description": "Αντίστοιχα με το /new_applications/eduadmin/{eduadmin}",
+                "parameters": [
+                    {
+                        "name": "eduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Αντίστοιχα με το /new_applications/eduadmin/{eduadmin}"
+                    }
+                }
+            }
+        },
+        "/applications/regioneduadmin/{regioneduadmin}": {
+            "get": {
+                "summary": "Λίστα των αιτήσεων που υποβλήθηκαν στην Α' φάση από μονάδες που υπάγονται σε περιφερειακή διεύθυνση εκπαίδευσης με δεδομένο λεκτικό.",
+                "description": "Αντίστοιχα με το /applications/regioneduadmin/{regioneduadmin}",
+                "parameters": [
+                    {
+                        "name": "regioneduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της περιφερειακής διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Αντίστοιχα με το /applications/regioneduadmin/{regioneduadmin}"
+                    }
+                }
+            }
+        },
+        "/applications/prefecture/{prefecture}": {
+            "get": {
+                "summary": "Λίστα των αιτήσεων που υποβλήθηκαν στην Α' φάση από μονάδες που ανήκουν στη δεδομένη περιφερειακή ενότητα.",
+                "description": "Αντίστοιχα με το /applications/prefecture/{prefecture}",
+                "parameters": [
+                    {
+                        "name": "prefecture",
+                        "in": "path",
+                        "description": "Το όνομα της περιφερειακής ενότητας",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Αντίστοιχα με το /applications/prefecture/{prefecture}"
+                    }
+                }
+            }
+        },
+        "/applications/municipality/{municipality}": {
+            "get": {
+                "summary": "Λίστα των αιτήσεων που υποβλήθηκαν στην Α' φάση από μονάδες που ανήκουν στο συγκεκριμένο Δήμο.",
+                "description": "Αντίστοιχα με το /applications/municipality/{municipality}",
+                "parameters": [
+                    {
+                        "name": "municipality",
+                        "in": "path",
+                        "description": "Η ονομασία του Δήμου",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Αντίστοιχα με το /applications/municipality/{municipality}"
+                    }
+                }
+            }
+        },
+        "/new_application_items": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκαν οι μονάδες (Β' φάση)",
+                "description": "Επιστρέφει στοιχεία του εξοπλισμού που αιτήθηκαν οι μονάδες στην πρώτη\nφάση του προγράμματος.\n",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Εξοπλισμός που αιτήθηκαν οι μονάδες (Β' φάση)",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ApplicationItemB"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 2,
+                                "countall": 81978,
+                                "page": 1,
+                                "pages": 40989,
+                                "labels": {
+                                    "id": "ID αίτησης",
+                                    "school_registry_no": "Κωδικός σχολείου",
+                                    "school_name": "Ονομασία σχολείου",
+                                    "submitted": "Ημερομηνία υποβολής",
+                                    "lab_id": "ID χώρου",
+                                    "lab_type": "Τύπος χώρου",
+                                    "is_new": "Νέος χώρος",
+                                    "category": "Είδος",
+                                    "qty": "Πλήθος",
+                                    "reasons": "Αιτιολογία χρήσης"
+                                },
+                                "data": [
+                                    {
+                                        "id": "2",
+                                        "school_registry_no": "1234567",
+                                        "school_name": "ΟΛΟΗΜΕΡΟ ΝΗΠΙΑΓΩΓΕΙΟ X",
+                                        "submitted": "2016-02-28 18:32:55",
+                                        "lab_id": "00",
+                                        "lab_type": "ΑΙΘΟΥΣΑ ΔΙΔΑΣΚΑΛΙΑΣ",
+                                        "is_new": "ΝΑΙ",
+                                        "category": "ΦΟΡΗΤΟΣ Η/Υ (LAPTOP)",
+                                        "qty": "1",
+                                        "reasons": "Για Υλοποίηση του προγράμματος XYZ"
+                                    },
+                                    {
+                                        "id": "2",
+                                        "school_registry_no": "1234567",
+                                        "school_name": "ΟΛΟΗΜΕΡΟ ΝΗΠΙΑΓΩΓΕΙΟ X",
+                                        "submitted": "2016-02-28 18:32:55",
+                                        "lab_id": "00",
+                                        "lab_type": "ΑΙΘΟΥΣΑ ΔΙΔΑΣΚΑΛΙΑΣ",
+                                        "is_new": "ΝΑΙ",
+                                        "category": "ΣΑΡΩΤΗΣ (SCANNER)",
+                                        "qty": "1",
+                                        "reasons": "Για Υλοποίηση του προγράμματος XYZ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/school/{registry_no}/new_application_items": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκε η μονάδα στη B' φάση",
+                "description": "Επιστρέφει στοιχεία του εξοπλισμού που αιτήθηκε η μονάδα στη δεύτερη\nφάση του προγράμματος.\n",
+                "parameters": [
+                    {
+                        "name": "registry_no",
+                        "in": "path",
+                        "description": "Κωδικός μονάδας",
+                        "required": true,
+                        "type": "integer",
+                        "pattern": "[0-9]+"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications",
+                    "Schools"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Εξοπλισμός που αιτήθηκε η μονάδα (Β' φάση)"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/new_application_items/eduadmin/{eduadmin}": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκαν στη Β' φάση οι μονάδες που υπάγονται σε διεύθυνση εκπαίδευσης με δεδομένο λεκτικό.",
+                "description": "Επιστρέφει στοιχεία του εξοπλισμού που αιτήθηκαν στη δεύτερη\nφάση του προγράμματος οι μονάδες ανήκουν στη διεύθυνση εκπαίδευσης \nμε λεκτικό *eduadmin*. \nΤο λεκτικό που δίνεται ως παράμετρος πρέπει να περιλαμβάνεται στην \nονομασία της διεύθυνσης εκπαίδευσης. Για παράδειγμα το λεκτικό \"ΗΡΑΚΛ\"\nαντιστοιχεί \"ΔΙΕΥΘΥΝΣΗ Π.Ε. ΗΡΑΚΛΕΙΟΥ\" και \"ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΗΡΑΚΛΕΙΟΥ\".\n",
+                "parameters": [
+                    {
+                        "name": "eduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Εξοπλισμός που αιτήθηκαν στη Β' φάση οι μονάδες που υπάγονται σε διεύθυνση εκπαίδευσης με το δεδομένο λεκτικό"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/new_application_items/regioneduadmin/{regioneduadmin}": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκαν στη Β' φάση οι μονάδες που υπάγονται σε περιφερειακή διεύθυνση εκπαίδευσης με δεδομένο λεκτικό.",
+                "description": "Επιστρέφει στοιχεία του εξοπλισμού που αιτήθηκαν στη δεύτερη\nφάση του προγράμματος μονάδες που ανήκουν στην περιφερειακή διεύθυνση\nεκπαίδευσης με λεκτικό *regioneduadmin*. \nΤο λεκτικό που δίνεται ως παράμετρος πρέπει να περιλαμβάνεται στην \nονομασία της περιφερειακής διεύθυνσης εκπαίδευσης. \nΓια παράδειγμα το λεκτικό \"ΑΙΓΑΙΟ\"\nαντιστοιχεί \"ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΝΟΤΙΟΥ ΑΙΓΑΙΟΥ\" και \n\"ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΒΟΡΕΙΟΥ ΑΙΓΑΙΟΥ\".\n",
+                "parameters": [
+                    {
+                        "name": "regioneduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της περιφερειακής διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Εξοπλισμός που αιτήθηκαν στη Β' φάση οι μονάδες που υπάγονται σε διεύθυνση εκπαίδευσης με το δεδομένο λεκτικό"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/new_application_items/prefecture/{prefecture}": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκαν στη Β' φάση οι μονάδες που ανήκουν στη δεδομένη περιφερειακή ενότητα.",
+                "description": "Επιστρέφει στοιχεία του εξοπλισμού που αιτήθηκαν στη δεύτερη\nφάση του προγράμματος οι μονάδες που ανήκουν στη δεδομένη περιφερειακή\nενότητα με ονομασία *prefecture*.\n",
+                "parameters": [
+                    {
+                        "name": "prefecture",
+                        "in": "path",
+                        "description": "Το όνομα της περιφερειακής ενότητας",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Εξοπλισμός που αιτήθηκαν στη Β' φάση οι μονάδες που υπάγονται σε διεύθυνση εκπαίδευσης με το δεδομένο λεκτικό"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/new_application_items/municipality/{municipality}": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκαν στη Β' φάση οι μονάδες που ανήκουν στο συγκεκριμένο Δήμο.",
+                "description": "Επιστρέφει στοιχεία του εξοπλισμού που αιτήθηκαν στη δεύτερη\nφάση του προγράμματος οι μονάδες που ανήκουν στο συγκεκριμένο Δήμο\nμε ονομασία *municipality*.\n",
+                "parameters": [
+                    {
+                        "name": "municipality",
+                        "in": "path",
+                        "description": "Η ονομασία του Δήμου",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Εξοπλισμός που αιτήθηκαν στη Β' φάση οι μονάδες που υπάγονται στο Δήμο με το δεδομένη ονομασία"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/application_items": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκαν οι μονάδες (Α' φάση)",
+                "description": "Αντίστοιχα με το /new_application_items",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Εξοπλισμός που αιτήθηκαν οι μονάδες (Α' φάση)",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/CoreResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ApplicationItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "default": {
+                        "description": "Αντίστοιχα με το /new_applications"
+                    }
+                }
+            }
+        },
+        "/school/{registry_no}/application_items": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκε η μονάδα στην Α' φάση",
+                "description": "Αντίστοιχα με το /school/{registry_no}/new_application_items",
+                "parameters": [
+                    {
+                        "name": "registry_no",
+                        "in": "path",
+                        "description": "Κωδικός μονάδας",
+                        "required": true,
+                        "type": "integer",
+                        "pattern": "[0-9]+"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications",
+                    "Schools"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Αντίστοιχα με το /school/{registry_no}/new_application_items"
+                    }
+                }
+            }
+        },
+        "/application_items/eduadmin/{eduadmin}": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκαν στην Α' φάση οι μονάδες που υπάγονται σε διεύθυνση εκπαίδευσης με δεδομένο λεκτικό.",
+                "description": "Αντίστοιχα με το /new_application_items/eduadmin/{eduadmin}",
+                "parameters": [
+                    {
+                        "name": "eduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Αντίστοιχα με το /new_application_items/eduadmin/{eduadmin}"
+                    }
+                }
+            }
+        },
+        "/application_items/regioneduadmin/{regioneduadmin}": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκαν στην Α' φάση οι μονάδες που υπάγονται σε περιφερειακή διεύθυνση εκπαίδευσης με δεδομένο λεκτικό.",
+                "description": "Αντίστοιχα με το /new_application_items/regioneduadmin/{regioneduadmin}",
+                "parameters": [
+                    {
+                        "name": "regioneduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της περιφερειακής διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Αντίστοιχα με το /new_application_items/regioneduadmin/{regioneduadmin}"
+                    }
+                }
+            }
+        },
+        "/application_items/prefecture/{prefecture}": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκαν στην Α' φάση οι μονάδες που ανήκουν στη δεδομένη περιφερειακή ενότητα.",
+                "description": "Αντίστοιχα με το /new_application_items/prefecture/{prefecture}",
+                "parameters": [
+                    {
+                        "name": "prefecture",
+                        "in": "path",
+                        "description": "Το όνομα της περιφερειακής ενότητας",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Αντίστοιχα με το /new_application_items/prefecture/{prefecture}"
+                    }
+                }
+            }
+        },
+        "/application_items/municipality/{municipality}": {
+            "get": {
+                "summary": "Λίστα του εξοπλισμού που αιτήθηκαν στην Α' φάση οι μονάδες που ανήκουν στο συγκεκριμένο Δήμο.",
+                "description": "Αντίστοιχα με το /new_application_items/municipality/{municipality}",
+                "parameters": [
+                    {
+                        "name": "municipality",
+                        "in": "path",
+                        "description": "Η ονομασία του Δήμου",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Applications"
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Αντίστοιχα με το /new_application_items/municipality/{municipality}"
+                    }
+                }
+            }
+        },
+        "/labs": {
+            "get": {
+                "summary": "Χώροι μονάδων που καταγράφηκαν από τη δράση",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Labs"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Χώροι μονάδων που καταγράφηκαν από τη δράση",
+                        "schema": {
+                            "type": "object"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 2,
+                                "countall": 41581,
+                                "page": 1000,
+                                "pages": 20791,
+                                "labels": {
+                                    "id": "ID",
+                                    "school_registry_no": "Κωδικός σχολείου",
+                                    "school_name": "Ονομασία σχολείου",
+                                    "name": "Ονομασία χώρου",
+                                    "type": "Τύπος χώρου",
+                                    "responsible_branch": "Ειδικότητα υπευθύνου",
+                                    "is_new": "Νέος χώρος",
+                                    "area": "Επιφάνεια (m^2)",
+                                    "has_network": "Σύνδεση στο δίκτυο",
+                                    "has_server": "Διαθέτει server",
+                                    "lessons": "Μαθήματα",
+                                    "use_in_program": "Χρήση στα πλαίσια μαθημάτων",
+                                    "use_ext_program": "Χρήση για δραστηριότητες εκτός εκπαιδευτικού προγράμματος"
+                                },
+                                "data": [
+                                    {
+                                        "id": "12973",
+                                        "school_registry_no": "9051175",
+                                        "school_name": "13ο ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΓΛΥΦΑΔΑ",
+                                        "name": "Αίθουσα Δ2",
+                                        "type": "ΑΙΘΟΥΣΑ ΔΙΔΑΣΚΑΛΙΑΣ",
+                                        "responsible_branch": "ΠΕ70-ΔΑΣΚΑΛΟΙ",
+                                        "is_new": "ΟΧΙ",
+                                        "area": "48",
+                                        "has_network": "ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ",
+                                        "has_server": "ΟΧΙ",
+                                        "lessons": null,
+                                        "use_in_program": "ΝΑΙ",
+                                        "use_ext_program": "ΟΧΙ"
+                                    },
+                                    {
+                                        "id": "12993",
+                                        "school_registry_no": "9051175",
+                                        "school_name": "13ο ΟΛΟΗΜΕΡΟ ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΓΛΥΦΑΔΑ",
+                                        "name": "Αίθουσα Ε1",
+                                        "type": "ΑΙΘΟΥΣΑ ΔΙΔΑΣΚΑΛΙΑΣ",
+                                        "responsible_branch": "ΠΕ70-ΔΑΣΚΑΛΟΙ",
+                                        "is_new": "ΝΑΙ",
+                                        "area": "48",
+                                        "has_network": "ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ",
+                                        "has_server": "ΟΧΙ",
+                                        "lessons": null,
+                                        "use_in_program": "ΝΑΙ",
+                                        "use_ext_program": "ΟΧΙ"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/school/{registry_no}/labs": {
+            "get": {
+                "summary": "Χώροι μονάδων που καταγράφηκαν από τη δράση για συγκεκριμένη μονάδα",
+                "parameters": [
+                    {
+                        "name": "registry_no",
+                        "in": "path",
+                        "description": "Κωδικός μονάδας",
+                        "required": true,
+                        "type": "integer",
+                        "pattern": "[0-9]+"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Labs",
+                    "Schools"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Χώροι μονάδων που καταγράφηκαν από τη δράση για τη συγκεκριμένη μονάδα",
+                        "schema": {
+                            "type": "object"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": 200,
+                                "success": true,
+                                "count": 9,
+                                "countall": 9,
+                                "page": 1,
+                                "pages": 1,
+                                "labels": {
+                                    "id": "ID",
+                                    "school_registry_no": "Κωδικός σχολείου",
+                                    "school_name": "Ονομασία σχολείου",
+                                    "name": "Ονομασία χώρου",
+                                    "type": "Τύπος χώρου",
+                                    "responsible_branch": "Ειδικότητα υπευθύνου",
+                                    "is_new": "Νέος χώρος",
+                                    "area": "Επιφάνεια (m^2)",
+                                    "has_network": "Σύνδεση στο δίκτυο",
+                                    "has_server": "Διαθέτει server",
+                                    "lessons": "Μαθήματα",
+                                    "use_in_program": "Χρήση στα πλαίσια μαθημάτων",
+                                    "use_ext_program": "Χρήση για δραστηριότητες εκτός εκπαιδευτικού προγράμματος"
+                                },
+                                "data": [
+                                    {
+                                        "id": "6128",
+                                        "school_registry_no": "1765010",
+                                        "school_name": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ",
+                                        "name": "Εργαστήριο Πληροφορικής",
+                                        "type": "ΕΡΓΑΣΤΗΡΙΟ ΠΛΗΡ/ΚΗΣ",
+                                        "responsible_branch": "ΠΕ19-ΠΛΗΡΟΦΟΡΙΚΗΣ ΑΕΙ",
+                                        "is_new": "ΟΧΙ",
+                                        "area": "39",
+                                        "has_network": "ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ",
+                                        "has_server": "ΝΑΙ",
+                                        "lessons": "ΠΛΗΡΟΦΟΡΙΚΗ",
+                                        "use_in_program": "Όλα τα μαθήματα πληροφορικής (ΕΦΑΡΜΟΓΕΣ ΠΛΗΡΟΦΟΡΙΚΗΣ, ΕΙΣΑΓΩΓΗ ΣΤΙΣ ΑΡΧΕΣ ΤΗΣ ΕΠΙΣΤΗΜΗΣ ΤΩΝ Η/Υ, ΑΝΑΠΤΥΞΗ ΕΦΑΡΜΟΓΩΝ ΣΕ ΠΡΟΓΡΑΜΜΑΤΙΣΤΙΚΟ ΠΕΡΙΒΑΛΛΟΝ), μαθήματα ερευνητικών εργασιών καθώς και ορ",
+                                        "use_ext_program": ""
+                                    },
+                                    {
+                                        "id": "6129",
+                                        "school_registry_no": "1765010",
+                                        "school_name": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ",
+                                        "name": "Εργαστήριο Φυσικών Επιστημών",
+                                        "type": "ΕΡΓΑΣΤΗΡΙΟ ΦΥΣΙΚΩΝ ΕΠΙΣΤΗΜΩΝ",
+                                        "responsible_branch": "ΠΕ04.01-ΦΥΣΙΚΟΙ",
+                                        "is_new": "ΟΧΙ",
+                                        "area": "86",
+                                        "has_network": "ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ",
+                                        "has_server": "ΟΧΙ",
+                                        "lessons": "ΦΥΣΙΚΩΝ ΕΠΙΣΤΗΜΩΝ",
+                                        "use_in_program": "Τα μαθήματα Φυσικής, Χημείας, Βιολογίας και Γεωλογίας όλων των τάξεων.",
+                                        "use_ext_program": ""
+                                    },
+                                    {
+                                        "id": "6130",
+                                        "school_registry_no": "1765010",
+                                        "school_name": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ",
+                                        "name": "Αίθουσα Εκδηλώσεων",
+                                        "type": "ΑΛΛΗ ΑΙΘΟΥΣΑ",
+                                        "responsible_branch": "ΠΕ03-ΜΑΘΗΜΑΤΙΚΟΙ",
+                                        "is_new": "ΟΧΙ",
+                                        "area": "190",
+                                        "has_network": "ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ",
+                                        "has_server": "ΟΧΙ",
+                                        "lessons": "ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ ΕΚΤΟΣ ΩΡΑΡΙΟΥ ΛΕΙΤΟΥΡΓΙΑΣ ΣΧΟΛΕΙΟΥ",
+                                        "use_in_program": "Γυμναστική.",
+                                        "use_ext_program": "Όλες οι δραστηριότητες του σχολείου. Προβολές ντοκυμαντέρ, σεμινάρια, ομιλίες, σχολικές εορτές κτλ"
+                                    },
+                                    {
+                                        "id": "30750",
+                                        "school_registry_no": "1765010",
+                                        "school_name": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ",
+                                        "name": "Βιβλιοθήκη",
+                                        "type": "ΒΙΒΛΙΟΘΗΚΗ",
+                                        "responsible_branch": "ΠΕ06-ΑΓΓΛΙΚΗΣ ΦΙΛΟΛΟΓΙΑΣ",
+                                        "is_new": "ΟΧΙ",
+                                        "area": "39",
+                                        "has_network": "ΔΕΝ ΥΠΑΡΧΕΙ ΔΙΚΤΥΟ",
+                                        "has_server": "ΟΧΙ",
+                                        "lessons": "ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ ΕΚΤΟΣ ΩΡΑΡΙΟΥ ΛΕΙΤΟΥΡΓΙΑΣ ΣΧΟΛΕΙΟΥ",
+                                        "use_in_program": "Αγγλικά, Γαλλικά, Ερευνητικές εργασίες",
+                                        "use_ext_program": "Η βιβλιοθήκη είναι δανειστική."
+                                    },
+                                    {
+                                        "id": "30774",
+                                        "school_registry_no": "1765010",
+                                        "school_name": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ",
+                                        "name": "Αίθουσα Β1",
+                                        "type": "ΑΙΘΟΥΣΑ ΔΙΔΑΣΚΑΛΙΑΣ",
+                                        "responsible_branch": "ΠΕ03-ΜΑΘΗΜΑΤΙΚΟΙ",
+                                        "is_new": "ΟΧΙ",
+                                        "area": "40",
+                                        "has_network": "ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ",
+                                        "has_server": "ΟΧΙ",
+                                        "lessons": null,
+                                        "use_in_program": "",
+                                        "use_ext_program": ""
+                                    },
+                                    {
+                                        "id": "30790",
+                                        "school_registry_no": "1765010",
+                                        "school_name": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ",
+                                        "name": "Αίθουσα Β2",
+                                        "type": "ΑΙΘΟΥΣΑ ΔΙΔΑΣΚΑΛΙΑΣ",
+                                        "responsible_branch": "ΠΕ03-ΜΑΘΗΜΑΤΙΚΟΙ",
+                                        "is_new": "ΟΧΙ",
+                                        "area": "40",
+                                        "has_network": "ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ",
+                                        "has_server": "ΟΧΙ",
+                                        "lessons": null,
+                                        "use_in_program": "",
+                                        "use_ext_program": ""
+                                    },
+                                    {
+                                        "id": "30801",
+                                        "school_registry_no": "1765010",
+                                        "school_name": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ",
+                                        "name": "Αίθουσα Γ1",
+                                        "type": "ΑΙΘΟΥΣΑ ΔΙΔΑΣΚΑΛΙΑΣ",
+                                        "responsible_branch": "ΠΕ03-ΜΑΘΗΜΑΤΙΚΟΙ",
+                                        "is_new": "ΟΧΙ",
+                                        "area": "40",
+                                        "has_network": "ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ",
+                                        "has_server": "ΝΑΙ",
+                                        "lessons": null,
+                                        "use_in_program": "",
+                                        "use_ext_program": ""
+                                    },
+                                    {
+                                        "id": "30804",
+                                        "school_registry_no": "1765010",
+                                        "school_name": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ",
+                                        "name": "Αίθουσα Γ2",
+                                        "type": "ΑΙΘΟΥΣΑ ΔΙΔΑΣΚΑΛΙΑΣ",
+                                        "responsible_branch": "ΠΕ03-ΜΑΘΗΜΑΤΙΚΟΙ",
+                                        "is_new": "ΟΧΙ",
+                                        "area": "40",
+                                        "has_network": "ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ",
+                                        "has_server": "ΟΧΙ",
+                                        "lessons": null,
+                                        "use_in_program": "",
+                                        "use_ext_program": ""
+                                    },
+                                    {
+                                        "id": "30825",
+                                        "school_registry_no": "1765010",
+                                        "school_name": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ",
+                                        "name": "Αίθουσα Κοινωνικών Επιστημων",
+                                        "type": "ΑΛΛΗ ΑΙΘΟΥΣΑ",
+                                        "responsible_branch": "ΠΕ09-ΟΙΚΟΝΟΜΟΛΟΓΟΙ",
+                                        "is_new": "ΟΧΙ",
+                                        "area": "40",
+                                        "has_network": "ΔΟΜΗΜΕΝΗ ΚΑΛΩΔΙΩΣΗ",
+                                        "has_server": "ΟΧΙ",
+                                        "lessons": null,
+                                        "use_in_program": "Μαθήματα Κοινωνικών Επιστημών",
+                                        "use_ext_program": ""
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/labs/eduadmin/{eduadmin}": {
+            "get": {
+                "summary": "Χώροι μονάδων που καταγράφηκαν από τη δράση στη διεύθυνση εκπαίδευσης με δεδομένο λεκτικό",
+                "parameters": [
+                    {
+                        "name": "eduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Labs"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Χώροι μονάδων που καταγράφηκαν από τη δράση"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/labs/regioneduadmin/{regioneduadmin}": {
+            "get": {
+                "summary": "Χώροι μονάδων που καταγράφηκαν από τη δράση στην περιφερειακή διεύθυνση εκπαίδευσης με δεδομένο λεκτικό",
+                "parameters": [
+                    {
+                        "name": "regioneduadmin",
+                        "in": "path",
+                        "description": "Το λεκτικό που πρέπει να περιλαμβάνεται στο όνομα της περιφερειακής διεύθυνσης εκπαίδευσης",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Labs"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Χώροι μονάδων που καταγράφηκαν από τη δράση"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/labs/prefecture/{prefecture}": {
+            "get": {
+                "summary": "Χώροι μονάδων που καταγράφηκαν από τη δράση στη δεδομένη περιφερειακή ενότητα",
+                "parameters": [
+                    {
+                        "name": "prefecture",
+                        "in": "path",
+                        "description": "Το όνομα της περιφερειακής ενότητας",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Labs"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Χώροι μονάδων που καταγράφηκαν από τη δράση"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/labs/municipality/{municipality}": {
+            "get": {
+                "summary": "Χώροι μονάδων που καταγράφηκαν από τη δράση στο συγκεκριμένο Δήμο",
+                "parameters": [
+                    {
+                        "name": "municipality",
+                        "in": "path",
+                        "description": "Η ονομασία του Δήμου",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Labs"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Χώροι μονάδων που καταγράφηκαν από τη δράση"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/assets": {
+            "get": {
+                "summary": "Εξοπλισμός μονάδων που καταγράφηκε από τη δράση",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Εξοπλισμός μονάδων που καταγράφηκε από τη δράση"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        },
+        "/software": {
+            "get": {
+                "summary": "Λογισμικό που χρησιμοποιείται από τις μονάδες και καταγράφηκε από τη δράση",
+                "parameters": [
+                    {
+                        "name": "pagesize",
+                        "in": "query",
+                        "description": "Πλήθος αποτελεσμάτων ανά σελίδα",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1,
+                        "maximum": 200
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Αριθμός σελίδας αποτελεσμάτων",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Λογισμικό που χρησιμοποιείται από τις μονάδες και καταγράφηκε από τη δράση"
+                    },
+                    "400": {
+                        "description": "Λανθασμένα στοιχεία αιτήματος"
+                    },
+                    "404": {
+                        "description": "Δεν εντοπίστηκαν στοιχεία"
+                    },
+                    "500": {
+                        "description": "Λάθος κατά την άντληση των στοιχείων"
+                    },
+                    "default": {
+                        "description": "Unexpected error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "CoreResponse": {
+            "type": "object",
+            "required": [
+                "status",
+                "success"
+            ],
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "description": "http status code",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "description": "Πρέπει να είναι true σε όλα τα responses με status code 200"
+                },
+                "count": {
+                    "x-nullable": true,
+                    "type": "integer",
+                    "description": "Πλήθος αποτελεσμάτων (resources) στο reponse"
+                },
+                "countall": {
+                    "x-nullable": true,
+                    "type": "integer",
+                    "description": "Συνολικό πλήθος resources"
+                },
+                "page": {
+                    "x-nullable": true,
+                    "type": "integer",
+                    "description": "Αριθμός σελίδας αποτελεσμάτων"
+                },
+                "pages": {
+                    "x-nullable": true,
+                    "type": "integer",
+                    "description": "Συνολικός αριθμός διαθέσιμων σελίδων αποτελεσμάτων"
+                }
+            }
+        },
+        "ApprovedApplicationInfo": {
+            "type": "object",
+            "properties": {
+                "school_registry_no": {
+                    "type": "string",
+                    "description": "Κωδικός ΥΠΠΕΘ της μονάδας",
+                    "example": "1765010"
+                },
+                "school_name": {
+                    "type": "string",
+                    "description": "Ονομασία της μονάδας",
+                    "example": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ"
+                },
+                "eduadmin_name": {
+                    "type": "string",
+                    "description": "Διεύθυνση εκπαίδευσης στην οποία ανήκει η μονάδα",
+                    "example": "ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΗΡΑΚΛΕΙΟΥ"
+                },
+                "regionedu_name": {
+                    "type": "string",
+                    "description": "Περιφερειακή διεύθυνση εκπαίδευσης στην οποία ανήκει η μονάδα",
+                    "example": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ"
+                }
+            }
+        },
+        "Application": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "Κωδικός αίτησης"
+                },
+                "school_registry_no": {
+                    "type": "string",
+                    "description": "Κωδικός ΥΠΠΕΘ της μονάδας"
+                },
+                "school_name": {
+                    "type": "string",
+                    "description": "Ονομασία της μονάδας"
+                },
+                "eduadmin": {
+                    "type": "string",
+                    "description": "Διεύθυνση εκπαίδευσης",
+                    "example": "ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΗΡΑΚΛΕΙΟΥ"
+                },
+                "region_edu_admin": {
+                    "type": "string",
+                    "description": "Περιφερειακή διεύθυνση εκπαίδευσης",
+                    "example": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ"
+                },
+                "submitted": {
+                    "type": "string",
+                    "description": "Ημερομηνία υποβολής"
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Σχόλια - Παρατηρήσεις"
+                }
+            }
+        },
+        "ApplicationItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "Κωδικός αίτησης"
+                },
+                "school_registry_no": {
+                    "type": "string",
+                    "description": "Κωδικός ΥΠΠΕΘ της μονάδας"
+                },
+                "school_name": {
+                    "type": "string",
+                    "description": "Ονομασία της μονάδας"
+                },
+                "eduadmin": {
+                    "type": "string",
+                    "description": "Διεύθυνση εκπαίδευσης",
+                    "example": "ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΗΡΑΚΛΕΙΟΥ"
+                },
+                "region_edu_admin": {
+                    "type": "string",
+                    "description": "Περιφερειακή διεύθυνση εκπαίδευσης",
+                    "example": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ"
+                },
+                "submitted": {
+                    "type": "string",
+                    "description": "Ημερομηνία υποβολής"
+                },
+                "lab_id": {
+                    "type": "integer",
+                    "description": "Κωδικός εργαστηρίου"
+                },
+                "lab_type": {
+                    "type": "string",
+                    "description": "Είδος εργαστηρίου"
+                },
+                "is_new": {
+                    "type": "string",
+                    "description": "Ένδειξη νέου χώρου"
+                },
+                "category": {
+                    "type": "string",
+                    "description": "Κατηγορία είδους"
+                },
+                "qty": {
+                    "type": "integer",
+                    "description": "Πλήθος αιτούμενων"
+                },
+                "reasons": {
+                    "type": "string",
+                    "description": "Αιτιολογία χρήσης"
+                }
+            }
+        },
+        "ApplicationItemB": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "Κωδικός αίτησης"
+                },
+                "school_registry_no": {
+                    "type": "string",
+                    "description": "Κωδικός ΥΠΠΕΘ της μονάδας"
+                },
+                "school_name": {
+                    "type": "string",
+                    "description": "Ονομασία της μονάδας"
+                },
+                "eduadmin": {
+                    "type": "string",
+                    "description": "Διεύθυνση εκπαίδευσης",
+                    "example": "ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΗΡΑΚΛΕΙΟΥ"
+                },
+                "region_edu_admin": {
+                    "type": "string",
+                    "description": "Περιφερειακή διεύθυνση εκπαίδευσης",
+                    "example": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ"
+                },
+                "category": {
+                    "type": "string",
+                    "description": "Κατηγορία είδους"
+                },
+                "qtyacquired": {
+                    "type": "integer",
+                    "description": "Πλήθος υπαρχόντων που λειτουργούν"
+                },
+                "qty": {
+                    "type": "integer",
+                    "description": "Πλήθος αιτούμενων"
+                },
+                "reasons": {
+                    "type": "string",
+                    "description": "Αιτιολογία χρήσης"
+                }
+            }
+        },
+        "School": {
+            "type": "object",
+            "properties": {
+                "registry_no": {
+                    "type": "string",
+                    "description": "Κωδικός ΥΠΠΕΘ της μονάδας",
+                    "example": "1765010"
+                },
+                "school_name": {
+                    "type": "string",
+                    "description": "Ονομασία της μονάδας",
+                    "example": "ΗΜΕΡΗΣΙΟ ΓΕΝΙΚΟ ΛΥΚΕΙΟ ΑΣΗΜΙΟΥ ΗΡΑΚΛΕΙΟΥ"
+                },
+                "school_type": {
+                    "type": "string",
+                    "description": "Τύπος της μονάδας",
+                    "example": "ΓΕΝΙΚΟ ΛΥΚΕΙΟ"
+                },
+                "prefecture": {
+                    "type": "string",
+                    "description": "Ονομασία της περιφερειακή ενότητας στην οποία ανήκει η μονάδα",
+                    "example": "ΗΡΑΚΛΕΙΟΥ"
+                },
+                "municipality": {
+                    "type": "string",
+                    "description": "Ονομασία του Δήμου στον οποίο ανήκει η μονάδα",
+                    "example": "ΗΡΑΚΛΕΙΟΥ"
+                },
+                "eduadmin": {
+                    "type": "string",
+                    "description": "Διεύθυνση εκπαίδευσης στην οποία ανήκει η μονάδα",
+                    "example": "ΔΙΕΥΘΥΝΣΗ Δ.Ε. ΗΡΑΚΛΕΙΟΥ"
+                },
+                "region_edu_admin": {
+                    "type": "string",
+                    "description": "Περιφερειακή διεύθυνση εκπαίδευσης στην οποία ανήκει η μονάδα",
+                    "example": "ΠΕΡΙΦΕΡΕΙΑΚΗ ΔΙΕΥΘΥΝΣΗ ΚΡΗΤΗΣ"
+                },
+                "education_level": {
+                    "type": "string",
+                    "description": "Βαθμίδα εκπαίδευσης στην οποίο ανήκει η μονάδα",
+                    "example": "ΔΕΥΤΕΡΟΒΑΘΜΙΑ"
+                }
+            }
+        },
+        "Prefecture": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "Το αναγνωριστικό id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Ονομασία της περιφερειακής ενότητας"
+                }
+            }
+        },
+        "Municipality": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Ονομασία της περιφερειακής ενότητας"
+                }
+            }
+        },
+        "ItemCategory": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "groupflag"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "Το αναγνωριστικό id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Ονομασία της περιφερειακής ενότητας"
+                },
+                "groupflag": {
+                    "type": "integer",
+                    "description": "Ο κωδικός ομαδοποίησης του είδους που αντιστοιχεί στην έκδοση της αίτησης που περιλαμβάνει τον εξοπλισμό"
+                }
+            }
+        },
+        "BasicIdNameEntity": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "Το αναγνωριστικό id",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Ονομασία",
+                    "example": "Το όνομα μου"
+                }
+            }
+        },
+        "UnexpectedError": {
+            "type": "object",
+            "required": [
+                "status",
+                "success"
+            ],
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "description": "http status code"
+                },
+                "success": {
+                    "type": "boolean",
+                    "description": "Πρέπει να είναι false"
+                },
+                "count": {
+                    "x-nullable": true,
+                    "type": "integer",
+                    "description": "Πρέπει να είναι null"
+                },
+                "countall": {
+                    "x-nullable": true,
+                    "type": "integer",
+                    "description": "Πρέπει να είναι null"
+                },
+                "page": {
+                    "x-nullable": true,
+                    "type": "integer",
+                    "description": "Πρέπει να είναι null"
+                },
+                "pages": {
+                    "x-nullable": true,
+                    "type": "integer",
+                    "description": "Πρέπει να είναι null"
+                },
+                "labels": {
+                    "x-nullable": true,
+                    "type": "array",
+                    "items": {
+                        "maxLength": 0
+                    },
+                    "description": "Πρέπει να είναι null"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "maxLength": 0
+                    },
+                    "description": "Πρέπει να είναι άδειος πίνακας"
+                }
+            }
+        }
+    }
+}
