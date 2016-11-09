@@ -45,13 +45,14 @@ $events('on', 'app.services', function ($container) {
 $events('on', 'app.bootstrap', function ($app, $container) {
         $container['view']->getEnvironment()->getLoader()->prependPath(__DIR__ . '/templates');
 
-     $app->group('/university-form', function () {
+      $app->group('/university-form', function () {
             $this->map(['get', 'post'], '', GrEduLabs\UniversityForm\Action\UniversityForm::class)
                 ->add(GrEduLabs\Application\Middleware\AddCsrfToView::class)
                 ->add('csrf')
                 ->setName('university_form');
             $this->get('/submit-success', GrEduLabs\UniversityForm\Action\SubmitSuccess::class)
                 ->setName('university_form.submit_success');
+  
      });
     });
 
