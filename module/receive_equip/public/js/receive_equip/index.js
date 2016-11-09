@@ -16,26 +16,9 @@
 
     ItemsView = Backbone.View.extend({
         el: '#items-list',
-        itemCount: 0,
-        events: {
-            'click .add-row': 'addRow',
-            'click .remove-row': 'removeRow'
-        },
         initialize: function () {
             this.itemCount = this.$el.find('tbody tr').length;
         },
-        addRow: function () {
-            var index = this.itemCount;
-            this.itemCount += 1;
-            this.$el.find('tbody').append(new ItemRowView().render(index).el);
-            return this;
-        },
-        removeRow: function (evt) {
-            if (this.$el.find('tbody tr').length > 1) {
-                $(evt.target).closest('tr').remove();
-            }
-            return this;
-        }
     });
 
     new ItemsView();
@@ -56,10 +39,5 @@
             }(form.data('messages')));
             utils.formMessages.render(form, messages);
     }());
-
-    $('#receive-equip-load-modal').modal({
-        backdrop: 'static'
-    }).modal('show');
-
 
 }(window.jQuery, _, window.EDULABS.utils));

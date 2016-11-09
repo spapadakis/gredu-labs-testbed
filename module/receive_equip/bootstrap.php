@@ -26,8 +26,6 @@ return function (Slim\App $app) {
 
         $container[GrEduLabs\ReceiveEquip\InputFilter\ReceiveEquip::class] = function ($c) {
             return new GrEduLabs\ReceiveEquip\InputFilter\ReceiveEquip(
-                $c->get(GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface::class),
-                $c->get(GrEduLabs\Schools\Service\SchoolServiceInterface::class),
                 $c->get(GrEduLabs\ReceiveEquip\InputFilter\ReceiveEquipItemCollection::class)
             );
         };
