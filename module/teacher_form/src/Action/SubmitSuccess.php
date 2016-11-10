@@ -28,7 +28,7 @@ class SubmitSuccess
 
     public function __invoke(Request $req, Response $res)
     {
-      
+
         if (!isset($_SESSION['teacherForm']['tForm'])) {
             $res = $res->withRedirect($this->formUrl);
 
@@ -40,7 +40,7 @@ class SubmitSuccess
         unset($_SESSION['teacherForm']['tForm']);
 
         return $this->view->render($res, 'teacher_form/submit_success.twig', [
-            'teacherForm' => $teacherForm,
+            
         ]);
     }
 }

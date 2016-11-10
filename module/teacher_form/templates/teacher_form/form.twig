@@ -69,11 +69,11 @@
           data-messages="{{ form.messages|default({})|json_encode }}">
         <div class="form-group">
               <p>
-                        <h1>Φόρμα εκδήλωση ενδιαφέροντος</h1>
+                        <h1>Φόρμα εκδήλωσης ενδιαφέροντος</h1>
                         <br>
                          Το συγκεκριμένο έργο δίνει τη δυνατότητα σε όποιον εκπαιδευτικό επιθυμεί να συμμετέχει ενεργά στην εγκατάσταση των εργαστηρίων που θα αποκτηθούν με τη συγκεκριμένη δράση.
                         <br>
-                         Παρακαλώ συμπληρώστε τα στοιχεία σας και θα επικοινωνίσουμε άμεσα μαζί σας. 
+                         Παρακαλώ συμπληρώστε τα στοιχεία σας και θα επικοινωνίσουμε άμεσα μαζί σας.
                 </p>
          </div>
 
@@ -81,25 +81,25 @@
        <fieldset>
                 <div id="items-list">
                   <table>
-                  <tr>               
-                         <tr class="name">    
-                         {{ macros.input('name', 'Όνομα')}}</tr>
+                  <tr>
+                         <tr class="name">
+                         {{ macros.input('name', 'Όνομα', form.values.name)}}</tr>
                          <tr class="surname" >
-                           {{ macros.input('surname', 'Επώνυμο')}}</tr>
+                           {{ macros.input('surname', 'Επώνυμο', form.values.surname)}}</tr>
                           <tr>
-                         {{ macros.select('eidikothta', 'Ειδικότητα', branches, '', {'required': ''}) }}</tr>
+                         {{ macros.select('eidikothta', 'Ειδικότητα', form.branches, '', {'required': ''}) }}</tr>
                          <tr>
-                         {{ macros.input('arithmitroou', 'Αριθμός Μητρώου')}}</tr>
+                         {{ macros.input('arithmitroou', 'Αριθμός Μητρώου', form.values.arithmitroou)}}</tr>
                          <tr>
-                         {{ macros.input('telef', 'Τηλέφωνο')}}</tr>
+                         {{ macros.input('telef', 'Τηλέφωνο', form.values.telef)}}</tr>
                          <tr>
-                         {{ macros.input('email', 'Email')}}</tr>
+                         {{ macros.input('email', 'Email', form.values.email)}}</tr>
                          <tr>
-                         {{ macros.input('school', 'Σχολείο που υπηρετει')}}</tr>
+                         {{ macros.input('school', 'Σχολείο που υπηρετει', form.values.school)}}</tr>
                          <tr>
-                         {{ macros.input('schooltelef', 'Τηλέφωνο Σχολείου')}}</tr>
+                         {{ macros.input('schooltelef', 'Τηλέφωνο Σχολείου', form.values.schooltelef)}}</tr>
                        </table>
-                       
+
                 </div>
                 {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.values.comments) }}
             </fieldset>
@@ -111,7 +111,7 @@
         <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
         <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
     </form>
-   
+
 
    <script type="text/template" id="app-form-item-row-template">
                       <td> {{ macros.input('name', 'Όνομα') }}

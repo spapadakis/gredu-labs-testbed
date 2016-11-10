@@ -16,8 +16,6 @@ use Slim\Views\Twig;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\InputFilter\InputFilterInterface;
 
-
-
 class TeacherForm
 {
     /**
@@ -51,7 +49,7 @@ class TeacherForm
     protected $successUrl;
 
     public function __construct(
-    Twig $view, TeacherFormServiceInterface $TeacherFormService,InputFilterInterface $TeacherFormInputFilter, $successUrl,$container
+    Twig $view, TeacherFormServiceInterface $TeacherFormService, InputFilterInterface $TeacherFormInputFilter, $successUrl, $container
 
     ) {
         $this->view                     = $view;
@@ -63,7 +61,6 @@ class TeacherForm
 
     public function __invoke(Request $req, Response $res)
     {
-
         if ($req->isPost()) {
             $reqParams = $req->getParams();
 
@@ -71,28 +68,33 @@ class TeacherForm
             $isValid = $this->TeacherFormInputFilter->isValid();
 
             if ($isValid) {
-                $data = $this->TeacherFormInputFilter->getValues();
-                $TeacherForm = $this->TeacherFormService->submit($data, $reqParams);
+                $data                             = $this->TeacherFormInputFilter->getValues();
+                $TeacherForm                      = $this->TeacherFormService->submit($data, $reqParams);
                 $_SESSION['teacherForm']['tForm'] = $TeacherForm;
-                $res = $res->withRedirect($this->successUrl);
+                $res                              = $res->withRedirect($this->successUrl);
+
                 return $res;
-            }
-          $this->view['form'] = [
-                'is_valid' => $isValid,
-                'values' => $this->TeacherFormInputFilter->getValues(),
+            } else {
+                $this->view['form'] = [
+                'is_valid'   => $isValid,
+                'values'     => $this->TeacherFormInputFilter->getValues(),
                 'raw_values' => $this->TeacherFormInputFilter->getRawValues(),
-                'messages' => $this->TeacherFormInputFilter->getMessages(),
-            ];
+                'messages'   => $this->TeacherFormInputFilter->getMessages(),
+                'branches'   => array_map(function ($branch) {
+                    return ['value' => $branch['id'], 'label' => $branch['name']];
+                }, $this->TeacherFormService->getBranches()),
+                ];
+                $res = $this->view->render($res, 'teacher_form/form.twig', []);
+            }
+        } else {
+            $this->view['form'] = [
+           'branches'  => array_map(function ($branch) {
+               return ['value' => $branch['id'], 'label' => $branch['name']];
+           }, $this->TeacherFormService->getBranches()),
+           ];
+            $res = $this->view->render($res, 'teacher_form/form.twig', []);
+        }
 
-       }
-        $res = $this->view->render($res, 'teacher_form/form.twig', [
-            'branches'  => array_map(function ($branch) {
-                return ['value' => $branch['id'], 'label' => $branch['name']];
-            }, $this->TeacherFormService->getBranches()),
-        ]);
-
-       return $res;
-
+        return $res;
     }
-
 }

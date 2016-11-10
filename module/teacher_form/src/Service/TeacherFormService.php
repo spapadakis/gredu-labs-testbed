@@ -12,19 +12,19 @@ use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
 class TeacherFormService implements TeacherFormServiceInterface
 {
-    public function submit(array $data, array $reqParams)
+    public function submit(array $data)
     {
         $appForm                      = R::dispense('volunteerteachers');
-        $appForm->id                  = $data['id'];
+//        $appForm->id                  = $data['id'];
         $appForm->name                = $data['name'];
         $appForm->surname             = $data['surname'];
-        $appForm->eidikothta          = $reqParams['eidikothta'];
+        $appForm->eidikothta          = $data['eidikothta'];
         $appForm->arithmitroou        = $data['arithmitroou'];
         $appForm->email               = $data['email'];
         $appForm->telef               = trim($data['telef']);
-        $appForm->school              = $reqParams['school'];
+        $appForm->school              = $data['school'];
         $appForm->schooltelef         = trim($data['schooltelef']);
-        $appForm->comments            = $reqParams['comments'];
+        $appForm->comments            = $data['comments'];
         R::store($appForm);
         return $appForm;
     }

@@ -16,13 +16,6 @@ class TeacherForm extends InputFilter
 {
     public function __construct()
     {
-        $id = new Input('id');
-        $id->setRequired(true)
-          ->getFilterChain()
-          ->attach(new Filter\ToInt());
-        $id->getValidatorChain()
-          ->attach(new Validator\NotEmpty());
-       
 		$name = new Input('name');
         $name->setRequired(true)
             ->getFilterChain()
@@ -38,14 +31,18 @@ class TeacherForm extends InputFilter
         $surname->getValidatorChain()
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 3]));
-		
+
 
 		$arithmitroou = new Input('arithmitroou');
         $arithmitroou->setRequired(true)
           ->getFilterChain()
           ->attach(new Filter\ToInt());
         $arithmitroou->getValidatorChain()
-          ->attach(new Validator\NotEmpty());
+          ->attach(new Validator\NotEmpty())
+          ->attach(new Validator\GreaterThan([
+              'min'       => 0,
+              'inclusive' => false,
+          ]));
 
 
         $email = new Input('email');
@@ -64,6 +61,11 @@ class TeacherForm extends InputFilter
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 10]));
 
+        $school = new Input('school');
+            $school->setRequired(false)
+                ->getFilterChain()
+                ->attach(new Filter\StringTrim());
+
  		$schooltelef = new Input('schooltelef');
         $schooltelef->setRequired(true)
             ->getFilterChain()
@@ -72,13 +74,24 @@ class TeacherForm extends InputFilter
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 10]));
 
+        $comments = new Input('comments');
+                $comments->setRequired(false)
+                    ->getFilterChain()
+                    ->attach(new Filter\StringTrim());
 
-        $this->add($id)
-	        ->add($name)
+        $eidikothta = new Input('eidikothta');
+                $comments->setRequired(true)
+                    ->getFilterChain()
+                    ->attach(new Filter\StringTrim());
+
+        $this->add($name)
 	        ->add($surname)
 			->add($arithmitroou)
             ->add($email)
             ->add($telef)
-            ->add($schooltelef);
+            ->add($schooltelef)
+            ->add($school)
+            ->add($comments)
+            ->add($eidikothta);
           }
 }
