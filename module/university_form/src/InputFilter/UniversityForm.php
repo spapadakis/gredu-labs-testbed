@@ -22,6 +22,13 @@ class UniversityForm extends InputFilter
     {
        
 
+       $id = new Input('id');
+        $id->setRequired(true)
+          ->getFilterChain()
+          ->attach(new Filter\ToInt());
+        $id->getValidatorChain()
+          ->attach(new Validator\NotEmpty());
+       
         $idrima = new Input('idrima');
         $idrima->setRequired(true)
             ->getFilterChain()
@@ -37,6 +44,7 @@ class UniversityForm extends InputFilter
         $sxolh->getValidatorChain()
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 3]));
+    
 
         $tmhma = new Input('tmhma');
         $tmhma->setRequired(true)
@@ -45,6 +53,7 @@ class UniversityForm extends InputFilter
         $tmhma->getValidatorChain()
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 3]));
+   
 
         $person = new Input('person');
         $person->setRequired(true)
@@ -55,7 +64,13 @@ class UniversityForm extends InputFilter
             ->attach(new Validator\StringLength(['min' => 3]));
 
 
-
+        $email = new Input('email');
+        $email->setRequired(true)
+            ->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\EmailAddress([
+                'useDomainCheck' => false,
+            ]));
 
         $telef = new Input('telef');
         $telef->setRequired(true)
@@ -65,18 +80,11 @@ class UniversityForm extends InputFilter
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 10]));
 
-        
-        $email = new Input('email');
-        $email->setRequired(true)
-            ->getValidatorChain()
-            ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\EmailAddress([
-                'useDomainCheck' => false,
-            ]));
+
 
 
       //  $this->inputFilter = new InputFilter();
-        $this->add($id)
+        $this ->add($id)
             ->add($idrima)
             ->add($sxolh)
             ->add($tmhma)

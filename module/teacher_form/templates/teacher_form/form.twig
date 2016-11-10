@@ -1,52 +1,134 @@
 {% extends "layout.twig" %}
 
-{% import "schools/form.twig" as macros %}
+{% macro select(name, label, options, selected, attributes) %}
+<div class="form-group">
+    <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>
+    <div class="col-xs-12 col-sm-12 col-md-9">
+        <select class="form-control input-sm" name="{{ name }}" id="el-{{ name }}"
+        {% for attr_name, attr_value in attributes|default({}) %}
+            {{ attr_name }}="{{ attr_value }}"
+        {% endfor %} data-placeholder="{{ label|striptags }}">
+        {% set multi = attributes.multiple is defined %}
+        {% if multi %}
+            <optgroup label="{{ label|striptags }}">
+        {% endif %}
+            {% if not multi %}
+                <option value="" disabled{% if selected is empty %} selected{% endif %}>{{ label|striptags }}</option>
+            {% endif %}
+            {% if attributes.empty_value %}
+                <option value="">{{ attributes.empty_value }}</option>
+            {% endif %}
+            {% for option in options %}
+                <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
+                    {{ option.label }}
+                </option>
+            {% endfor %}
+        {% if multi %}
+            </optgroup>
+        {% endif %}
+        </select>
+    </div>
+</div>
+{% endmacro %}
 
- {% block content %}
-                <div id="school-info">
-                    <p>
+{% macro input(name, label, value, type, attributes) %}
+<div class="form-group">
+    <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>
+    <div class="col-xs-12 col-sm-12 col-md-9">
+        <input placeholder="{{ label|striptags }}" class="form-control input-sm"
+            type="{{ type|default('text') }}" name="{{ name }}"
+            id="el-{{ name }}" value="{{ value|default('')|raw }}"
+        {% for attr_name, attr_value in attributes|default({}) %}
+            {{ attr_name }}="{{ attr_value }}"
+        {% endfor %}>
+    </div>
+</div>
+{% endmacro %}
+
+
+{% macro text(name, label, value) %}
+    <div class="form-group">
+        <label class="control-label hidden-xs hidden-sm" for="el-{{ name }}">{{ label|raw }}</label>
+        <textarea class="form-control" name="{{ name }}"
+                  id="el-{{ name }}"
+                  placeholder="{{ label|striptags }}">{{ value|default('') }}</textarea>
+    </div>
+{% endmacro %}
+
+
+{% block content %}
+    {% import _self as macros %}
+
+<div id="app-form">
+    <h1>
+    {% block title %}
+        Αίτηση <small></small>
+    {% endblock %}
+    </h1>
+    <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}"
+          data-messages="{{ form.messages|default({})|json_encode }}">
+        <div class="form-group">
+              <p>
                         <h1>Φόρμα εκδήλωση ενδιαφέροντος</h1>
                         <br>
                          Το συγκεκριμένο έργο δίνει τη δυνατότητα σε όποιον εκπαιδευτικό επιθυμεί να συμμετέχει ενεργά στην εγκατάσταση των εργαστηρίων που θα αποκτηθούν με τη συγκεκριμένη δράση.
                         <br>
                          Παρακαλώ συμπληρώστε τα στοιχεία σας και θα επικοινωνίσουμε άμεσα μαζί σας. 
-                    </p>
+                </p>
+         </div>
+
+        <div class="table-responsive">
+       <fieldset>
+                <div id="items-list">
+                  <table>
+                  <tr>               
+                         <tr class="name">    
+                         {{ macros.input('name', 'Όνομα')}}</tr>
+                         <tr class="surname" >
+                           {{ macros.input('surname', 'Επώνυμο')}}</tr>
+                          <tr>
+                         {{ macros.select('eidikothta', 'Ειδικότητα', branches, '', {'required': ''}) }}</tr>
+                         <tr>
+                         {{ macros.input('arithmitroou', 'Αριθμός Μητρώου')}}</tr>
+                         <tr>
+                         {{ macros.input('telef', 'Τηλέφωνο')}}</tr>
+                         <tr>
+                         {{ macros.input('email', 'Email')}}</tr>
+                         <tr>
+                         {{ macros.input('school', 'Σχολείο που υπηρετει')}}</tr>
+                         <tr>
+                         {{ macros.input('schooltelef', 'Τηλέφωνο Σχολείου')}}</tr>
+                       </table>
+                       
                 </div>
-                 
+                {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.values.comments) }}
+            </fieldset>
+        </div>
+        <hr>
+        <div class="form-group text-center">
+            <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
+        </div>
+        <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
+        <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
+    </form>
+   
 
-
-             {% block schoolContent %}
-        <form  method="post" action="" class="form-horizontal" >
-                    <div class="modal-body">
-                        {{ macros.input('name', 'Όνομα', '', 'text', {'required': ''}) }}
-                        {{ macros.input('surname', 'Επίθετο', '', 'text', {'required': ''}) }}
-                        {{ macros.select('eidikothta', 'Ειδικότητα', branches, '', {'required': ''}) }}
-                        {{ macros.input('arithmitroou', 'Αριθμός Μητρώου', '', 'text', {'required': ''}) }}
-                        {{ macros.input('telef', 'Τηλέφωνο', '', 'text', {'required': ''}) }}
-                        {{ macros.input('email', 'Email', '', 'text', {'required': ''}) }}
-                        {{ macros.input('school', 'Σχολείο που υπηρετει', '', 'text', {'required': ''}) }}
-                        {{ macros.input('schooltelef', 'Τηλέφωνο Σχολείου', '', 'text', {'required': ''}) }}
-                                                
-                        
-                        {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.values.comments) }}
-                        <input type="hidden" name="id" value="">
-                    </div>
-
-             <div class="form-group text-center">
-                        <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
-                        <input type="hidden" name="id" value="{{ form.values.id }}">
-            </div>
-             <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
-             <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
-        </form>
-
-        
-    {% endblock %}
-
+   <script type="text/template" id="app-form-item-row-template">
+                      <td> {{ macros.input('name', 'Όνομα') }}
+                      <td> {{ macros.input('surname', 'Επώνυμο')}}
+                      <td> {{ macros.select('eidikothta', 'Ειδικότητα', branches, '') }}
+                      <td> {{ macros.input('arithmitroou', 'Αριθμός Μητρώου')}}
+                      <td> {{ macros.input('telef', 'Τηλέφωνο')}}
+                      <td> {{ macros.input('email', 'Email')}}
+                      <td> {{ macros.input('school', 'Σχολείο που υπηρετει')}}
+                      <td> {{ macros.input('schooltelef', 'Τηλέφωνο Σχολείου')}}
+    </script>
+</div>
 {% endblock %}
 
 {% block inlinejs %}
     {{ parent() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"></script>
+    <script src="{{ base_url() }}/js/teacher_form/index.js"></script>
 {% endblock %}

@@ -60,19 +60,18 @@ class UniversityForm
     public function __invoke(Request $req, Response $res)
     {
 
-        print_r($this->successUrl);
+       
         if ($req->isPost()) {
             $reqParams = $req->getParams();
 
             $this->UniversityFormInputFilter->setData($reqParams);
-            $isValid = $this->UniversityFormInputFilter->isValid();
-             print_r($this->successUrl);
+            $isValid = $this->UniversityFormInputFilter->isValid();             
             if ($isValid) {
                 $data = $this->UniversityFormInputFilter->getValues();
                 $UniversityForm = $this->UniversityFormService->submit($data, $reqParams);
                 $_SESSION['UnivForm']['uForm'] = $UniversityForm;
                 $res = $res->withRedirect($this->successUrl);
-                return $res;
+//                return $res;
             }
             $this->view['form'] = [
                 'is_valid' => $isValid,

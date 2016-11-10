@@ -40,6 +40,14 @@ $events('on', 'app.services', function ($container) {
                 $c->get('router')->pathFor('university_form.submit_success'),
                 $c);
         };
+
+        $container[GrEduLabs\UniversityForm\Action\SubmitSuccess::class] = function ($c) {
+            return new GrEduLabs\UniversityForm\Action\SubmitSuccess(
+                $c->get('view'),
+                $c->get('router')->pathFor('university_form')
+            );
+        };
+
 });
 
 $events('on', 'app.bootstrap', function ($app, $container) {
