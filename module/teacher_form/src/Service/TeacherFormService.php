@@ -28,6 +28,7 @@ class TeacherFormService implements TeacherFormServiceInterface
         R::store($appForm);
         return $appForm;
     }
+    
     public function getBranches()
     {
         return array_map(function ($branch) {

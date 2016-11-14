@@ -28,7 +28,7 @@
                 <div id="items-list">
                          {{ macros.input('name', 'Όνομα', form.values.name)}}
                          {{ macros.input('surname', 'Επώνυμο', form.values.surname)}}
-                         {{ macros.select('eidikothta', 'Ειδικότητα', form.branches, '', {'required': ''}) }}
+                         {{ macros.select('eidikothta', 'Ειδικότητα', form.branches, form.values.eidikothta, {'required': ''}) }}
                          {{ macros.input('arithmitroou', 'Αριθμός Μητρώου', form.values.arithmitroou)}}
                          {{ macros.input('telef', 'Τηλέφωνο', form.values.telef)}}
                          {{ macros.input('email', 'Email', form.values.email)}}

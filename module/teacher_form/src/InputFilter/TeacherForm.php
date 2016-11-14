@@ -20,6 +20,7 @@ class TeacherForm extends InputFilter
         $name->setRequired(true)
             ->getFilterChain()
             ->attach(new Filter\StringTrim());
+
         $name->getValidatorChain()
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 3]));
@@ -33,10 +34,11 @@ class TeacherForm extends InputFilter
             ->attach(new Validator\StringLength(['min' => 3]));
 
         $eidikothta = new Input('eidikothta');
-        $eidikothta->setRequired(true)
-                    ->getFilterChain()
-                    ->attach(new Filter\StringTrim());
-    
+        $eidikothta->getValidatorChain()
+            ->attach(new Validator\NotEmpty())
+            ->attach(new Validator\Digits());
+
+
 
 		$arithmitroou = new Input('arithmitroou');
         $arithmitroou->setRequired(true)
@@ -64,7 +66,8 @@ class TeacherForm extends InputFilter
             ->attach(new Filter\Digits());
         $telef->getValidatorChain()
             ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\StringLength(['min' => 10]));
+            ->attach(new Validator\StringLength(['min' => 10]))
+            ->attach(new Validator\StringLength(['max' => 13]));
 
         $school = new Input('school');
             $school->setRequired(false)
@@ -77,8 +80,8 @@ class TeacherForm extends InputFilter
             ->attach(new Filter\Digits());
         $schooltelef->getValidatorChain()
             ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\StringLength(['min' => 10]));
-
+            ->attach(new Validator\StringLength(['min' => 10]))
+			->attach(new Validator\StringLength(['max' => 13]));
         $comments = new Input('comments');
                 $comments->setRequired(false)
                     ->getFilterChain()

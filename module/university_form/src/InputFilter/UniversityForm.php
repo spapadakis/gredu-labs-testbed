@@ -72,7 +72,8 @@ class UniversityForm extends InputFilter
             ->attach(new Filter\Digits());
        $telef->getValidatorChain()
             ->attach(new Validator\NotEmpty())
-            ->attach(new Validator\StringLength(['min' => 10]));
+            ->attach(new Validator\StringLength(['min' => 10]))
+            ->attach(new Validator\StringLength(['max' => 13]));
 
 
        $comments = new Input('comments');

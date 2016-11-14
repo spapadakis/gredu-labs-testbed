@@ -63,7 +63,6 @@ class TeacherForm
     {
         if ($req->isPost()) {
             $reqParams = $req->getParams();
-
             $this->TeacherFormInputFilter->setData($reqParams);
             $isValid = $this->TeacherFormInputFilter->isValid();
 
@@ -75,17 +74,18 @@ class TeacherForm
 
                 return $res;
             } else {
+              
                 $this->view['form'] = [
                 'is_valid'   => $isValid,
                 'values'     => $this->TeacherFormInputFilter->getValues(),
                 'raw_values' => $this->TeacherFormInputFilter->getRawValues(),
                 'messages'   => $this->TeacherFormInputFilter->getMessages(),
                 'branches'   => array_map(function ($branch) {
-                    return ['value' => $branch['id'], 'label' => $branch['name']];
+                 return ['value' => $branch['id'], 'label' => $branch['name']];
                 }, $this->TeacherFormService->getBranches()),
                 ];
                 $res = $this->view->render($res, 'teacher_form/form.twig', []);
-            }
+              }
         } else {
             $this->view['form'] = [
            'branches'  => array_map(function ($branch) {
@@ -94,7 +94,6 @@ class TeacherForm
            ];
             $res = $this->view->render($res, 'teacher_form/form.twig', []);
         }
-
         return $res;
     }
 }
