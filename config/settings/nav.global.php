@@ -55,6 +55,14 @@ return [
                 'label' => 'Ανοικτά δεδομένα',
                 'route' => 'open_data',
             ],
+           'university_form' => [
+                'label' => 'Ιδρύματα',
+                'route' => 'university_form',
+            ],
+            'teacher_form' => [
+                'label' => 'Εκπαιδευτικοί',
+                'route' => 'teacher_form',
+            ],
             'about' => [
                 'label' => 'Σχετικά με τη δράση',
                 'route' => 'about',

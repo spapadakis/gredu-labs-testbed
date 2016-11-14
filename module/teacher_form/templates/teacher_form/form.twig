@@ -1,0 +1,59 @@
+{% extends "layout.twig" %}
+
+{% import "schools/form.twig" as macros %}
+
+{% block content %}
+
+
+<div id="app-form">
+    <h1>
+    {% block title %}
+        Αίτηση <small></small>
+    {% endblock %}
+    </h1>
+    <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}"
+          data-messages="{{ form.messages|default({})|json_encode }}">
+        <div class="form-group">
+              <p>
+                        <h1>Φόρμα εκδήλωσης ενδιαφέροντος</h1>
+                        <br>
+                         Το συγκεκριμένο έργο δίνει τη δυνατότητα σε όποιον εκπαιδευτικό επιθυμεί να συμμετέχει ενεργά στην εγκατάσταση των εργαστηρίων που θα αποκτηθούν με τη συγκεκριμένη δράση.
+                        <br>
+                         Παρακαλώ συμπληρώστε τα στοιχεία σας και θα επικοινωνίσουμε άμεσα μαζί σας.
+                </p>
+         </div>
+
+        <div class="table-responsive">
+       <fieldset>
+                <div id="items-list">
+                         {{ macros.input('name', 'Όνομα', form.values.name)}}
+                         {{ macros.input('surname', 'Επώνυμο', form.values.surname)}}
+                         {{ macros.select('eidikothta', 'Ειδικότητα', form.branches, '', {'required': ''}) }}
+                         {{ macros.input('arithmitroou', 'Αριθμός Μητρώου', form.values.arithmitroou)}}
+                         {{ macros.input('telef', 'Τηλέφωνο', form.values.telef)}}
+                         {{ macros.input('email', 'Email', form.values.email)}}
+                         {{ macros.input('school', 'Σχολείο που υπηρετει', form.values.school)}}
+                         {{ macros.input('schooltelef', 'Τηλέφωνο Σχολείου', form.values.schooltelef)}}
+
+                </div>
+                {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.values.comments) }}
+            </fieldset>
+        </div>
+        <hr>
+        <div class="form-group text-center">
+            <button name="submit" value="submit" type="submit" class="btn btn-lg btn-primary">Υποβολή</button>
+        </div>
+        <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
+        <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
+    </form>
+
+   
+</div>
+{% endblock %}
+
+{% block inlinejs %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"></script>
+    <script src="{{ base_url() }}/js/teacher_form/index.js"></script>
+{% endblock %}
