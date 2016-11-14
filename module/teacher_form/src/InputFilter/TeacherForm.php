@@ -32,6 +32,11 @@ class TeacherForm extends InputFilter
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 3]));
 
+        $eidikothta = new Input('eidikothta');
+        $eidikothta->setRequired(true)
+                    ->getFilterChain()
+                    ->attach(new Filter\StringTrim());
+    
 
 		$arithmitroou = new Input('arithmitroou');
         $arithmitroou->setRequired(true)
@@ -66,8 +71,8 @@ class TeacherForm extends InputFilter
                 ->getFilterChain()
                 ->attach(new Filter\StringTrim());
 
- 		$schooltelef = new Input('schooltelef');
-        $schooltelef->setRequired(true)
+		$schooltelef = new Input('schooltelef');
+        $schooltelef->setRequired(false)
             ->getFilterChain()
             ->attach(new Filter\Digits());
         $schooltelef->getValidatorChain()
@@ -79,19 +84,16 @@ class TeacherForm extends InputFilter
                     ->getFilterChain()
                     ->attach(new Filter\StringTrim());
 
-        $eidikothta = new Input('eidikothta');
-                $comments->setRequired(true)
-                    ->getFilterChain()
-                    ->attach(new Filter\StringTrim());
-
+     
         $this->add($name)
 	        ->add($surname)
+            ->add($eidikothta)
 			->add($arithmitroou)
             ->add($email)
             ->add($telef)
             ->add($schooltelef)
             ->add($school)
             ->add($comments)
-            ->add($eidikothta);
+            ;
           }
 }

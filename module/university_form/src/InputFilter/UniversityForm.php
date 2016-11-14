@@ -22,12 +22,6 @@ class UniversityForm extends InputFilter
     {
        
 
-       $id = new Input('id');
-        $id->setRequired(true)
-          ->getFilterChain()
-          ->attach(new Filter\ToInt());
-        $id->getValidatorChain()
-          ->attach(new Validator\NotEmpty());
        
         $idrima = new Input('idrima');
         $idrima->setRequired(true)
@@ -72,24 +66,27 @@ class UniversityForm extends InputFilter
                 'useDomainCheck' => false,
             ]));
 
-        $telef = new Input('telef');
-        $telef->setRequired(true)
+       $telef = new Input('telef');
+       $telef->setRequired(true)
             ->getFilterChain()
             ->attach(new Filter\Digits());
-        $telef->getValidatorChain()
+       $telef->getValidatorChain()
             ->attach(new Validator\NotEmpty())
             ->attach(new Validator\StringLength(['min' => 10]));
 
 
+       $comments = new Input('comments');
+                $comments->setRequired(false)
+                    ->getFilterChain()
+                    ->attach(new Filter\StringTrim());
 
 
-      //  $this->inputFilter = new InputFilter();
-        $this ->add($id)
-            ->add($idrima)
+        $this ->add($idrima)
             ->add($sxolh)
             ->add($tmhma)
             ->add($person)
             ->add($telef)
-            ->add($email);
+            ->add($email)
+            ->add($comments);
     }
 }

@@ -40,7 +40,10 @@ class SubmitSuccess
         unset($_SESSION['UnivForm']['uForm']);
 
         return $this->view->render($res, 'university_form/submit_success.twig', [
-            'universityForm' => $universityForm,
+          
         ]);
-    }
+     }
 }
+
+
+

@@ -2,7 +2,7 @@
     'use strict';
 
     (function () {
-        var form = $('#university-form form'),
+        var form = $('#app-form form'),
             messages = (function (messages) {
                 var itemMessages = {};
                 _.each(messages.items || [], function (message, idx){

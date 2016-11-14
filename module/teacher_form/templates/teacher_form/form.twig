@@ -1,63 +1,9 @@
 {% extends "layout.twig" %}
 
-{% macro select(name, label, options, selected, attributes) %}
-<div class="form-group">
-    <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>
-    <div class="col-xs-12 col-sm-12 col-md-9">
-        <select class="form-control input-sm" name="{{ name }}" id="el-{{ name }}"
-        {% for attr_name, attr_value in attributes|default({}) %}
-            {{ attr_name }}="{{ attr_value }}"
-        {% endfor %} data-placeholder="{{ label|striptags }}">
-        {% set multi = attributes.multiple is defined %}
-        {% if multi %}
-            <optgroup label="{{ label|striptags }}">
-        {% endif %}
-            {% if not multi %}
-                <option value="" disabled{% if selected is empty %} selected{% endif %}>{{ label|striptags }}</option>
-            {% endif %}
-            {% if attributes.empty_value %}
-                <option value="">{{ attributes.empty_value }}</option>
-            {% endif %}
-            {% for option in options %}
-                <option value="{{ option.value|e }}"{% if selected == option.value %} selected{% endif %}>
-                    {{ option.label }}
-                </option>
-            {% endfor %}
-        {% if multi %}
-            </optgroup>
-        {% endif %}
-        </select>
-    </div>
-</div>
-{% endmacro %}
-
-{% macro input(name, label, value, type, attributes) %}
-<div class="form-group">
-    <label class="control-label hidden-xs hidden-sm col-md-3" for="el-{{ name }}">{{ label|raw }}</label>
-    <div class="col-xs-12 col-sm-12 col-md-9">
-        <input placeholder="{{ label|striptags }}" class="form-control input-sm"
-            type="{{ type|default('text') }}" name="{{ name }}"
-            id="el-{{ name }}" value="{{ value|default('')|raw }}"
-        {% for attr_name, attr_value in attributes|default({}) %}
-            {{ attr_name }}="{{ attr_value }}"
-        {% endfor %}>
-    </div>
-</div>
-{% endmacro %}
-
-
-{% macro text(name, label, value) %}
-    <div class="form-group">
-        <label class="control-label hidden-xs hidden-sm" for="el-{{ name }}">{{ label|raw }}</label>
-        <textarea class="form-control" name="{{ name }}"
-                  id="el-{{ name }}"
-                  placeholder="{{ label|striptags }}">{{ value|default('') }}</textarea>
-    </div>
-{% endmacro %}
-
+{% import "schools/form.twig" as macros %}
 
 {% block content %}
-    {% import _self as macros %}
+
 
 <div id="app-form">
     <h1>
@@ -80,25 +26,14 @@
         <div class="table-responsive">
        <fieldset>
                 <div id="items-list">
-                  <table>
-                  <tr>
-                         <tr class="name">
-                         {{ macros.input('name', 'Όνομα', form.values.name)}}</tr>
-                         <tr class="surname" >
-                           {{ macros.input('surname', 'Επώνυμο', form.values.surname)}}</tr>
-                          <tr>
-                         {{ macros.select('eidikothta', 'Ειδικότητα', form.branches, '', {'required': ''}) }}</tr>
-                         <tr>
-                         {{ macros.input('arithmitroou', 'Αριθμός Μητρώου', form.values.arithmitroou)}}</tr>
-                         <tr>
-                         {{ macros.input('telef', 'Τηλέφωνο', form.values.telef)}}</tr>
-                         <tr>
-                         {{ macros.input('email', 'Email', form.values.email)}}</tr>
-                         <tr>
-                         {{ macros.input('school', 'Σχολείο που υπηρετει', form.values.school)}}</tr>
-                         <tr>
-                         {{ macros.input('schooltelef', 'Τηλέφωνο Σχολείου', form.values.schooltelef)}}</tr>
-                       </table>
+                         {{ macros.input('name', 'Όνομα', form.values.name)}}
+                         {{ macros.input('surname', 'Επώνυμο', form.values.surname)}}
+                         {{ macros.select('eidikothta', 'Ειδικότητα', form.branches, '', {'required': ''}) }}
+                         {{ macros.input('arithmitroou', 'Αριθμός Μητρώου', form.values.arithmitroou)}}
+                         {{ macros.input('telef', 'Τηλέφωνο', form.values.telef)}}
+                         {{ macros.input('email', 'Email', form.values.email)}}
+                         {{ macros.input('school', 'Σχολείο που υπηρετει', form.values.school)}}
+                         {{ macros.input('schooltelef', 'Τηλέφωνο Σχολείου', form.values.schooltelef)}}
 
                 </div>
                 {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.values.comments) }}
@@ -112,17 +47,7 @@
         <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
     </form>
 
-
-   <script type="text/template" id="app-form-item-row-template">
-                      <td> {{ macros.input('name', 'Όνομα') }}
-                      <td> {{ macros.input('surname', 'Επώνυμο')}}
-                      <td> {{ macros.select('eidikothta', 'Ειδικότητα', branches, '') }}
-                      <td> {{ macros.input('arithmitroou', 'Αριθμός Μητρώου')}}
-                      <td> {{ macros.input('telef', 'Τηλέφωνο')}}
-                      <td> {{ macros.input('email', 'Email')}}
-                      <td> {{ macros.input('school', 'Σχολείο που υπηρετει')}}
-                      <td> {{ macros.input('schooltelef', 'Τηλέφωνο Σχολείου')}}
-    </script>
+   
 </div>
 {% endblock %}
 

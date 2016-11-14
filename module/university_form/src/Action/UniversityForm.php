@@ -8,6 +8,7 @@
  * @license GNU GPLv3 http://www.gnu.org/licenses/gpl-3.0-standalone.html
  */
 namespace GrEduLabs\UniversityForm\Action;
+
 use GrEduLabs\UniversityForm\Service\UniversityFormServiceInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -46,10 +47,11 @@ class UniversityForm
      * @var string
      */
     protected $successUrl;
+
     public function __construct(
     Twig $view, UniversityFormServiceInterface $UniversityFormService, InputFilterInterface $UniversityFormInputFilter, $successUrl,$container
-
-    ) {
+    )
+     {
         $this->view                    = $view;
         $this->UniversityFormService   = $UniversityFormService;
         $this->UniversityFormInputFilter = $UniversityFormInputFilter;
@@ -65,27 +67,32 @@ class UniversityForm
             $reqParams = $req->getParams();
 
             $this->UniversityFormInputFilter->setData($reqParams);
-            $isValid = $this->UniversityFormInputFilter->isValid();             
+            $isValid = $this->UniversityFormInputFilter->isValid();      
             if ($isValid) {
-                $data = $this->UniversityFormInputFilter->getValues();
-                $UniversityForm = $this->UniversityFormService->submit($data, $reqParams);
-                $_SESSION['UnivForm']['uForm'] = $UniversityForm;
-                $res = $res->withRedirect($this->successUrl);
-//                return $res;
-            }
-            $this->view['form'] = [
+           
+                $data =                            $this->UniversityFormInputFilter->getValues();
+                $UniversityForm =                  $this->UniversityFormService->submit($data);
+                $_SESSION['UnivForm']['uForm'] =   $UniversityForm;
+                $res =                             $res->withRedirect($this->successUrl);
+               return $res;
+           } 
+           else {
+                $this->view['form'] = [
+
                 'is_valid' => $isValid,
                 'values' => $this->UniversityFormInputFilter->getValues(),
                 'raw_values' => $this->UniversityFormInputFilter->getRawValues(),
-                'messages' => $this->UniversityFormInputFilter->getMessages(),
+                'messages' => $this->UniversityFormInputFilter->getMessages()
             ];
-             
-        } 
-
+            $res = $this->view->render($res, 'university_form/form.twig', []);
+                } 
+    }
+    else
+    {
         $res = $this->view->render($res, 'university_form/form.twig', [
                 ]);
        return $res;
 
     }
-
+}
 }

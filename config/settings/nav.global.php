@@ -1,7 +1,7 @@
 <?php
 /**
  * gredu_labs.
- *
+ * 
  * @link https://github.com/eellak/gredu_labs for the canonical source repository
  *
  * @copyright Copyright (c) 2008-2015 Greek Free/Open Source Software Society (https://gfoss.ellak.gr/)
@@ -59,14 +59,19 @@ return [
                 'label' => 'Ανοικτά δεδομένα',
                 'route' => 'open_data',
             ],
+            'approved-applications' => [
+                'label' => 'Αιτήσεις που εγκρίθηκαν',
+                'route' => 'application_form.approved',
+            ],
             'university_form' => [
-                'label' => 'Ιδρύματα Τριτοβάθμιας',
+                'label' => 'Ιδρύματα',
                 'route' => 'university_form',
             ],
             'teacher_form' => [
-                'label' => 'Εθελοντές Εκπαιδευτικοί',
+                'label' => 'Εκπαιδευτικοί',
                 'route' => 'teacher_form',
             ],
+
             'about' => [
                 'label' => 'Σχετικά με τη δράση',
                 'route' => 'about',

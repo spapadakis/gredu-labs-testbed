@@ -15,9 +15,8 @@ use RedBeanPHP\R;
 
 class UniversityFormService implements UniversityFormServiceInterface
 {
-    public function submit(array $data, array $reqParams)
+    public function submit(array $data)
     {
-        $appForm                      = R::dispense('univ');       
 
       	$appForm                      = R::dispense('univ');
         $appForm->id                  = $data['id'];
@@ -27,7 +26,7 @@ class UniversityFormService implements UniversityFormServiceInterface
         $appForm->person              = $data['person'];
         $appForm->telef               = trim($data['telef']);
         $appForm->email               = $data['email'];
-        $appForm->comments            = $reqParams['comments'];
+        $appForm->comments            = $data['comments'];
  
  
         R::store($appForm); 

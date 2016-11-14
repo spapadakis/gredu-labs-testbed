@@ -3,23 +3,35 @@
 {% import "schools/form.twig" as macros %}
 
 {% block content %}
-    <div id="university-form">
-        <p>
-        <h1>Φόρμα εκδήλωση ενδιαφέροντος xaxa</h1>
-        <br>
-        Το συγκεκριμένο έργο δίνει τη δυνατότητα σε όποιο εκπαιδευτικό ίδρυμα τριτοβάθμιας εκπαίδευσης επιθυμεί να συμμετέχει ενεργά στην εγκατάσταση των εργαστηρίων που θα αποκτηθούν με τη συγκεκριμένη δράση.
-        <br>Παρακαλώ συμπληρώστε τα στοιχεία σας και θα επικοινωνίσουμε άμεσα μαζί σας. 
-        </p>
 
-        {% block schoolContent %}
-            <form  method="post" action="" class="form-horizontal" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}" data-messages="{{ form.messages|default({})|json_encode }}" >
-                <div class="modal-body">
-                    {{ macros.input('idrima', 'Ίδρυμα', '', 'text') }}
-                    {{ macros.input('sxolh', 'Σχολή', '', 'text' ) }}
-                    {{ macros.input('tmhma', 'Τμήμα', '', 'text' ) }}
-                    {{ macros.input('person', 'Υπεύθυνος Επικοινωνίας', '', 'text' ) }}
-                    {{ macros.input('telef', 'Τηλέφωνο', '', 'text' ) }}
-                    {{ macros.input('email', 'Email', '', 'text' ) }}
+
+    <div id="app-form">
+    <h1>
+    {% block title %}
+        Αίτηση <small></small>
+    {% endblock %}
+    </h1>
+    <form method="post" action="" data-is-valid="{{ form.is_valid | default(true) ? '1' : '0' }}"
+          data-messages="{{ form.messages|default({})|json_encode }}">
+        <div class="form-group">
+              <p>
+                        <h1>Φόρμα εκδήλωσης ενδιαφέροντος</h1>
+                        <br>
+                         Το συγκεκριμένο έργο δίνει τη δυνατότητα σε όποιον εκπαιδευτικό επιθυμεί να συμμετέχει ενεργά στην εγκατάσταση των εργαστηρίων που θα αποκτηθούν με τη συγκεκριμένη δράση.
+                        <br>
+                         Παρακαλώ συμπληρώστε τα στοιχεία σας και θα επικοινωνίσουμε άμεσα μαζί σας.
+                </p>
+         </div>
+
+        <div class="table-responsive">
+       <fieldset>
+                <div id="items-list">
+                    {{ macros.input('idrima', 'Ίδρυμα',form.values.idrima) }}
+                    {{ macros.input('sxolh', 'Σχολή',form.values.sxolh ) }}
+                    {{ macros.input('tmhma', 'Τμήμα',form.values.tmhma ) }}
+                    {{ macros.input('person', 'Υπεύθυνος Επικοινωνίας',form.values.person ) }}
+                    {{ macros.input('telef', 'Τηλέφωνο',form.values.telef ) }}
+                    {{ macros.input('email', 'Email',form.values.email ) }}
                     {{ macros.text('comments', 'Σχόλια/Παρατηρήσεις', form.values.comments) }}
                     <input type="hidden" name="id" value="">
                 </div>
@@ -30,19 +42,16 @@
                 </div>
                 <input type="hidden" name="{{ csrf.name_key }}" value="{{ csrf.name }}">
                 <input type="hidden" name="{{ csrf.value_key }}" value="{{ csrf.value }}">
+        </fieldset>
+    </div>
             </form>
-
-            <script type="text/template">
-                <td class="telef"><%= telef %></td>
-            </script>
-        {% endblock %}
+ 
     </div>
 
 {% endblock %}
-
 {% block inlinejs %}
     {{ parent() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"></script>
-    <script src="{{ base_url() }}/js/university_form/index.js"></script>
+    <script src="{{ base_url() }}/js/teacher_form/index.js"></script>
 {% endblock %}
