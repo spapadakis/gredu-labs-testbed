@@ -9,20 +9,15 @@
 
 namespace GrEduLabs\ReceiveEquip\InputFilter;
 
-use GrEduLabs\ReceiveEquip\Service\ReceiveEquipServiceInterface;
-use GrEduLabs\Schools\Service\SchoolServiceInterface;
 use Zend\Filter;
 use Zend\InputFilter\CollectionInputFilter;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\FileInput;
 use Zend\Validator;
 
 class ReceiveEquip extends InputFilter
 {
     public function __construct(
-        ReceiveEquipServiceInterface $receiveEquipService,
-        SchoolServiceInterface $schoolService,
         CollectionInputFilter $itemsInputFilter
     ) {
         $id = new Input('id');
@@ -47,14 +42,9 @@ class ReceiveEquip extends InputFilter
                 'useDomainCheck' => false,
             ]));
 
-/*        $received_document = new FileInput('received_document');
-        $received_document->getValidatorChain()
-            ->attach(new Validator\File\UploadFile()); */
-
         $this->add($id)
             ->add($schoolId)
             ->add($submittedBy)
-//            ->add($received_document)
             ->add($itemsInputFilter, 'items');
     }
 }
